@@ -55,7 +55,7 @@
   ];
   // mở sẵn ý tưởng khe Hải Vân mới nhất (sửa theo góp ý của thầy), nếu có
   const pick = re => (G.CHOT || []).findIndex(p => re.test(p.code));
-  let ci = [pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
+  let ci = [pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
   const st = { furn: true, dim: true, staff: true, route: true, lab: true, light: true, orient: window.matchMedia && window.matchMedia("(min-width: 900px)").matches ? "h" : "v" };
 
   function closedIn(z, s) {
