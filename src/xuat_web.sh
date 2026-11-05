@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Đưa trang và mã nguồn vào repo arc329-thu-vien, rồi đẩy lên GitHub (Vercel tự triển khai lại khi repo có thay đổi).
+# Đưa trang và mã nguồn vào repo arc329-thu-vien (GitHub HuynhDucKhoi0105/Duyen), đẩy lên GitHub và triển khai Vercel.
 set -e
 SP="${0:A:h}"
 R="/Users/khoihuynh/Documents/Duyên/arc329-thu-vien"
@@ -19,3 +19,5 @@ cd "$R"
 git add -A
 if ! git diff --cached --quiet; then git commit -q -m "${1:-Cập nhật trang phương án}"; fi
 if git remote get-url origin >/dev/null 2>&1; then git push -q origin HEAD:main; echo "Đã đẩy lên GitHub"; else echo "Chưa có repo GitHub (origin), mới commit trong máy"; fi
+# Vercel: khi đã nối repo trong Vercel thì lần đẩy GitHub ở trên tự triển khai; đặt NO_VERCEL=1 để bỏ bước triển khai trực tiếp dưới đây
+if [[ -z "$NO_VERCEL" ]] && command -v vercel >/dev/null; then vercel deploy --prod --yes >/dev/null 2>&1 && echo "Đã triển khai lên https://arc329-thu-vien.vercel.app"; fi
