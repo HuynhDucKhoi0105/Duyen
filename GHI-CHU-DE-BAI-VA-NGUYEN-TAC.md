@@ -648,6 +648,17 @@ Bạn muốn tự xếp hình khối từ các khối A1–E6, xong gửi lại 
 - Kiểm tra nhanh chỉ là gợi ý; khi Claude dựng mặt bằng sẽ chạy bộ kiểm tra đầy đủ.
 - Xếp xong bấm "Lưu cho Claude": bản xếp lưu vào dữ liệu của trang (xepkhoi/ban-moi-nhat), Claude đọc trực tiếp. Hoặc bấm "Tải file" rồi gửi file .json.
 
+### 3.15 Khối vuông, chữ nhật 2–3 tầng (thầy xác nhận lại ngày 05/11/2026)
+Thầy không cần cầu kỳ: chỉ xếp các khối vuông, chữ nhật lên nhau, kèm mặt bằng đủ công năng. Thư viện, kể cả thiếu nhi, luôn đi qua khối A (sảnh A1 rồi quầy A4).
+- **S.1 Hai hộp chồng lệch** (2 tầng, 2.798 m²): hộp công cộng, sự kiện 1 tầng; hộp thư viện 2 tầng lệch sang Đông qua sân 8 m.
+- **S.2 Ba tầng lùi bậc** (3 tầng, 2.982 m²): mỗi tầng lùi về Nam, mái tầng dưới làm sân thượng.
+- **S.3 Hộp vuông giữa, hai hộp phụ** (2 tầng, 2.658 m²): hộp thư viện 32 × 32 m, hộp sự kiện và hộp kính A1 một tầng.
+- **S.4 Chồng ba hộp xoay** (3 tầng, 2.816 m²): ba hộp chồng xoay hướng; tầng 3 đọc yên tĩnh lấy sáng mái.
+- **S.5 Thanh dài ba tầng** (3 tầng, 2.934 m²): thanh thư viện 3 tầng giữa hai sân 12,5 m, tầng 3 đọc yên tĩnh.
+- **S.6 Bốn hộp vuông quanh sân** (2 tầng, 2.920 m²).
+- Cả 6 qua mọi kiểm tra (ánh sáng, đón tiếp, bảo mật sách, đi lại, tách ồn, diện tích, chỗ ngồi, ngoài giờ, người trực, thoát nạn ≤ 30 m, cột chống thêm 0).
+- Web: https://arc329-thu-vien.vercel.app (repo GitHub HuynhDucKhoi0105/Duyen), cập nhật sau mỗi lần đăng trang.
+
 ---
 
 ## 4. Những gì đã có trên trang phương án
