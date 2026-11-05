@@ -52,7 +52,7 @@ if 'role="tab" data-tab="g10"' not in s:
 if 'data-panel="g10" hidden' not in s:
     b='<div id="g9-host" style="margin-top:48px"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'+s[i2:]
-s=s.replace('Phương án chốt · mặt bằng<small>khe chéo 2.1: nội thất, cửa, giao thông, 4 tình huống</small>','Phương án chốt · mặt bằng<small>S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước</small>' if os.path.exists(SP+'chot_s1.js') else 'Phương án chốt · mặt bằng<small>A.4–A.6, H.7–H.9: kho sát thư viện, đi lại gọn</small>' if os.path.exists(SP+'chot_a4.js') else 'Phương án chốt · mặt bằng<small>5 khe Hải Vân, 6 hộp xếp: sáng Bắc – Nam, qua đón tiếp</small>' if os.path.exists(SP+'chot_k1.js') else 'Phương án chốt · mặt bằng<small>A khe chéo, B thanh mái dốc: nội thất, cửa, giao thông</small>' if os.path.exists(SP+'chot_b.js') else 'Phương án chốt · mặt bằng<small>khe chéo 2.1: nội thất, cửa, giao thông, 4 tình huống</small>')
+s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+('S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
 # mã bản dựng: trang đang mở so với version.json trên web để báo "Tải lại"
 import time, json, re as _re
 BUILD=time.strftime('%Y%m%d-%H%M%S')
