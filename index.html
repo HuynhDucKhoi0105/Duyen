@@ -418,7 +418,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261106-151257"</script>
+<script>window.ARC_BUILD="20261106-151756"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -18323,6 +18323,8 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   const nf = (v, d = 0) => (+v).toLocaleString("vi-VN", { minimumFractionDigits: d, maximumFractionDigits: d });
   const KEY = "arc329.xep.v1", UIKEY = "arc329.xep.ui", SNAP = 0.25, FH = [0, 0.45, 4.95, 9.45], TOP = [0, 4.95, 9.45, 13.95], NF = 3, OH = 4;
   const SITE = { x0: 6, x1: 41.5, y0: 12, y1: 89 }, STAGE_X = 50;
+  // bàn nháp cạnh khu đất: đặt vài khối ra xoay, đổi tỉ lệ, tách đôi trước khi kéo vào xếp (không tính vào kiểm tra)
+  const DRAFT = { x0: 50, x1: 75, y0: 8, y1: 92 };
   // phòng có người dùng cần cửa sổ Bắc/Nam (góp ý của thầy)
   const LIT = /^(A[1-4]|B[1-6]|C2|D1|D4|E[123])$/, NOISY = /^(D1|D2|D4|A3|B3|B4)$/;
 
@@ -18413,10 +18415,11 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
 .x10 .k { font-size: 12px; color: var(--ink-2); }
 .x10 .opt { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--ink-2); padding: 2px 4px; }
 .x10 .opt input[type=range] { width: 110px; }
-.x10 .main { display: grid; gap: 12px; align-items: start; grid-template-columns: auto 12px minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "plan dv td" "info info info"; }
-.x10 .main.l-plan { grid-template-areas: "stk stk stk" "kho kho kho" "plan plan plan" "info info info"; }
-.x10 .main.l-3d { grid-template-columns: 0 0 minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "td td td" "info info info"; }
-.x10 .main.l-plan .td, .x10 .main.l-plan .dv, .x10 .main.l-3d .cv, .x10 .main.l-3d .dv { display: none; }
+.x10 .main { display: grid; gap: 12px; align-items: start; grid-template-columns: auto 12px minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "plan dv td" "plan dv sel" "info info info"; grid-template-rows: auto auto auto 1fr auto; }
+.x10 .main.l-plan { grid-template-areas: "stk stk stk" "kho kho kho" "plan dv sel" "plan dv sel" "info info info"; }
+.x10 .main.l-3d { grid-template-columns: 0 0 minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "td td td" "sel sel sel" "info info info"; }
+.x10 .main.l-plan .td, .x10 .main.l-3d .cv, .x10 .main.l-3d .dv { display: none; }
+.x10 #x10-sel { grid-area: sel; }
 .x10 .info { grid-area: info; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); align-items: start; }
 .x10 .cv { position: relative; }
 .x10 .cv .ov { position: absolute; display: flex; gap: 4px; align-items: center; }
@@ -18424,7 +18427,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
 .x10 .cv .ov.tr { right: 8px; top: 8px; }
 .x10 .cv .ov .btn { padding: 3px 10px; font-size: 15px; line-height: 1.2; }
 .x10 svg.plan.panning { cursor: grabbing; }
-@media (max-width: 900px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stk" "kho" "plan" "td" "info"; } .x10 .dv { display: none; } .x10 svg.plan { width: 100% !important; height: auto !important; } .x10 .main.l-plan .td, .x10 .main.l-3d .cv { display: block; } }
+@media (max-width: 900px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stk" "kho" "plan" "td" "sel" "info"; grid-template-rows: none; } .x10 .dv { display: none; } .x10 svg.plan { width: 100% !important; height: auto !important; } .x10 .main.l-plan .td, .x10 .main.l-3d .cv { display: block; } }
 .x10 .cv { grid-area: plan; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); overflow: hidden; min-width: 0; }
 .x10 svg.plan { display: block; height: var(--planH, 860px); width: auto; max-width: none; touch-action: none; user-select: none; -webkit-user-select: none; }
 .x10 svg.plan.dragging .ovh { display: none; }
@@ -18444,11 +18447,11 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
 .x10 .td .flv { font: 700 12.5px var(--mono, monospace); text-align: center; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 4px 0; }
 .x10 .td .hint { position: absolute; left: 8px; bottom: 6px; right: 8px; margin: 0; font-size: 11px; opacity: .8; color: var(--ink-2); pointer-events: none; text-shadow: 0 0 3px var(--paper); }
 .x10 .stk { grid-area: stk; display: flex; flex-wrap: wrap; gap: 8px; }
-.x10 .stk button { font: inherit; display: flex; gap: 10px; align-items: center; padding: 5px 12px 5px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--sheet); color: var(--ink); cursor: pointer; text-align: left; min-width: 150px; }
+.x10 .stk button { font: inherit; display: flex; gap: 10px; align-items: center; padding: 5px 12px 5px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--sheet); color: var(--ink); cursor: pointer; text-align: left; min-width: 190px; align-items: flex-end; }
 .x10 .stk button[aria-pressed="true"] { border: 2px solid var(--accent); padding: 4px 11px 4px 5px; background: color-mix(in srgb, var(--accent) 8%, var(--sheet)); }
-.x10 .stk button svg { height: 74px; width: auto; display: block; flex: none; }
-.x10 .stk .cap { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
-.x10 .stk .cap b { color: var(--ink); font-size: 15px; }
+.x10 .stk button svg { height: 190px; width: auto; display: block; flex: none; }
+.x10 .stk .cap { font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.x10 .stk .cap b { color: var(--ink); font-size: 17px; }
 .x10 .stk .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--x10Red); margin-left: 5px; vertical-align: 2px; }
 .x10 .kho { grid-area: kho; border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; min-height: 44px; background: color-mix(in srgb, var(--paper) 60%, var(--sheet)); display: grid; gap: 6px; min-width: 0; }
 .x10 .kho .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -18497,7 +18500,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   <div class="lg"><span><i style="border:2px dashed var(--ink-2)"></i>tầng dưới</span><span><i style="border:2px dotted var(--ink)"></i>tầng trên</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Red) 0 2px,transparent 2px 6px);border:1px solid var(--x10Red)"></i>đua quá 4 m, cần cột</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Green) 0 2px,transparent 2px 6px);border:1px solid var(--x10Green)"></i>mái lộ: lấy sáng mái, sân thượng</span><span><i style="background:#2f8fd6;height:4px"></i>mặt Bắc/Nam hở lấy sáng</span><span><i style="border-top:2px dashed var(--x10Guide)"></i>đường dóng khi kéo</span></div>
   <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
     <div class="stk" id="x10-stk" aria-label="Chọn tầng đang xếp"></div>
-    <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào mặt bằng hoặc vào 3D</span></div><div id="x10-kho" class="row"></div></div>
+    <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào khu đất, vào 3D, hoặc ra bàn nháp bên phải mặt bằng (bấm đúp một khối để đưa ra bàn nháp)</span></div><div id="x10-kho" class="row"></div></div>
     <div class="cv"><svg class="plan" id="x10-svg" aria-label="Mặt bằng khu đất và các khối"></svg><div class="ov tl" id="x10-pt"></div><div class="ov tr"><button type="button" class="btn" id="x10-zi" title="Phóng to (hoặc cuộn chuột)">＋</button><button type="button" class="btn" id="x10-zo" title="Thu nhỏ">−</button><button type="button" class="btn" id="x10-zf" title="Vừa khung" style="font-size:12.5px">Vừa khung</button></div></div>
     <div class="dv" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"></div>
     <div class="td">
@@ -18506,8 +18509,8 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
       <div class="ov tr"><button type="button" class="btn" id="x10-up" title="Lên tầng trên">▲</button><span class="flv" id="x10-flv"></span><button type="button" class="btn" id="x10-dn" title="Xuống tầng dưới">▼</button></div>
       <p class="hint">Kéo khối để di chuyển · kéo chỗ trống (hoặc giữ Shift) để xoay · cuộn để phóng to · PageUp/PageDown đưa khối lên, xuống tầng</p>
     </div>
+    <div class="card" id="x10-sel"></div>
     <div class="info">
-      <div class="card" id="x10-sel"></div>
       <div class="card"><h4>Kiểm tra nhanh</h4><ul class="chk" id="x10-chk"></ul></div>
       <div class="card"><h4>Diện tích</h4><div id="x10-area"></div></div>
       <div class="card"><h4>Gửi cho Claude</h4>
@@ -18572,14 +18575,14 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     let st = null;
     const main = host.querySelector("#x10-main"), set = h => { UI.planH2 = Math.round(Math.max(380, Math.min(1600, h))); main.style.setProperty("--planH", UI.planH2 + "px"); raf("d3", draw3); };
     dv.addEventListener("pointerdown", e => { st = { x: e.clientX, h: UI.planH2 }; dv.setPointerCapture(e.pointerId); e.preventDefault(); });
-    dv.addEventListener("pointermove", e => { if (st) set(st.h + (e.clientX - st.x) * 2); });
+    dv.addEventListener("pointermove", e => { if (st) set(st.h + (e.clientX - st.x) * VB0.h / VB0.w); });
     const end = () => { if (st) { st = null; saveUI(); } };
     dv.addEventListener("pointerup", end); dv.addEventListener("pointercancel", end);
     dv.addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); set(UI.planH2 + (e.key === "ArrowRight" ? 60 : -60)); saveUI(); } });
   }
 
   /* ---------- vẽ mặt bằng khu đất ---------- */
-  const VB0 = { x: -1, y: 6.5, w: 50, h: 86 }, PX = 10;
+  const VB0 = { x: -1, y: 6.5, w: 77, h: 86 }, PX = 10;
   let VB = { ...VB0 };
   const setVB = () => { if (svg) svg.setAttribute("viewBox", `${VB.x * PX} ${VB.y * PX} ${VB.w * PX} ${VB.h * PX}`); };
   // phóng to quanh điểm (px, py) theo hệ mét; giữ tỉ lệ khung để mặt bằng không méo
@@ -18654,6 +18657,13 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     for (const b of cur.sort((a, b) => (a.kind === "court") - (b.kind === "court") || a.f - b.f)) drawBlock(b);
     // khối tầng trên: viền chấm
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
+    // bàn nháp
+    R(DRAFT.x0 - 0.5, DRAFT.y0, DRAFT.x1 - DRAFT.x0 + 1, DRAFT.y1 - DRAFT.y0, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "10 6", rx: 12 });
+    T("Bàn nháp", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 2.2, { "font-size": 20, "font-weight": 800, fill: "var(--ink)" });
+    T("đặt khối ra đây để chỉnh", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 4.4, { "font-size": 15 });
+    T("rồi kéo sang khu đất", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 6.2, { "font-size": 15 });
+    for (const b of S.blocks.filter(b => b.draft)) drawBlock(b);
+    if (drag && drag.b && !onSite(drag.b) && !drag.b.draft) drawBlock(drag.b); // khối đang kéo từ kho
     el("g", { id: "x10-guides", "pointer-events": "none" }, svg);
     // đưa khối đang chọn lên trên cùng
     const n = sel && svg.querySelector(`[data-id="${CSS_ESC(sel)}"]`); if (n) svg.insertBefore(n, svg.querySelector("#x10-guides"));
@@ -18668,9 +18678,9 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const x = b.x * PX, y = b.y * PX, w = b.w * PX, h = b.h * PX, bad = BAD.has(b.id);
     el("rect", { class: "body", x, y, width: w, height: h, fill: col(b), opacity: b.kind === "court" ? 0.7 : 0.96, stroke: sel === b.id ? "var(--accent)" : bad ? "var(--warn)" : "var(--ink)", "stroke-width": sel === b.id ? 5 : bad ? 3 : 1.3, "stroke-dasharray": b.kind === "court" ? "6 4" : null }, g);
     if (mode === "all" && b.f >= 2) el("rect", { x, y, width: w, height: h, fill: "url(#x10h)", "pointer-events": "none" }, g);
-    if (b.kind === "room" && LIT.test(b.c)) { const lt = litOf(b); for (const [side, ok] of [["N", lt.N], ["S", lt.S]]) if (ok >= 1.2) el("line", { x1: x + 3, y1: side === "N" ? y + 2 : y + h - 2, x2: x + w - 3, y2: side === "N" ? y + 2 : y + h - 2, stroke: "#2f8fd6", "stroke-width": 4, opacity: 0.8, "pointer-events": "none" }, g); }
+    if (onSite(b) && b.kind === "room" && LIT.test(b.c)) { const lt = litOf(b); for (const [side, ok] of [["N", lt.N], ["S", lt.S]]) if (ok >= 1.2) el("line", { x1: x + 3, y1: side === "N" ? y + 2 : y + h - 2, x2: x + w - 3, y2: side === "N" ? y + 2 : y + h - 2, stroke: "#2f8fd6", "stroke-width": 4, opacity: 0.8, "pointer-events": "none" }, g); }
     // phần đua quá 4 m so với tầng ngay dưới (đề xuất 1)
-    if (b.f >= 2 && isFloor(b)) {
+    if (onSite(b) && b.f >= 2 && isFloor(b)) {
       const low = S.blocks.filter(o => onSite(o) && o.f === b.f - 1 && isFloor(o));
       const rs = runs(b, (px, py) => !low.some(o => inside(o, px, py)) && (low.length ? Math.min(...low.map(o => dpt(o, px, py))) : 99) > OH);
       if (rs.length) {
@@ -18713,7 +18723,8 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
       const s = el("svg", { viewBox: `${4 * PX} ${10 * PX} ${39.5 * PX} ${81 * PX}`, "aria-hidden": "true" }, bt);
       el("rect", { x: 6 * PX, y: 12 * PX, width: 35.5 * PX, height: 77 * PX, fill: "var(--paper)", stroke: "var(--line)", "stroke-width": 6 }, s);
       for (const b of P.filter(b => b.f === f - 1 && isFloor(b))) el("rect", { x: b.x * PX, y: b.y * PX, width: b.w * PX, height: b.h * PX, fill: "none", stroke: "var(--ink-2)", "stroke-width": 5, "stroke-dasharray": "14 10", opacity: 0.6 }, s);
-      for (const b of on) el("rect", { x: b.x * PX, y: b.y * PX, width: b.w * PX, height: b.h * PX, fill: col(b), stroke: BAD.has(b.id) ? "var(--x10Red)" : "var(--ink)", "stroke-width": BAD.has(b.id) ? 9 : 4 }, s);
+      for (const b of on) el("rect", { x: b.x * PX, y: b.y * PX, width: b.w * PX, height: b.h * PX, fill: col(b), stroke: BAD.has(b.id) ? "var(--x10Red)" : "var(--ink)", "stroke-width": BAD.has(b.id) ? 8 : 3 }, s);
+      for (const b of on.filter(b => b.w >= 4.5 && b.h >= 3.5 && b.kind === "room")) { const t = el("text", { x: (b.x + b.w / 2) * PX, y: (b.y + b.h / 2) * PX, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 30, "font-weight": 800, fill: "var(--ink)" }, s); t.textContent = b.c; }
       const c = document.createElement("span"); c.className = "cap";
       c.innerHTML = `<b>Tầng ${f}</b>${err ? '<span class="dot" title="Còn mục cần xem"></span>' : ""}<br>sàn +${nf(FH[f], 2)}<br>${on.length ? `${nf(a)} m² · ${on.length} khối` : "trống"}`;
       bt.appendChild(c);
@@ -18728,13 +18739,14 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   /* ---------- kho khối ---------- */
   function renderKho() {
     const box = host.querySelector("#x10-kho"); if (!box) return;
-    const st = S.blocks.filter(b => !onSite(b));
+    const st = S.blocks.filter(b => !onSite(b) && !b.draft);
     box.innerHTML = st.length ? "" : `<span class="k">Đã đặt hết khối lên khu đất. Muốn cất khối nào thì kéo nó ra khỏi khu đất (sang bờ sông) hoặc bấm "Cất vào kho".</span>`;
     for (const z of "ABCDE") for (const b of st.filter(q => q.kind === "room" && q.c[0] === z)) {
       const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.dataset.id = b.id; c.setAttribute("aria-pressed", String(sel === b.id));
-      c.title = `${b.n} · ${nf(area(b))} m² · kéo vào khu đất`;
+      c.title = `${b.n} · ${nf(area(b))} m² · kéo vào khu đất hoặc bàn nháp (bấm đúp: ra bàn nháp)`;
       c.innerHTML = `<i style="background:${col(b)}"></i><b>${esc(label(b))}</b> ${nf(area(b))} m²`;
       c.addEventListener("pointerdown", e => startDrag(e, b));
+      c.addEventListener("dblclick", () => { toDraft(b); sel = b.id; keep(); render(); });
       box.appendChild(c);
     }
   }
@@ -18742,7 +18754,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   /* ---------- hút mép, canh thẳng hàng ---------- */
   // trả về vị trí đã hút và các đường dóng; M là tầm hút (m)
   function snap(b, nx, ny, M) {
-    const others = S.blocks.filter(o => o !== b && onSite(o));
+    const others = S.blocks.filter(o => o !== b && (onSite(o) || (b.draft && o.draft)));
     let bx = null, by = null;
     const tryX = (d, t, o, w) => { const s = Math.abs(d) + w; if (Math.abs(d) <= M && (!bx || s < bx.s)) bx = { d, t, o, s }; };
     const tryY = (d, t, o, w) => { const s = Math.abs(d) + w; if (Math.abs(d) <= M && (!by || s < by.s)) by = { d, t, o, s }; };
@@ -18779,7 +18791,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   }
   // đưa khối về kho
   function toStage(b) {
-    b.f = 1;
+    b.f = 1; delete b.draft;
     const inStage = S.blocks.filter(o => o !== b && !onSite(o));
     for (let y = 1; y < 104; y += 0.5) for (let x = STAGE_X; x + b.w <= STAGE_X + 64; x += 0.5) {
       const t = { x, y, w: b.w, h: b.h };
@@ -18787,8 +18799,23 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     }
     b.x = STAGE_X; b.y = 100;
   }
+  // đưa khối ra bàn nháp vào chỗ trống
+  function toDraft(b) {
+    const on = S.blocks.filter(o => o !== b && o.draft);
+    for (let y = DRAFT.y0 + 7; y + b.h <= DRAFT.y1; y += 0.5) for (let x = DRAFT.x0; x + Math.min(b.w, 25) <= DRAFT.x1 + 0.01; x += 0.5) {
+      const t = { x, y, w: b.w, h: b.h };
+      if (!on.some(o => ovl(t, { x: o.x - 1, y: o.y - 1, w: o.w + 2, h: o.h + 2 }) > 0)) { b.x = x; b.y = y; b.draft = true; return; }
+    }
+    b.x = DRAFT.x0; b.y = DRAFT.y0 + 7; b.draft = true;
+  }
   // thả khối: ra ngoài khu đất thì cất vào kho, còn lại giữ trong khu đất và đẩy khít
   function drop(b, wasStage) {
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    if (cx > DRAFT.x0 - 2 && cx < DRAFT.x1 + 4 && cy > -6 && cy < 110) {
+      b.draft = true; b.x = b.w > DRAFT.x1 - DRAFT.x0 ? DRAFT.x0 : Math.max(DRAFT.x0, Math.min(DRAFT.x1 - b.w, b.x)); b.y = Math.max(DRAFT.y0 + 7, Math.min(DRAFT.y1 - b.h, b.y));
+      b.x = +b.x.toFixed(2); b.y = +b.y.toFixed(2); return;
+    }
+    if (b.draft) { delete b.draft; b.f = mode === "all" ? 1 : +mode; }
     if (b.x > 46 || b.x + b.w > 53 || b.y > 106 || b.y + b.h < -4 || b.x + b.w < -6) { toStage(b); return; }
     b.x = Math.max(0, Math.min(41.5 - b.w, b.x)); b.y = Math.max(0, Math.min(104 - b.h, b.y));
     settle(b);
@@ -18802,7 +18829,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     if (e.button > 0) return;
     e.preventDefault(); e.stopPropagation();
     if (!svg) return;
-    const wasStage = !onSite(b), o0 = { x: b.x, y: b.y, f: b.f };
+    const wasStage = !onSite(b) && !b.draft, o0 = { x: b.x, y: b.y, f: b.f };
     sel = b.id;
     let [mx, my] = pt(e);
     if (wasStage) { b.f = mode === "all" ? 1 : +mode; }
@@ -18901,7 +18928,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const k = (G.KHOI || []).find(q => q.c === b.c), room = b.kind === "room", a = area(b);
     const wMin = room ? Math.max(2, +(b.a / 40).toFixed(1)) : 1.5, wMax = room ? Math.min(42, +(b.a / 2).toFixed(1)) : 40;
     box.innerHTML = `<h4>${esc(label(b))} · ${esc(b.n)}</h4>
-<p>${nf(a, 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : " · đang ở kho"}</p>
+<p>${nf(a, 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : b.draft ? " · đang ở bàn nháp" : " · đang ở kho"}</p>
 ${room && briefA(b.c) ? areaCtl(b) : ""}
 ${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc hoặc Nam là đủ sáng." : b.h <= 16 ? "Sâu 8–16 m: cần hở cả mặt Bắc và mặt Nam." : "Sâu quá 16 m: giữa phòng sẽ tối, nên đổi tỉ lệ hoặc tách đôi."}</p>` : ""}
 ${k ? `<p style="color:var(--ink-2)">Nối với: ${esc(k.noi)}<br>Tránh: ${esc(k.tranh)}</p>` : ""}
@@ -18914,7 +18941,7 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
   ${room && b.a >= 30 ? `<button type="button" class="btn" id="x10-split">Tách đôi</button>` : ""}
   ${room && parts(b).length > 1 ? `<button type="button" class="btn" id="x10-merge">Gộp lại (${parts(b).length} phần)</button>` : ""}
   ${room && LIT.test(b.c) ? `<button type="button" class="btn" id="x10-top" aria-pressed="${!!b.top}">${b.top ? "✓ " : ""}Lấy sáng mái hướng Bắc</button>` : ""}
-  ${room ? (onSite(b) ? `<button type="button" class="btn" id="x10-back">Cất vào kho</button>` : "") : `<button type="button" class="btn" id="x10-del">Xóa</button>`}
+  ${room ? (onSite(b) || b.draft ? `<button type="button" class="btn" id="x10-back">Cất vào kho</button>` : `<button type="button" class="btn" id="x10-todraft">Đưa ra bàn nháp</button>`) : `<button type="button" class="btn" id="x10-del">Xóa</button>`}
 </div>`;
     box.querySelector("#x10-w").addEventListener("input", e => setW(b, e.target.value));
     const ar = box.querySelector("#x10-a"); if (ar) ar.addEventListener("input", e => setA(b, +e.target.value));
@@ -18926,6 +18953,7 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
     const mg = box.querySelector("#x10-merge"); if (mg) mg.addEventListener("click", () => merge(b));
     const sp = box.querySelector("#x10-split"); if (sp) sp.addEventListener("click", () => split(b));
     const bk = box.querySelector("#x10-back"); if (bk) bk.addEventListener("click", () => { toStage(b); keep(); render(); });
+    const td = box.querySelector("#x10-todraft"); if (td) td.addEventListener("click", () => { toDraft(b); keep(); render(); });
     const dl = box.querySelector("#x10-del"); if (dl) dl.addEventListener("click", () => { S.blocks = S.blocks.filter(q => q !== b); sel = null; keep(); render(); });
   }
 
@@ -19190,7 +19218,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     if (!T3) return;
     const box = host.querySelector("#x10-3d"), cv = host.querySelector(".x10 .cv"), W = box.clientWidth || 700;
     const planH = cv && cv.offsetParent && window.innerWidth > 900 ? cv.clientHeight : 0;
-    const H = Math.round(UI.layout === "3d" || !planH ? Math.max(420, Math.min((window.innerHeight || 900) - 60, W * 0.62)) : Math.max(380, planH));
+    const H = Math.round(UI.layout === "3d" || !planH ? Math.max(420, Math.min((window.innerHeight || 900) - 60, W * 0.62)) : Math.max(320, Math.min(W * 0.85, planH * 0.56)));
     T3.r.setSize(W, H, false); T3.r.domElement.style.height = H + "px"; T3.cam.aspect = W / H; T3.cam.updateProjectionMatrix();
     const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, tx = 24, tz = 52, ty = 3 + UI.explode;
     T3.cam.position.set(tx + d * Math.cos(pr) * Math.sin(yr), ty + d * Math.sin(pr), tz + d * Math.cos(pr) * Math.cos(yr)); T3.cam.lookAt(tx, ty, tz);
@@ -19211,7 +19239,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
   }
 
   /* ---------- lưu cho Claude, tải và mở file ---------- */
-  const payload = () => ({ kind: "arc329-xep-khoi", v: 1, savedAt: new Date().toISOString(), note: S.note || "", from: S.from || null, blocks: S.blocks.map(b => ({ id: b.id, c: b.c, n: b.n, kind: b.kind, a: b.a, x: b.x, y: b.y, w: b.w, h: b.h, f: b.f, top: !!b.top, onSite: onSite(b) })) });
+  const payload = () => ({ kind: "arc329-xep-khoi", v: 1, savedAt: new Date().toISOString(), note: S.note || "", from: S.from || null, blocks: S.blocks.map(b => ({ id: b.id, c: b.c, n: b.n, kind: b.kind, a: b.a, x: b.x, y: b.y, w: b.w, h: b.h, f: b.f, top: !!b.top, onSite: onSite(b), draft: !!b.draft || undefined })) });
   const say = t => { const e = host.querySelector("#x10-st"); if (e) e.textContent = t; };
   async function saveForClaude() {
     const db = window.claude && window.claude.use ? await window.claude.use("db") : null;
