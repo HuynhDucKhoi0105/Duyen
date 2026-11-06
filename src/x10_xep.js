@@ -51,7 +51,7 @@
   let sel = null, hover = null, mode = "1", seq = 1, ISS = [], BAD = new Set();
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH: 680, explode: 0, cut: true, shadow: true, people: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -103,14 +103,16 @@
 .x10 .k { font-size: 12px; color: var(--ink-2); }
 .x10 .opt { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; color: var(--ink-2); padding: 2px 4px; }
 .x10 .opt input[type=range] { width: 110px; }
-.x10 .main { display: grid; gap: 12px; align-items: start; grid-template-columns: 96px auto 12px minmax(0, 1fr) 320px; grid-template-areas: "stk plan dv td side" "stk kho kho kho side"; }
-.x10 .main.l-plan { grid-template-columns: 96px auto 0 minmax(0, 1fr) 320px; grid-template-areas: "stk plan plan plan side" "stk kho kho kho side"; }
-.x10 .main.l-3d { grid-template-columns: 96px 0 0 minmax(0, 1fr) 320px; grid-template-areas: "stk td td td side" "stk kho kho kho side"; }
+.x10 .main { display: grid; gap: 12px; align-items: start; grid-template-columns: auto 12px minmax(0, 1fr) 290px; grid-template-areas: "stk stk stk stk" "kho kho kho kho" "plan dv td sel" "info info info info"; }
+.x10 .main.l-plan { grid-template-columns: auto 0 minmax(0, 1fr) 290px; grid-template-areas: "stk stk stk stk" "kho kho kho kho" "plan plan plan sel" "info info info info"; }
+.x10 .main.l-3d { grid-template-columns: 0 0 minmax(0, 1fr) 290px; grid-template-areas: "stk stk stk stk" "kho kho kho kho" "td td td sel" "info info info info"; }
 .x10 .main.l-plan .td, .x10 .main.l-plan .dv, .x10 .main.l-3d .cv, .x10 .main.l-3d .dv { display: none; }
-@media (max-width: 1250px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: 96px auto 12px minmax(0, 1fr); grid-template-areas: "stk plan dv td" "stk kho kho kho" "side side side side"; } .x10 .main.l-plan { grid-template-areas: "stk plan plan plan" "stk kho kho kho" "side side side side"; } .x10 .main.l-3d { grid-template-areas: "stk td td td" "stk kho kho kho" "side side side side"; } .x10 .side { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); } }
-@media (max-width: 900px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: minmax(0, 1fr); grid-template-areas: "plan" "td" "stk" "kho" "side"; } .x10 .dv { display: none; } .x10 svg.plan { width: 100% !important; height: auto !important; } .x10 .stk { grid-auto-flow: column; grid-auto-columns: minmax(70px, 1fr); overflow-x: auto; } .x10 .main.l-plan .td, .x10 .main.l-3d .cv { display: block; } }
+.x10 .info { grid-area: info; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+.x10 #x10-sel { grid-area: sel; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; }
+@media (max-width: 1150px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: auto 12px minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "plan dv td" "sel sel sel" "info info info"; } .x10 .main.l-plan { grid-template-areas: "stk stk stk" "kho kho kho" "plan plan plan" "sel sel sel" "info info info"; } .x10 .main.l-3d { grid-template-areas: "stk stk stk" "kho kho kho" "td td td" "sel sel sel" "info info info"; } .x10 #x10-sel { position: static; max-height: none; } }
+@media (max-width: 900px) { .x10 .main, .x10 .main.l-plan, .x10 .main.l-3d { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stk" "kho" "plan" "td" "sel" "info"; } .x10 .dv { display: none; } .x10 svg.plan { width: 100% !important; height: auto !important; } .x10 .main.l-plan .td, .x10 .main.l-3d .cv { display: block; } }
 .x10 .cv { grid-area: plan; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); overflow: hidden; min-width: 0; }
-.x10 svg.plan { display: block; height: var(--planH, 680px); width: auto; max-width: none; touch-action: none; user-select: none; -webkit-user-select: none; }
+.x10 svg.plan { display: block; height: var(--planH, 860px); width: auto; max-width: none; touch-action: none; user-select: none; -webkit-user-select: none; }
 .x10 svg.plan.dragging .ovh { display: none; }
 .x10 svg.plan g.blk { cursor: grab; }
 .x10 svg.plan.dragging, .x10 svg.plan.dragging g.blk { cursor: grabbing; }
@@ -126,20 +128,19 @@
 .x10 .td .ov .btn { padding: 4px 9px; font-size: 12.5px; opacity: .94; }
 .x10 .td .ov.tr .btn { font-size: 15px; line-height: 1; padding: 6px 10px; }
 .x10 .td .flv { font: 700 12.5px var(--mono, monospace); text-align: center; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 4px 0; }
-.x10 .td .hint { position: absolute; left: 8px; bottom: 6px; right: 8px; margin: 0; font-size: 11.5px; color: var(--ink-2); pointer-events: none; text-shadow: 0 0 3px var(--paper); }
-.x10 .stk { grid-area: stk; display: grid; gap: 8px; align-content: start; }
-.x10 .stk button { font: inherit; display: grid; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--sheet); color: var(--ink); cursor: pointer; text-align: left; }
-.x10 .stk button[aria-pressed="true"] { border: 2px solid var(--accent); padding: 3px; }
-.x10 .stk button svg { width: 100%; height: auto; display: block; }
-.x10 .stk .cap { font-size: 11px; line-height: 1.3; color: var(--ink-2); }
-.x10 .stk .cap b { color: var(--ink); font-size: 12px; }
-.x10 .stk .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--x10Red); margin-left: 4px; vertical-align: 1px; }
-.x10 .kho { grid-area: kho; border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; display: grid; gap: 6px; min-width: 0; }
+.x10 .td .hint { position: absolute; left: 8px; bottom: 6px; right: 8px; margin: 0; font-size: 11px; opacity: .8; color: var(--ink-2); pointer-events: none; text-shadow: 0 0 3px var(--paper); }
+.x10 .stk { grid-area: stk; display: flex; flex-wrap: wrap; gap: 8px; }
+.x10 .stk button { font: inherit; display: flex; gap: 10px; align-items: center; padding: 5px 12px 5px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--sheet); color: var(--ink); cursor: pointer; text-align: left; min-width: 150px; }
+.x10 .stk button[aria-pressed="true"] { border: 2px solid var(--accent); padding: 4px 11px 4px 5px; background: color-mix(in srgb, var(--accent) 8%, var(--sheet)); }
+.x10 .stk button svg { height: 74px; width: auto; display: block; flex: none; }
+.x10 .stk .cap { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.x10 .stk .cap b { color: var(--ink); font-size: 15px; }
+.x10 .stk .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--x10Red); margin-left: 5px; vertical-align: 2px; }
+.x10 .kho { grid-area: kho; border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; min-height: 44px; background: color-mix(in srgb, var(--paper) 60%, var(--sheet)); display: grid; gap: 6px; min-width: 0; }
 .x10 .kho .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .x10 .chip { font: inherit; display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--line); border-radius: 7px; padding: 4px 8px; background: var(--sheet); color: var(--ink); cursor: grab; touch-action: none; font-size: 12.5px; user-select: none; }
 .x10 .chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .x10 .chip i { width: 12px; height: 12px; border: 1px solid var(--ink); display: inline-block; border-radius: 2px; }
-.x10 .side { grid-area: side; display: grid; gap: 12px; }
 .x10 .card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--sheet); min-width: 0; }
 .x10 .card h4 { margin: 0 0 6px; font-size: 14px; }
 .x10 .card p { margin: 4px 0; font-size: 13px; }
@@ -166,10 +167,9 @@
 <section class="x10">
   <div><p class="eyebrow">Tự xếp khối · 20 khối A1–E6 đúng diện tích đề</p>
   <h2>Kéo các khối lên khu đất, xếp 2–3 tầng, rồi gửi cho Claude làm mặt bằng</h2>
-  <p class="lede">Kéo khối từ <b>Kho khối</b> vào mặt bằng hoặc kéo ngay trên 3D; khối tự hút vào mép và canh thẳng hàng với khối khác (đường dóng màu hồng). Đang xếp tầng 2 thì tầng 1 hiện nét đứt xám, chỗ đua quá 4 m tô sọc đỏ, mái tầng dưới còn lộ tô sọc xanh. Chọn khối ở mặt bằng hay 3D đều sáng cả hai bên. Làm sai bấm Hoàn tác (Ctrl+Z). Kiểm tra nhanh bên phải chỉ là gợi ý. Xếp xong bấm <b>Lưu cho Claude</b> rồi nhắn Claude.</p></div>
+  <p class="lede">Chọn tầng ở hàng trên, kéo khối từ kho vào mặt bằng hoặc vào 3D. Khối tự hút mép, canh thẳng hàng (đường dóng hồng). Sọc đỏ: đua quá 4 m cần cột; sọc xanh: mái tầng dưới còn lộ. Xếp xong bấm <b>Lưu cho Claude</b>.</p></div>
   <div class="bar">
     <button type="button" class="btn" id="x10-undo" title="Ctrl+Z">↶ Hoàn tác</button><button type="button" class="btn" id="x10-redo" title="Ctrl+Y">↷ Làm lại</button>
-    <span class="k" style="margin-left:8px">Đang xếp</span><span class="seg" id="x10-mode">${[["1", "Tầng 1"], ["2", "Tầng 2"], ["3", "Tầng 3"], ["all", "Cả các tầng"]].map(([k, t]) => `<button type="button" data-m="${k}" aria-pressed="${k === mode}">${t}</button>`).join("")}</span>
     <span class="k" style="margin-left:8px">Thêm</span>${Object.entries(HELP).map(([k, v]) => `<button type="button" class="btn" data-add="${k}">+ ${v.n.split(":")[0]}</button>`).join("")}
   </div>
   <div class="bar">
@@ -181,8 +181,9 @@
     <label class="opt"><input type="checkbox" id="x10-pp" ${UI.people ? "checked" : ""}> Người 1,7 m</label>
   </div>
   <div class="lg"><span><i style="border:2px dashed var(--ink-2)"></i>tầng dưới</span><span><i style="border:2px dotted var(--ink)"></i>tầng trên</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Red) 0 2px,transparent 2px 6px);border:1px solid var(--x10Red)"></i>đua quá 4 m, cần cột</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Green) 0 2px,transparent 2px 6px);border:1px solid var(--x10Green)"></i>mái lộ: lấy sáng mái, sân thượng</span><span><i style="background:#2f8fd6;height:4px"></i>mặt Bắc/Nam hở lấy sáng</span><span><i style="border-top:2px dashed var(--x10Guide)"></i>đường dóng khi kéo</span></div>
-  <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH}px">
-    <div class="stk" id="x10-stk" aria-label="Các tầng"></div>
+  <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
+    <div class="stk" id="x10-stk" aria-label="Chọn tầng đang xếp"></div>
+    <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào mặt bằng hoặc vào 3D</span></div><div id="x10-kho" class="row"></div></div>
     <div class="cv"><svg class="plan" id="x10-svg" aria-label="Mặt bằng khu đất và các khối"></svg></div>
     <div class="dv" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"></div>
     <div class="td">
@@ -191,9 +192,8 @@
       <div class="ov tr"><button type="button" class="btn" id="x10-up" title="Lên tầng trên">▲</button><span class="flv" id="x10-flv"></span><button type="button" class="btn" id="x10-dn" title="Xuống tầng dưới">▼</button></div>
       <p class="hint">Kéo khối để di chuyển · kéo chỗ trống (hoặc giữ Shift) để xoay · cuộn để phóng to · PageUp/PageDown đưa khối lên, xuống tầng</p>
     </div>
-    <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào mặt bằng hoặc vào 3D</span></div><div id="x10-kho" class="row"></div></div>
-    <div class="side">
-      <div class="card" id="x10-sel"></div>
+    <div class="card" id="x10-sel"></div>
+    <div class="info">
       <div class="card"><h4>Kiểm tra nhanh</h4><ul class="chk" id="x10-chk"></ul></div>
       <div class="card"><h4>Diện tích</h4><div id="x10-area"></div></div>
       <div class="card"><h4>Gửi cho Claude</h4>
@@ -242,12 +242,12 @@
   // vạch giữa mặt bằng và 3D: kéo sang phải thì mặt bằng to ra
   function divider(dv) {
     let st = null;
-    const main = host.querySelector("#x10-main"), set = h => { UI.planH = Math.round(Math.max(380, Math.min(1500, h))); main.style.setProperty("--planH", UI.planH + "px"); raf("d3", draw3); };
-    dv.addEventListener("pointerdown", e => { st = { x: e.clientX, h: UI.planH }; dv.setPointerCapture(e.pointerId); e.preventDefault(); });
+    const main = host.querySelector("#x10-main"), set = h => { UI.planH2 = Math.round(Math.max(380, Math.min(1600, h))); main.style.setProperty("--planH", UI.planH2 + "px"); raf("d3", draw3); };
+    dv.addEventListener("pointerdown", e => { st = { x: e.clientX, h: UI.planH2 }; dv.setPointerCapture(e.pointerId); e.preventDefault(); });
     dv.addEventListener("pointermove", e => { if (st) set(st.h + (e.clientX - st.x) * 2); });
     const end = () => { if (st) { st = null; saveUI(); } };
     dv.addEventListener("pointerup", end); dv.addEventListener("pointercancel", end);
-    dv.addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); set(UI.planH + (e.key === "ArrowRight" ? 60 : -60)); saveUI(); } });
+    dv.addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); set(UI.planH2 + (e.key === "ArrowRight" ? 60 : -60)); saveUI(); } });
   }
 
   /* ---------- vẽ mặt bằng khu đất ---------- */
@@ -371,7 +371,7 @@
     const box = host.querySelector("#x10-stk"); if (!box) return;
     box.innerHTML = "";
     const P = S.blocks.filter(onSite);
-    for (const f of [3, 2, 1]) {
+    for (const f of [1, 2, 3]) {
       const on = P.filter(b => b.f === f), fl = on.filter(isFloor), a = fl.reduce((t, b) => t + b.w * b.h, 0), err = on.some(b => BAD.has(b.id));
       const bt = document.createElement("button"); bt.type = "button"; bt.setAttribute("aria-pressed", String(mode === String(f))); bt.title = `Xếp tầng ${f}`;
       const s = el("svg", { viewBox: `${4 * PX} ${10 * PX} ${39.5 * PX} ${81 * PX}`, "aria-hidden": "true" }, bt);
@@ -379,13 +379,13 @@
       for (const b of P.filter(b => b.f === f - 1 && isFloor(b))) el("rect", { x: b.x * PX, y: b.y * PX, width: b.w * PX, height: b.h * PX, fill: "none", stroke: "var(--ink-2)", "stroke-width": 5, "stroke-dasharray": "14 10", opacity: 0.6 }, s);
       for (const b of on) el("rect", { x: b.x * PX, y: b.y * PX, width: b.w * PX, height: b.h * PX, fill: col(b), stroke: BAD.has(b.id) ? "var(--x10Red)" : "var(--ink)", "stroke-width": BAD.has(b.id) ? 9 : 4 }, s);
       const c = document.createElement("span"); c.className = "cap";
-      c.innerHTML = `<b>Tầng ${f}</b>${err ? '<span class="dot" title="Còn mục cần xem"></span>' : ""}<br>${on.length ? `${nf(a)} m² · ${on.length} khối` : "trống"}`;
+      c.innerHTML = `<b>Tầng ${f}</b>${err ? '<span class="dot" title="Còn mục cần xem"></span>' : ""}<br>sàn +${nf(FH[f], 2)}<br>${on.length ? `${nf(a)} m² · ${on.length} khối` : "trống"}`;
       bt.appendChild(c);
       bt.addEventListener("click", () => setMode(String(f)));
       box.appendChild(bt);
     }
     const all = document.createElement("button"); all.type = "button"; all.setAttribute("aria-pressed", String(mode === "all"));
-    all.innerHTML = `<span class="cap"><b>Cả các tầng</b><br>${nf(P.filter(isFloor).reduce((t, b) => t + b.w * b.h, 0))} m² sàn</span>`;
+    all.innerHTML = `<span class="cap"><b>Cả các tầng</b><br>tổng ${nf(P.filter(isFloor).reduce((t, b) => t + b.w * b.h, 0))} m² sàn<br>tối đa 3.000 m²</span>`;
     all.addEventListener("click", () => setMode("all")); box.appendChild(all);
   }
 
@@ -854,7 +854,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     if (!T3) return;
     const box = host.querySelector("#x10-3d"), cv = host.querySelector(".x10 .cv"), W = box.clientWidth || 700;
     const planH = cv && cv.offsetParent && window.innerWidth > 900 ? cv.clientHeight : 0;
-    const H = Math.round(UI.layout === "3d" || !planH ? Math.min(820, Math.max(380, W * 0.62)) : Math.max(380, planH));
+    const H = Math.round(UI.layout === "3d" || !planH ? Math.max(420, Math.min((window.innerHeight || 900) - 60, W * 0.62)) : Math.max(380, planH));
     T3.r.setSize(W, H, false); T3.r.domElement.style.height = H + "px"; T3.cam.aspect = W / H; T3.cam.updateProjectionMatrix();
     const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, tx = 24, tz = 52, ty = 3 + UI.explode;
     T3.cam.position.set(tx + d * Math.cos(pr) * Math.sin(yr), ty + d * Math.sin(pr), tz + d * Math.cos(pr) * Math.cos(yr)); T3.cam.lookAt(tx, ty, tz);
