@@ -1,0 +1,392 @@
+<title>Xếp khối dễ hình dung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Bố cục: bản đề xuất trên nền giấy can, giống trang phương án; mỗi đề xuất là một tờ có hình minh họa bên trái, lời bên phải */
+:root {
+  --paper: #f2f4f3; --sheet: #ffffff; --ink: #1d2422; --ink-2: #4c5753; --line: #c9d0cd;
+  --accent: #1f6f5c; --warn: #b4441f; --ok: #3f8f4f; --sel: #1f6f5c;
+  --zA: #f2c49b; --zB: #b9dcc4; --zC: #d6c8ea; --zD: #f0dc93; --zE: #d3d8d6; --ground: #e6ebe8; --ghost: #9aa5a1;
+  --display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #151a19; --sheet: #1c2321; --ink: #e6ebe9; --ink-2: #a9b4b0; --line: #34403c;
+  --accent: #6cc7ac; --warn: #f08a63; --ok: #7fcf8f; --sel: #6cc7ac;
+  --zA: #7a5434; --zB: #355a43; --zC: #4d4166; --zD: #6b5b25; --zE: #3c4542; --ground: #222a28; --ghost: #6f7b77;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #151a19; --sheet: #1c2321; --ink: #e6ebe9; --ink-2: #a9b4b0; --line: #34403c;
+  --accent: #6cc7ac; --warn: #f08a63; --ok: #7fcf8f; --sel: #6cc7ac;
+  --zA: #7a5434; --zB: #355a43; --zC: #4d4166; --zD: #6b5b25; --zE: #3c4542; --ground: #222a28; --ghost: #6f7b77;
+  color-scheme: dark; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 36px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 52px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.25; text-wrap: balance; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 800; }
+h2 { font-size: 21px; font-weight: 700; }
+h3 { font-size: 16px; font-weight: 700; }
+p { margin: 0; max-width: 70ch; }
+.eyebrow { font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.lede { color: var(--ink-2); font-size: 16px; }
+section { display: grid; gap: 16px; min-width: 0; }
+.sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; }
+ul.why { margin: 0; padding-left: 20px; display: grid; gap: 8px; max-width: 72ch; }
+.fig { padding: 12px; display: grid; gap: 6px; min-width: 0; }
+.fig svg { width: 100%; height: auto; display: block; }
+.fig figcaption, .cap { font-size: 12.5px; color: var(--ink-2); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--ink-2); font-size: 12.5px; }
+.prop { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0; }
+.prop .fig { border-right: 1px solid var(--line); }
+.prop .txt { padding: 16px 18px; display: grid; gap: 10px; align-content: start; font-size: 14.5px; }
+.prop .head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.num { font: 700 13px var(--mono); color: var(--accent); }
+.chip { font: 600 11.5px var(--mono); border: 1px solid var(--ink-2); color: var(--ink-2); border-radius: 3px; padding: 0 7px; white-space: nowrap; }
+.chip.s { border-color: var(--ok); color: var(--ok); }
+.chip.m { border-color: var(--accent); color: var(--accent); }
+.chip.l { border-color: var(--warn); color: var(--warn); }
+.prop ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.pick { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; font-size: 14px; cursor: pointer; }
+.pick input { width: 18px; height: 18px; accent-color: var(--accent); }
+@media (max-width: 760px) { .prop { grid-template-columns: minmax(0, 1fr); } .prop .fig { border-right: 0; border-bottom: 1px solid var(--line); } }
+.phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.phases .sheet { padding: 14px 16px; display: grid; gap: 6px; align-content: start; font-size: 14px; }
+.reply { display: grid; gap: 10px; padding: 16px 18px; }
+.reply output { font: 500 14px var(--mono); background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 8px 10px; display: block; overflow-wrap: anywhere; }
+.btn { font: 600 13.5px var(--body); padding: 7px 14px; border: 1px solid var(--ink); border-radius: 3px; background: var(--ink); color: var(--sheet); cursor: pointer; justify-self: start; }
+.btn:focus-visible, .pick input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); }
+.legend i { width: 12px; height: 12px; display: inline-block; border: 1px solid var(--ink); vertical-align: -1px; margin-right: 5px; }
+svg text { font-family: var(--body); fill: var(--ink); }
+svg .m { font-family: var(--mono); }
+svg .halo { paint-order: stroke; stroke: var(--sheet); stroke-width: 3px; stroke-linejoin: round; }
+a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+<header style="display:grid;gap:12px">
+  <div class="eyebrow">ARC 329 · Tab "Tự xếp khối" · kế hoạch chờ bạn duyệt</div>
+  <h1>Làm sao để xếp tầng 1, tầng 2 mà vẫn hình dung được khối</h1>
+  <p class="lede">Bạn thấy xếp xong tầng 1, tầng 2 vẫn khó hình dung. Mình đã xem lại tab hiện tại và cách vài phần mềm 3D, thiết kế nhà làm. Dưới đây là lý do khó nhìn, các cách họ xử lý, và 7 thay đổi mình đề xuất, mỗi cái có hình minh họa. Bạn tích chọn cái muốn làm rồi gửi lại cho mình. Mình chưa sửa gì trên trang.</p>
+</header>
+
+<section>
+  <h2>Vì sao bây giờ khó hình dung</h2>
+  <div class="prop sheet">
+    <figure class="fig" style="margin:0"><svg id="f-now" viewBox="0 0 520 360" role="img" aria-label="Mặt bằng hiện tại: khối tầng 1 và tầng 2 cùng màu, chỉ khác độ mờ"></svg>
+      <figcaption>Hiện tại, đang xem tầng 2: khối tầng 1 cùng màu, chỉ mờ đi. Khó biết khối nào ở tầng nào, khối tầng 2 đang đè lên gì.</figcaption></figure>
+    <div class="txt">
+      <ul class="why">
+        <li><b>Hai tầng cùng màu.</b> Tầng không xem chỉ mờ đi, nên khi khối chồng nhau, mắt không tách được khối nào nằm trên, khối nào nằm dưới.</li>
+        <li><b>Không thấy chỗ đỡ.</b> Khối tầng 2 đặt lên chỗ trống (đua ra) hay đặt trên mái khối tầng 1, mặt bằng đều vẽ giống nhau.</li>
+        <li><b>Mặt bằng và 3D tách rời.</b> 3D chỉ để xem: bấm một khối trên 3D không chọn được nó, chọn khối trên mặt bằng thì 3D không làm nổi khối đó lên.</li>
+        <li><b>3D thiếu chiều sâu.</b> Không có bóng đổ, không có vạch tầng, không có người để so tỉ lệ, nên khó đoán khối cao một hay hai tầng.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Các trang 3D, thiết kế nhà làm thế nào</h2>
+  <div class="sheet scroll"><table>
+    <thead><tr><th>Phần mềm, cách vẽ</th><th>Họ làm gì với nhiều tầng</th><th>Mình lấy được gì</th></tr></thead>
+    <tbody>
+      <tr><td>Planner 5D (vẽ nhà trên web)</td><td>Khi thêm tầng mới, tầng bên dưới hiện xám để vẽ đè lên cho khớp.</td><td>Tầng dưới phải đổi sang <b>màu xám, nét đứt</b>, không giữ màu khối.</td></tr>
+      <tr><td>Planoplan</td><td>Có thanh trượt "độ trong suốt các tầng dưới" trên mặt bằng 2D.</td><td>Cho bạn <b>tự chỉnh</b> tầng dưới đậm hay nhạt.</td></tr>
+      <tr><td>Autodesk Forma (dựng khối quy hoạch)</td><td>Kéo hộp lên xuống trực tiếp trên 3D; vạch các tầng hiện trên mặt khối; diện tích sàn cập nhật ngay ở bảng bên.</td><td><b>Vạch tầng</b> trên khối 3D, sửa khối ngay trên 3D, bảng diện tích sống.</td></tr>
+      <tr><td>SketchUp (dựng hình)</td><td>Khi sửa một nhóm, phần còn lại của mô hình mờ đi.</td><td>3D làm <b>đậm tầng đang sửa</b>, các tầng khác thành kính mờ.</td></tr>
+      <tr><td>Bản vẽ tách tầng (exploded axonometric)</td><td>Cách trình bày quen thuộc trong kiến trúc: kéo các tầng tách nhau theo chiều đứng để thấy từng sàn và cách chúng chồng lên nhau.</td><td>Nút <b>tách tầng</b> trong 3D, có đường đứt nối các góc thẳng hàng.</td></tr>
+      <tr><td>Trò chơi xây nhà, phần mềm nội thất</td><td>Nút lên, xuống tầng; khi đang ở tầng 1 thì ẩn hết các tầng trên, cắt tường thấp xuống.</td><td>Chế độ <b>cắt theo tầng</b>: 3D chỉ hiện tới tầng đang xếp.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap">Nguồn: <a href="https://blogs.autodesk.com/forma/2026/04/21/how-to-create-a-3d-sketch-building-in-forma-site-design/" target="_blank" rel="noopener">Autodesk Forma, dựng khối 3D Sketch</a> · <a href="https://support.planner5d.com/en/articles/16475679-how-to-create-a-new-floor" target="_blank" rel="noopener">Planner 5D, tạo tầng mới</a> · <a href="https://planoplan.com/en/help-center/documentation/2d-work/floors/" target="_blank" rel="noopener">Planoplan, các tầng</a> · <a href="https://illustrarch.com/articles/architectural-diagrams/98403-exploded-diagram-architecture.html" target="_blank" rel="noopener">illustrarch, sơ đồ tách tầng</a>. Phần SketchUp và trò chơi xây nhà là cách làm quen thuộc, mình không dẫn nguồn riêng.</p>
+</section>
+
+<section>
+  <h2>7 thay đổi mình đề xuất</h2>
+  <div class="legend"><span><i style="background:var(--zA)"></i>A đón tiếp</span><span><i style="background:var(--zB)"></i>B đọc</span><span><i style="background:var(--zC)"></i>C kho</span><span><i style="background:var(--zD)"></i>D sự kiện</span><span><i style="background:var(--ground);border-style:dashed"></i>tầng dưới (nét đứt)</span><span><i style="background:color-mix(in srgb,var(--warn) 35%,transparent);border-color:var(--warn)"></i>đua quá 4 m</span><span><i style="background:color-mix(in srgb,var(--ok) 30%,transparent);border-color:var(--ok)"></i>mái lộ, sân thượng</span></div>
+  <p class="cap">Hình minh họa dùng một bản xếp mẫu: tầng 1 có hộp sự kiện, sảnh và hộp thư viện; tầng 2 có hộp thư viện lớn và một hộp đọc nhỏ đua về phía Bắc.</p>
+
+  <div class="prop sheet" id="p1">
+    <figure class="fig" style="margin:0"><svg id="f-under" viewBox="0 0 520 360" role="img" aria-label="Đang xếp tầng 2: tầng 1 hiện nét đứt xám, chỗ đua quá 4 m tô đỏ, mái tầng 1 lộ ra tô xanh"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">1</span><h3>Tầng dưới thành nét đứt xám, tô chỗ đua và mái lộ</h3><span class="chip s">nhỏ</span></div>
+      <ul>
+        <li>Đang xếp tầng 2: khối tầng 2 giữ màu, khối tầng 1 chỉ còn <b>viền đứt xám</b> và tên mờ. Tầng 3 (nếu có) hiện viền chấm phía trên.</li>
+        <li>Phần khối tầng 2 nằm trên chỗ trống và cách chỗ đỡ quá 4 m tô <b>sọc đỏ</b>, ghi "cần cột".</li>
+        <li>Phần mái tầng 1 không có gì đè lên tô <b>sọc xanh</b>, ghi "mái lộ: lấy sáng mái, sân thượng".</li>
+        <li>Thêm thanh trượt "độ đậm tầng dưới", như Planoplan.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c1" data-k="1" checked> Duyệt đề xuất 1</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p2">
+    <figure class="fig" style="margin:0"><svg id="f-sync" viewBox="0 0 520 300" role="img" aria-label="Mặt bằng và 3D cạnh nhau, khối đang chọn sáng lên ở cả hai"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">2</span><h3>Mặt bằng và 3D cạnh nhau, chọn một bên sáng cả hai</h3><span class="chip m">vừa</span></div>
+      <ul>
+        <li>Mặt bằng và 3D chia đôi màn hình bằng nhau, kéo vạch giữa để to nhỏ.</li>
+        <li>Rê chuột hoặc chọn một khối trên mặt bằng: khối đó viền xanh trên 3D. Bấm khối trên 3D: mặt bằng nhảy sang đúng tầng đó và chọn khối.</li>
+        <li>Trên 3D, <b>tầng đang xếp đậm</b>, các tầng khác thành kính mờ (như SketchUp).</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c2" data-k="2" checked> Duyệt đề xuất 2</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p3">
+    <figure class="fig" style="margin:0"><svg id="f-explode" viewBox="0 0 520 380" role="img" aria-label="3D tách tầng: tầng 1 và tầng 2 tách nhau theo chiều đứng"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">3</span><h3>Nút "Tách tầng" trong 3D</h3><span class="chip s">nhỏ</span></div>
+      <ul>
+        <li>Bấm một nút, các tầng tách nhau ra theo chiều đứng (thanh trượt 0–8 m), giống bản vẽ tách tầng hay dùng trong thuyết minh.</li>
+        <li>Đường đứt nối các góc thẳng hàng giữa hai tầng, để thấy khối trên nằm đúng trên khối nào.</li>
+        <li>Mỗi tầng có nhãn T1, T2, T3 và tổng diện tích sàn của tầng đó.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c3" data-k="3" checked> Duyệt đề xuất 3</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p4">
+    <figure class="fig" style="margin:0"><svg id="f-cut" viewBox="0 0 520 340" role="img" aria-label="3D cắt tới tầng 1: chỉ hiện tầng 1 có tên phòng trên sàn, tầng 2 chỉ còn khung dây"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">4</span><h3>Cắt 3D theo tầng đang xếp</h3><span class="chip m">vừa</span></div>
+      <ul>
+        <li>Khi đang xếp tầng 1, 3D chỉ hiện khối tầng 1 đặc; các tầng trên còn <b>khung dây</b> mỏng.</li>
+        <li>Tên phòng, diện tích viết ngay trên mặt sàn khối 3D, nên nhìn 3D cũng đọc được mặt bằng.</li>
+        <li>Nút ▲ ▼ cạnh 3D để lên, xuống tầng, đồng bộ với nút Tầng 1, 2, 3 bên mặt bằng.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c4" data-k="4" checked> Duyệt đề xuất 4</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p5">
+    <figure class="fig" style="margin:0"><svg id="f-stack" viewBox="0 0 520 330" role="img" aria-label="Cột nhỏ bên trái có ba mặt bằng tầng 3, 2, 1 xếp chồng, tầng đang xếp viền đậm"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">5</span><h3>Cột "chồng tầng" thu nhỏ</h3><span class="chip s">nhỏ</span></div>
+      <ul>
+        <li>Một cột hẹp hiện ba mặt bằng nhỏ T3, T2, T1 xếp từ trên xuống, như mặt cắt đứng.</li>
+        <li>Tầng đang xếp viền đậm; bấm vào hình nhỏ để đổi tầng.</li>
+        <li>Mỗi hình nhỏ ghi diện tích sàn và số khối của tầng, có dấu đỏ nếu tầng đó còn lỗi.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c5" data-k="5"> Duyệt đề xuất 5</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p6">
+    <figure class="fig" style="margin:0"><svg id="f-shadow" viewBox="0 0 520 360" role="img" aria-label="3D có bóng đổ, vạch tầng mỗi 4,5 m và người để so tỉ lệ"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">6</span><h3>Bóng đổ, vạch tầng và người so tỉ lệ</h3><span class="chip s">nhỏ</span></div>
+      <ul>
+        <li>Bóng đổ xuống đất và xuống mái khối thấp giúp mắt đoán được khối nào cao hơn.</li>
+        <li>Vạch ngang mỗi 4,5 m trên mặt khối, như Forma, để đếm tầng ngay trên 3D.</li>
+        <li>Thêm vài người cao 1,7 m ở sân và cửa vào để so tỉ lệ.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c6" data-k="6" checked> Duyệt đề xuất 6</label>
+    </div>
+  </div>
+
+  <div class="prop sheet" id="p7">
+    <figure class="fig" style="margin:0"><svg id="f-drag" viewBox="0 0 520 360" role="img" aria-label="Kéo một khối ngay trên 3D, bóng chiếu của khối hiện xuống tầng bên dưới"></svg></figure>
+    <div class="txt">
+      <div class="head"><span class="num">7</span><h3>Kéo khối ngay trên 3D</h3><span class="chip l">lớn</span></div>
+      <ul>
+        <li>Kéo khối trên 3D, khối trượt trên mặt sàn của tầng nó đang đứng; hút vào mép khối khác như bên mặt bằng.</li>
+        <li>Trong lúc kéo, <b>hình chiếu của khối</b> hiện xuống tầng dưới (viền xanh) để thấy nó đặt lên đâu.</li>
+        <li>Phím ▲ ▼ (hoặc PageUp, PageDown) đưa khối đang chọn lên, xuống một tầng.</li>
+        <li>Làm sau cùng: tốn công nhất và dễ lỗi khi xoay góc nhìn trên điện thoại.</li>
+      </ul>
+      <label class="pick"><input type="checkbox" id="c7" data-k="7"> Duyệt đề xuất 7</label>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Thứ tự làm, nếu bạn duyệt</h2>
+  <div class="phases">
+    <div class="sheet"><span class="eyebrow">Đợt 1</span><h3>Nhìn ra tầng nào trên tầng nào</h3><p>Đề xuất 1, 3, 6. Sửa nhỏ, thấy rõ ngay: tầng dưới nét đứt, chỗ đua, mái lộ; tách tầng; bóng đổ và vạch tầng.</p></div>
+    <div class="sheet"><span class="eyebrow">Đợt 2</span><h3>Mặt bằng và 3D nói chuyện với nhau</h3><p>Đề xuất 2, 4, 5. Chia đôi màn hình, chọn một bên sáng cả hai, cắt 3D theo tầng, cột chồng tầng.</p></div>
+    <div class="sheet"><span class="eyebrow">Đợt 3</span><h3>Xếp ngay trên 3D</h3><p>Đề xuất 7. Kéo khối trên 3D và đưa khối lên, xuống tầng bằng phím.</p></div>
+  </div>
+  <p class="cap">Bản xếp bạn đã lưu (trên trang hoặc file .json) vẫn mở được như cũ sau các thay đổi này.</p>
+</section>
+
+<section>
+  <h2>Gửi lại cho mình</h2>
+  <div class="sheet reply">
+    <p>Tích các đề xuất muốn làm ở trên, rồi chép dòng dưới gửi cho mình. Có thể thêm ý riêng, ví dụ "tách tầng mặc định bật".</p>
+    <output id="out" aria-live="polite"></output>
+    <button class="btn" type="button" id="copy">Chép dòng duyệt</button>
+  </div>
+</section>
+</div>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const TOP = [0, 4.95, 9.45, 13.95];
+  // bản xếp mẫu (tọa độ khu đất, m): x Tây → Đông, y Bắc → Nam
+  const B = [
+    { id: "D", n: "D sự kiện", z: "zD", f: 1, r: [6, 12, 18, 16] },
+    { id: "A23", n: "A trưng bày, cà phê", z: "zA", f: 1, r: [24, 12, 11, 16] },
+    { id: "A1", n: "A1 sảnh", z: "zA", f: 1, r: [24, 28, 11, 8] },
+    { id: "C", n: "C kho, nghiệp vụ", z: "zC", f: 1, r: [6, 44, 14, 12] },
+    { id: "B1", n: "B đọc T1", z: "zB", f: 1, r: [20, 44, 21, 12] },
+    { id: "B3", n: "B3 thiếu nhi", z: "zB", f: 1, r: [6, 56, 35, 10] },
+    { id: "BT2", n: "B thư viện T2", z: "zB", f: 2, r: [6, 44, 35, 22] },
+    { id: "B2", n: "B2 đọc yên tĩnh", z: "zB", f: 2, r: [8, 34, 16, 10] }
+  ];
+  const col = b => `var(--${b.z})`;
+
+  /* ---------- mặt bằng ---------- */
+  function plan(svg, o) {
+    const { ox = 20, oy = 14, k = 4.4, floor = 2, mode = "now", sel = null, labels = true, small = false } = o;
+    const g = el("g", {}, svg);
+    const P = (x, y) => [ox + (y - 8) * k, oy + (41.5 - x) * k];   // xoay: Bắc bên trái để vừa khung ngang
+    const R = ([x, y, w, h]) => { const [a, b] = P(x, y + h), [c, d] = P(x + w, y); return { x: a, y: c, w: b - a + 0, h: d - c } };
+    // khu đất
+    const s = R([6, 12, 35.5, 77]);
+    el("rect", { x: s.x, y: s.y, width: s.w, height: s.h, fill: "var(--ground)", stroke: "var(--line)", "stroke-dasharray": "4 3" }, g);
+    const defs = el("defs", {}, svg);
+    const pat = (id, c) => { const p = el("pattern", { id, width: 7, height: 7, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs); el("rect", { width: 7, height: 7, fill: `color-mix(in srgb, ${c} 18%, transparent)` }, p); el("line", { x1: 0, y1: 0, x2: 0, y2: 7, stroke: c, "stroke-width": 2.2 }, p); return `url(#${id})`; };
+    const red = pat(svg.id + "r", "var(--warn)"), grn = pat(svg.id + "g", "var(--ok)");
+    const lower = B.filter(b => b.f < floor), cur = B.filter(b => b.f === floor);
+    const rr = b => R([b.r[1] < 0 ? 0 : b.r[0], b.r[1], b.r[2], b.r[3]]);
+    const R2 = b => { const [x, y, w, h] = b.r; const [a] = P(x, y), [, c] = P(x + w, y); const [b1] = P(x, y + h); return { x: Math.min(a, b1), y: Math.min(c, P(x, y)[1]), w: Math.abs(b1 - a), h: Math.abs(P(x, y)[1] - c) }; };
+    if (mode === "now") {
+      for (const b of B) { const q = R2(b); el("rect", { x: q.x, y: q.y, width: q.w, height: q.h, fill: col(b), opacity: b.f === floor ? 0.95 : 0.3, stroke: "var(--ink)", "stroke-width": 1.2 }, g); }
+      if (labels) for (const b of B) { const q = R2(b); el("text", { x: q.x + q.w / 2, y: q.y + q.h / 2 + 4, "text-anchor": "middle", "font-size": 11, class: "halo", opacity: b.f === floor ? 1 : 0.55 }, g).textContent = b.n; }
+    } else {
+      for (const b of lower) { const q = R2(b); el("rect", { x: q.x, y: q.y, width: q.w, height: q.h, fill: "none", stroke: "var(--ghost)", "stroke-width": 1.4, "stroke-dasharray": "5 3" }, g); if (labels && !small) el("text", { x: q.x + 4, y: q.y + 12, "font-size": 9.5, fill: "var(--ghost)", class: "m" }, g).textContent = "T1 · " + b.id; }
+      // mái lộ: phần tầng dưới không bị khối tầng này che (xấp xỉ bằng các dải đơn giản cho hình mẫu)
+      if (mode === "under") {
+        for (const r of [[6, 12, 29, 22], [24, 34, 11, 2]]) { const q = R2({ r }); el("rect", { x: q.x, y: q.y, width: q.w, height: q.h, fill: grn, stroke: "none" }, g); }
+      }
+      for (const b of cur) { const q = R2(b); el("rect", { x: q.x, y: q.y, width: q.w, height: q.h, fill: col(b), stroke: sel === b.id ? "var(--sel)" : "var(--ink)", "stroke-width": sel === b.id ? 4 : 1.4 }, g); if (labels) el("text", { x: q.x + q.w / 2, y: q.y + q.h / 2 + 4, "text-anchor": "middle", "font-size": small ? 9 : 11.5, "font-weight": 600, class: "halo" }, g).textContent = small ? b.id : b.n; }
+      if (mode === "under") {
+        // B2 tầng 2: y 34–44 trên chỗ trống; y 34–40 cách mép đỡ (y 44) quá 4 m
+        const q = R2({ r: [8, 34, 16, 6] }); el("rect", { x: q.x, y: q.y, width: q.w, height: q.h, fill: red, stroke: "var(--warn)", "stroke-width": 1.5 }, g);
+        el("text", { x: q.x + q.w / 2, y: q.y - 6, "text-anchor": "middle", "font-size": 11, fill: "var(--warn)", "font-weight": 700, class: "halo" }, g).textContent = "đua 10 m: cần cột";
+        const m = R2({ r: [6, 12, 29, 16] }); el("text", { x: m.x + m.w / 2, y: m.y + m.h - 8, "text-anchor": "middle", "font-size": 11, fill: "var(--ok)", "font-weight": 700, class: "halo" }, g).textContent = "mái lộ: lấy sáng mái, sân thượng";
+      }
+    }
+    if (!small) {
+      const [nx, ny] = [ox + 4, oy + 8];
+      el("text", { x: s.x + 2, y: s.y - 4, "font-size": 10.5, class: "m", fill: "var(--ink-2)" }, g).textContent = "← Bắc (quảng trường)";
+      el("text", { x: s.x + s.w, y: s.y - 4, "font-size": 10.5, class: "m", fill: "var(--ink-2)", "text-anchor": "end" }, g).textContent = "Nam (bãi xe) →";
+      el("text", { x: s.x + s.w / 2, y: s.y + s.h + 14, "font-size": 10.5, class: "m", fill: "var(--ink-2)", "text-anchor": "middle" }, g).textContent = "sông ↓";
+    }
+    return g;
+  }
+
+  /* ---------- 3D trục đo (vẽ tay, sắp theo thứ tự che khuất) ---------- */
+  function iso(svg, o) {
+    const { cx = 260, cy = 60, k = 3.2, gap = 0, cut = 0, sel = null, ghostOthers = 0, shadow = false, floorLines = false, people = false, lift = null, wire = 0, label = true, roomText = false } = o;
+    const c = Math.cos(Math.PI / 6), s = Math.sin(Math.PI / 6);
+    // nhìn từ góc Đông Nam: x (Tây → Đông) chạy xuống phải, y (Bắc → Nam) chạy xuống trái
+    const pj = (x, y, z) => [cx + (x - y) * c * k * 0.95 + 120, cy + (x + y) * s * k - z * k];
+    const g = el("g", {}, svg);
+    const site = [[0, 6], [41.5, 6], [41.5, 76], [0, 76]].map(([x, y]) => pj(x, y, 0));
+    el("polygon", { points: site.map(p => p.join(",")).join(" "), fill: "var(--ground)", stroke: "var(--line)" }, g);
+    const zb = b => TOP[b.f - 1] + (b.f - 1) * gap + (lift && lift.id === b.id ? lift.dz : 0), zt = b => TOP[b.f] - 0.05 + (b.f - 1) * gap + (lift && lift.id === b.id ? lift.dz : 0);
+    let boxes = B.map(b => ({ b, x0: b.r[0], y0: b.r[1], x1: b.r[0] + b.r[2], y1: b.r[1] + b.r[3], z0: zb(b), z1: zt(b) }));
+    if (lift) { const q = boxes.find(q => q.b.id === lift.id); q.x0 += lift.dx; q.x1 += lift.dx; q.y0 += lift.dy; q.y1 += lift.dy; }
+    // bóng đổ (nắng từ Đông Nam phía trên, bóng ngả Tây Bắc)
+    if (shadow) for (const q of boxes) { const h = q.z1, dx = -0.55 * h, dy = -0.35 * h; const pts = [[q.x0, q.y0], [q.x1, q.y0], [q.x1, q.y1], [q.x0, q.y1]]; const all = [...pts, ...pts.map(([x, y]) => [x + dx, y + dy])].map(([x, y]) => pj(x, y, 0)); const hull = hullOf(all); el("polygon", { points: hull.map(p => p.join(",")).join(" "), fill: "var(--ink)", opacity: 0.13 }, g); }
+    // sắp xếp: A vẽ trước B nếu A nằm phía sau (x hoặc y nhỏ hơn, hoặc thấp hơn)
+    const behind = (A, Bq) => A.x1 <= Bq.x0 + 1e-6 || A.y1 <= Bq.y0 + 1e-6 || A.z1 <= Bq.z0 + 1e-6;
+    const order = []; const left = [...boxes];
+    while (left.length) { let i = left.findIndex(A => !left.some(Bq => Bq !== A && behind(Bq, A) === false && behind(A, Bq) === false ? false : Bq !== A && behind(Bq, A) && !behind(A, Bq) ? false : false)); i = left.findIndex(A => left.every(Bq => Bq === A || !behind(Bq, A) || behind(A, Bq) ? true : true));
+      // chọn hộp không có hộp nào còn lại nằm phía sau nó
+      i = left.findIndex(A => !left.some(Bq => Bq !== A && behind(Bq, A) && !behind(A, Bq)));
+      if (i < 0) i = 0; order.push(left.splice(i, 1)[0]); }
+    // vết chiếu khi đang kéo
+    if (lift) { const q = boxes.find(q => q.b.id === lift.id); const z = TOP[q.b.f - 1]; const pr = [[q.x0, q.y0], [q.x1, q.y0], [q.x1, q.y1], [q.x0, q.y1]].map(([x, y]) => pj(x, y, z)); order.splice(order.findIndex(o => o === q), 0, { proj: pr }); }
+    for (const q of order) {
+      if (q.proj) { el("polygon", { points: q.proj.map(p => p.join(",")).join(" "), fill: "color-mix(in srgb, var(--sel) 25%, transparent)", stroke: "var(--sel)", "stroke-width": 2, "stroke-dasharray": "6 3" }, g); continue; }
+      const { b, x0, y0, x1, y1, z0, z1 } = q;
+      const isCur = cut ? b.f === cut : true;
+      if (cut && b.f > cut) { // khung dây
+        const W = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+        for (const z of [z0, z1]) el("polygon", { points: W.map(([x, y]) => pj(x, y, z).join(",")).join(" "), fill: "none", stroke: "var(--ghost)", "stroke-dasharray": "4 3" }, g);
+        for (const [x, y] of W) { const a = pj(x, y, z0), d = pj(x, y, z1); el("line", { x1: a[0], y1: a[1], x2: d[0], y2: d[1], stroke: "var(--ghost)", "stroke-dasharray": "4 3" }, g); }
+        continue;
+      }
+      const op = ghostOthers && b.f !== ghostOthers ? 0.28 : 1;
+      const top = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].map(([x, y]) => pj(x, y, z1));
+      const east = [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]].map(p => pj(...p));
+      const south = [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]].map(p => pj(...p));
+      const st = sel === b.id ? "var(--sel)" : "var(--ink)", sw = sel === b.id ? 2.6 : 0.9;
+      for (const [f, d] of [[east, 0.26], [south, 0.12], [top, 0]]) {
+        el("polygon", { points: f.map(p => p.join(",")).join(" "), fill: col(b), opacity: op, stroke: st, "stroke-width": sw, "stroke-linejoin": "round" }, g);
+        if (d) el("polygon", { points: f.map(p => p.join(",")).join(" "), fill: "#000", opacity: d * op, "pointer-events": "none" }, g);
+      }
+      if (floorLines) for (let z = z0 + 4.5; z < z1 - 0.3; z += 4.5) { const a = pj(x1, y0, z), d = pj(x1, y1, z), e = pj(x0, y1, z); el("polyline", { points: [a, d, e].map(p => p.join(",")).join(" "), fill: "none", stroke: "var(--ink)", "stroke-width": 1, opacity: 0.55 }, g); }
+      if (roomText && isCur) { const [tx, ty] = pj((x0 + x1) / 2, (y0 + y1) / 2, z1); el("text", { x: tx, y: ty + 4, "text-anchor": "middle", "font-size": 10.5, "font-weight": 600, class: "halo" }, g).textContent = `${b.id} · ${Math.round((x1 - x0) * (y1 - y0))} m²`; }
+    }
+    if (people) for (const [x, y] of [[38, 30], [36.5, 32], [30, 40], [38, 70]]) { const a = pj(x, y, 0), d = pj(x, y, 1.7); el("line", { x1: a[0], y1: a[1], x2: d[0], y2: d[1] + 2.5, stroke: "var(--ink)", "stroke-width": 2.2, "stroke-linecap": "round" }, g); el("circle", { cx: d[0], cy: d[1], r: 2.2, fill: "var(--ink)" }, g); }
+    return { g, pj };
+  }
+  function hullOf(P) { const p = [...P].sort((a, b) => a[0] - b[0] || a[1] - b[1]); const cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); const lo = [], up = []; for (const q of p) { while (lo.length > 1 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); } for (const q of p.reverse()) { while (up.length > 1 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); } return lo.slice(0, -1).concat(up.slice(0, -1)); }
+  const T = (svg, x, y, t, a = {}) => { const e = el("text", { x, y, "font-size": 12, ...a }, svg); e.textContent = t; return e; };
+  const $ = id => document.getElementById(id);
+
+  // Hiện tại
+  plan($("f-now"), { mode: "now", floor: 2, ox: 30, oy: 60 });
+  T($("f-now"), 30, 34, "Đang xem: Tầng 2", { "font-weight": 700, class: "m" });
+  // 1 · nét đứt + đua + mái lộ
+  plan($("f-under"), { mode: "under", floor: 2, ox: 30, oy: 60 });
+  T($("f-under"), 30, 34, "Đang xếp: Tầng 2 · tầng 1 nét đứt", { "font-weight": 700, class: "m" });
+  // 2 · đồng bộ
+  { const sv = $("f-sync"); const gp = plan(sv, { mode: "flat", floor: 2, sel: "B2", ox: 6, oy: 70, k: 2.85, labels: false });
+    T(sv, 8, 26, "Mặt bằng · Tầng 2", { "font-weight": 700, class: "m", "font-size": 11 });
+    el("line", { x1: 258, y1: 14, x2: 258, y2: 290, stroke: "var(--line)", "stroke-width": 2 }, sv);
+    const I = iso(sv, { cx: 175, cy: 2, k: 2.15, sel: "B2", ghostOthers: 2 });
+    T(sv, 270, 26, "3D · tầng 2 đậm, tầng 1 mờ", { "font-weight": 700, class: "m", "font-size": 11 });
+    T(sv, 30, 282, "chọn B2 ở đây …", { fill: "var(--sel)", "font-weight": 700, "font-size": 11.5 }); T(sv, 300, 282, "… sáng lên ở đây", { fill: "var(--sel)", "font-weight": 700, "font-size": 11.5 }); }
+  // 3 · tách tầng
+  { const sv = $("f-explode"); const I = iso(sv, { cx: 90, cy: 40, k: 2.6, gap: 9 });
+    const pj = I.pj; for (const [x, y] of [[6, 66], [41, 66], [41, 44], [6, 44]]) { const a = pj(x, y, 4.9), d = pj(x, y, 4.95 + 9); el("line", { x1: a[0], y1: a[1], x2: d[0], y2: d[1], stroke: "var(--accent)", "stroke-dasharray": "4 3", "stroke-width": 1.3 }, I.g); }
+    const t2 = pj(41, 66, 18.4), t1 = pj(41, 66, 4.95); T(sv, t2[0] + 8, t2[1] + 4, "T2 · 930 m²", { class: "m", "font-weight": 700 }); T(sv, t1[0] + 8, t1[1] + 4, "T1 · 1.570 m²", { class: "m", "font-weight": 700 });
+    T(sv, 14, 24, "Tách tầng: 9 m", { class: "m", "font-weight": 700 }); el("rect", { x: 14, y: 32, width: 120, height: 4, rx: 2, fill: "var(--line)" }, sv); el("circle", { cx: 14 + 120 * 9 / 12, cy: 34, r: 7, fill: "var(--accent)" }, sv); }
+  // 4 · cắt theo tầng
+  { const sv = $("f-cut"); const Ic = iso(sv, { cx: 70, cy: 30, k: 2.7, cut: 1, roomText: true }); const bb = Ic.g.getBBox(), bx = bb.x + bb.width - 20;
+    T(sv, 14, 24, "3D cắt tới: Tầng 1", { class: "m", "font-weight": 700 });
+    for (const [i, t] of [[0, "▲"], [1, "▼"]]) { el("rect", { x: bx, y: 60 + i * 40, width: 32, height: 32, rx: 3, fill: "var(--sheet)", stroke: "var(--ink)" }, sv); T(sv, bx + 16, 81 + i * 40, t, { "text-anchor": "middle", "font-size": 14 }); }
+    T(sv, bx + 16, 154, "T1", { "text-anchor": "middle", class: "m", "font-weight": 700 }); }
+  // 5 · cột chồng tầng
+  { const sv = $("f-stack"); const lab = ["T3 · trống", "T2 · 930 m² · 2 khối", "T1 · 1.570 m² · 6 khối"];
+    [3, 2, 1].forEach((f, i) => { const y = 14 + i * 104; el("rect", { x: 10, y, width: 170, height: 96, rx: 3, fill: "var(--sheet)", stroke: f === 2 ? "var(--accent)" : "var(--line)", "stroke-width": f === 2 ? 3 : 1 }, sv);
+      const svg2 = el("g", { transform: `translate(14 ${y + 20})` }, sv); svg2.id = "st" + f;
+      plan(svg2.ownerSVGElement ? Object.assign(svg2, { id: "st" + f }) : svg2, { mode: "flat", floor: f, ox: 0, oy: 0, k: 1.95, small: true, labels: f !== 3 });
+      T(sv, 18, y + 14, lab[i], { class: "m", "font-size": 10.5, "font-weight": f === 2 ? 700 : 500 }); });
+    el("rect", { x: 200, y: 14, width: 310, height: 304, rx: 3, fill: "var(--paper)", stroke: "var(--line)" }, sv);
+    T(sv, 355, 160, "Mặt bằng đang xếp (tầng 2)", { "text-anchor": "middle", fill: "var(--ink-2)" }); T(sv, 355, 180, "và 3D ở đây", { "text-anchor": "middle", fill: "var(--ink-2)" }); }
+  // 6 · bóng đổ
+  { const sv = $("f-shadow"); iso(sv, { cx: 70, cy: 46, k: 2.75, shadow: true, floorLines: true, people: true }); T(sv, 14, 24, "Bóng đổ · vạch tầng 4,5 m · người 1,7 m", { class: "m", "font-weight": 700 }); }
+  // 7 · kéo trên 3D
+  { const sv = $("f-drag"); const I = iso(sv, { cx: 70, cy: 46, k: 2.75, sel: "B2", lift: { id: "B2", dx: 6, dy: 4, dz: 2.2 } });
+    const p = I.pj(30, 40, 12.5); T(sv, p[0] + 6, p[1] - 10, "đang kéo B2", { fill: "var(--sel)", "font-weight": 700 });
+    const q = I.pj(22, 46, 4.95); T(sv, q[0] - 150, q[1] + 26, "hình chiếu xuống tầng 1", { fill: "var(--sel)", "font-weight": 600, "font-size": 11.5 });
+    T(sv, 14, 24, "Kéo trên 3D · ▲ ▼ đổi tầng", { class: "m", "font-weight": 700 }); }
+
+  // khung hình ôm sát nội dung (trừ hai hình ghép)
+  for (const s of document.querySelectorAll('svg[id^="f-"]')) { if (s.id === "f-sync" || s.id === "f-stack") continue; const b = s.getBBox(), p = 12; s.setAttribute("viewBox", `${(b.x - p).toFixed(0)} ${(b.y - p).toFixed(0)} ${(b.width + 2 * p).toFixed(0)} ${(b.height + 2 * p).toFixed(0)}`); }
+
+  // chọn duyệt
+  const out = $("out"), boxes = [...document.querySelectorAll(".pick input")];
+  const KEY = "arc329.kehoach3d";
+  try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (Array.isArray(v)) boxes.forEach(b => b.checked = v.includes(b.dataset.k)); } catch (e) {}
+  const upd = () => { const ks = boxes.filter(b => b.checked).map(b => b.dataset.k); out.textContent = ks.length ? `Duyệt đề xuất ${ks.join(", ")} cho tab Tự xếp khối.` : "Chưa chọn đề xuất nào."; try { localStorage.setItem(KEY, JSON.stringify(ks)); } catch (e) {} };
+  boxes.forEach(b => b.addEventListener("change", upd)); upd();
+  $("copy").addEventListener("click", () => { const t = out.textContent; const done = () => { $("copy").textContent = "Đã chép"; setTimeout(() => $("copy").textContent = "Chép dòng duyệt", 1600); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, () => { const r = document.createRange(); r.selectNodeContents(out); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+    else { const r = document.createRange(); r.selectNodeContents(out); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } });
+})();
+</script>

@@ -6,7 +6,7 @@ Nguồn đề bài: `ARC329_NVTK_TrungTamVanHoaThuVien_2026F_v18_20261020.pdf` t
 
 Phần 1 chép số liệu từ đề. Phần 2 là giả định về khu đất dùng trong các phương án. Phần 3 là các nguyên tắc bạn đã đặt ra trong quá trình làm. Mỗi ý tưởng mới phải theo đủ cả ba phần.
 
-Cập nhật lần cuối: 05/11/2026.
+Cập nhật lần cuối: 06/11/2026.
 
 ---
 
@@ -658,6 +658,28 @@ Thầy không cần cầu kỳ: chỉ xếp các khối vuông, chữ nhật lê
 - **S.6 Bốn hộp vuông quanh sân** (2 tầng, 2.920 m²).
 - Cả 6 qua mọi kiểm tra (ánh sáng, đón tiếp, bảo mật sách, đi lại, tách ồn, diện tích, chỗ ngồi, ngoài giờ, người trực, thoát nạn ≤ 30 m, cột chống thêm 0).
 - Web: https://arc329-thu-vien.vercel.app (repo GitHub HuynhDucKhoi0105/Duyen), cập nhật sau mỗi lần đăng trang.
+
+### 3.16 Thêm 10 ý tưởng khối vuông S.7–S.16 và tab "Yêu cầu của thầy" (06/11/2026)
+Bạn xin thêm 10 ý tưởng xếp khối đơn giản 2–3 tầng để lấy ý tự xếp, và muốn thấy mình ghi yêu cầu của thầy có đúng không.
+- Trang có tab mới **"Yêu cầu của thầy"**: từng yêu cầu ghi nguồn (thầy nói, bạn dặn, đề bài, mình tự hiểu) và cách trang kiểm tra, cuối tab có 5 điểm mình tự suy ra cần bạn hỏi lại thầy.
+- 10 ý tưởng mới, cả 10 qua mọi kiểm tra, thoát nạn ≤ 30 m, cột chống thêm 0:
+
+| Mã | Tên | Tầng | Tổng sàn |
+|---|---|---|---|
+| S.7 | Hai thanh song song | 2 | 2.870 m² |
+| S.8 | Chữ L hai tầng | 2 | 2.682 m² |
+| S.9 | Chân đế và hộp trên | 2 | 2.869 m² |
+| S.10 | Hai hộp lệch góc | 2 | 2.986 m² |
+| S.11 | Chữ U mở ra sông | 2 | 2.737 m² |
+| S.12 | Hộp có sân trong | 2 | 2.798 m² |
+| S.13 | Răng lược | 2 | 2.877 m² |
+| S.14 | Hộp trượt ba tầng | 3 | 2.915 m² |
+| S.15 | Tháp đọc ba tầng và hộp thấp | 3 | 2.821 m² |
+| S.16 | Ba hộp nối hàng cao dần | 3 | 2.999 m² |
+
+- Ngoại lệ cần biết: S.14 đặt xử lý nghiệp vụ C2 và kho đóng C1 ở tầng 2 (sát thang máy chở sách) để nhường tầng 1 cho thiếu nhi; S.16 sát giới hạn (tổng sàn 2.999 m², góc che 44,5°, vài phòng lệch −9 đến −10%).
+- Cảnh báo còn lại (không phải lỗi): sách đi giữa C4, C2, C1, A4 qua sảnh thư viện ở S.7, S.12, S.13, S.14; vệ sinh tầng 2 chưa chồng thẳng ở S.12.
+- Kế hoạch làm tab "Tự xếp khối" dễ hình dung hơn (7 đề xuất có hình): https://claude.ai/artifact/QQZ4VFFy2u5ced8f9pdfSN, chờ bạn duyệt.
 
 ---
 

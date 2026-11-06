@@ -3,7 +3,7 @@ SP=os.path.dirname(os.path.abspath(__file__))+'/'
 F='/Users/khoihuynh/Documents/Duyên/so-do-phuong-an-mat-tien.html'
 import subprocess, sys
 six=sorted(f for f in os.listdir(SP) if re.match(r'^g[678]_.*\.js$', f) and f!='g6_kit.js' and (len(sys.argv)<2 or f in sys.argv[1:]))
-files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted(f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','x10_xep.js','x11_capnhat.js']
+files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','x10_xep.js','x11_capnhat.js']
 js='\n'.join(open(SP+f).read() for f in files)
 s=open(F).read()
 tag='<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>\n<script>'
@@ -52,7 +52,15 @@ if 'role="tab" data-tab="g10"' not in s:
 if 'data-panel="g10" hidden' not in s:
     b='<div id="g9-host" style="margin-top:48px"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'+s[i2:]
-s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+('S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
+s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+('S.1–S.16 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s16.js') else 'S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
+# tab "Yêu cầu của thầy": nội dung tĩnh từ yc_thay.html, thay lại mỗi lần dựng
+if 'role="tab" data-tab="yc"' not in s:
+    a=s.index('<button type="button" role="tab" data-tab="g9"')
+    s=s[:a]+'<button type="button" role="tab" data-tab="yc" aria-selected="false">Yêu cầu của thầy<small>mình đang ghi nhớ gì, bạn soát giúp</small></button>\n    '+s[a:]
+YC=open(SP+'yc_thay.html').read()
+s=re.sub(r'\n<div class="tab" data-panel="yc" hidden>.*?<!--/yc--></div>','',s,flags=re.S)
+b='<div class="tab" data-panel="g9" hidden>'
+i3=s.index(b); s=s[:i3]+'<div class="tab" data-panel="yc" hidden>'+YC+'<!--/yc--></div>\n'+s[i3:]
 # mã bản dựng: trang đang mở so với version.json trên web để báo "Tải lại"
 import time, json, re as _re
 BUILD=time.strftime('%Y%m%d-%H%M%S')
@@ -69,7 +77,7 @@ if os.environ.get('TEST'):
 import shutil, glob
 REPO='/Users/khoihuynh/Documents/Duyên/arc329-thu-vien/src/'
 if os.path.isdir(REPO):
-    for f in files+['rebuild_g6.py','check_p6.js','check_g6.js','syncheck.py']:
+    for f in files+['rebuild_g6.py','check_p6.js','check_g6.js','syncheck.py','yc_thay.html']:
         if os.path.exists(SP+f): shutil.copy(SP+f, REPO+f)
     for f in glob.glob(REPO+'chot_*.js'):
         if not os.path.exists(SP+os.path.basename(f)): os.remove(f)

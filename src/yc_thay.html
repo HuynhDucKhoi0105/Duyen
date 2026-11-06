@@ -1,0 +1,117 @@
+<style>
+.yc { display: grid; gap: 40px; }
+.yc .src { font: 600 11.5px var(--mono); border-radius: 3px; padding: 1px 7px; white-space: nowrap; display: inline-block; }
+.yc .s-thay { background: var(--ink); color: var(--sheet); }
+.yc .s-ban { border: 1px solid var(--accent); color: var(--accent); }
+.yc .s-de { border: 1px solid var(--ink-2); color: var(--ink-2); }
+.yc .s-minh { border: 1px dashed var(--warn); color: var(--warn); }
+.yc table td:first-child { width: 42%; }
+.yc td .src + .src { margin-left: 4px; }
+.yc ol.ask { margin: 0; padding-left: 22px; display: grid; gap: 10px; font-size: 14.5px; max-width: 80ch; }
+.yc ol.ask li::marker { font-family: var(--mono); color: var(--warn); }
+.yc .kv { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--ink-2); }
+@media (max-width: 640px) { .yc table td:first-child { width: auto; } .yc table, .yc tbody, .yc tr, .yc td { display: block; } .yc thead { display: none; } .yc tr { border-bottom: 1px solid var(--line); padding: 6px 0; } .yc td { border: 0; padding: 3px 0; } }
+</style>
+<div class="yc">
+<section>
+  <div class="eyebrow">Mình đang ghi nhớ những gì · bạn soát giúp</div>
+  <h2>Yêu cầu của thầy và các nguyên tắc đang dùng</h2>
+  <p class="lede">Đây là toàn bộ những điều mình đang áp dụng cho mọi ý tưởng, chép lại từ lời bạn kể về góp ý của thầy, lời bạn dặn thêm và đề bài. Mỗi dòng ghi nguồn và cách trang tự kiểm tra. Chỗ nào mình ghi sai ý thầy, bạn nhắn lại để mình sửa cả bộ kiểm tra.</p>
+  <div class="kv">
+    <span><span class="src s-thay">Thầy</span> thầy nói (qua lời bạn kể)</span>
+    <span><span class="src s-ban">Bạn</span> bạn dặn thêm</span>
+    <span><span class="src s-de">Đề</span> đề bài ARC 329</span>
+    <span><span class="src s-minh">Mình hiểu</span> mình tự suy ra hoặc tự đặt con số, cần bạn xác nhận</span>
+  </div>
+</section>
+
+<section>
+  <h3>1 · Hình khối</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Không cần cầu kỳ. Khối vuông, chữ nhật đơn giản là được, chỉ cần xếp các khối lên nhau kèm mặt bằng đủ công năng.</td><td><span class="src s-thay">Thầy</span> 04/11, xác nhận lại 05/11</td><td>Các ý tưởng S.1–S.16 chỉ dùng hộp chữ nhật, không đua, không mái cong, không trụ, dây.</td></tr>
+      <tr><td>Chỉ 2–3 tầng, ưu tiên 2 tầng.</td><td><span class="src s-ban">Bạn</span></td><td>Tầng 1 +0,45, tầng 2 +4,95, tầng 3 +9,45 (mỗi tầng cao 4,5 m).</td></tr>
+      <tr><td>Thư viện là khối chính, thắng rõ các khối phụ.</td><td><span class="src s-ban">Bạn</span></td><td>Hộp thư viện lớn và cao nhất; trang đo tỉ lệ sàn của khối chính.</td></tr>
+      <tr><td>Phần đua quá 4 m phải có cột chống nhìn thấy được.</td><td><span class="src s-ban">Bạn</span></td><td>Trang tự đếm "cột chống thêm"; mọi ý tưởng mới phải bằng 0.</td></tr>
+      <tr><td>Giai đoạn này chỉ làm hình khối, không lam, mái đua hay nét đố kính trên mô hình.</td><td><span class="src s-ban">Bạn</span></td><td>Khối 3D chỉ có hộp, màu theo khối, thang nhô lên mái.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>2 · Ánh sáng</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Mỗi phòng có người dùng phải nhận ánh sáng từ hướng Bắc và hướng Nam.</td><td><span class="src s-thay">Thầy</span> 04/11</td><td>Phòng có người cần cửa sổ trên mặt Bắc hoặc Nam (theo trục khu đất), dài ít nhất 1,2 m. Ở tầng trên cùng được thay bằng cửa mái hướng Bắc.</td></tr>
+      <tr><td>Tránh nhận nắng hướng Đông và Tây.</td><td><span class="src s-thay">Thầy</span> 04/11 <span class="src s-minh">Mình hiểu</span></td><td>Bạn viết "nắng tây và bắc phải bỏ", nhưng ngay trước đó nói nắng Bắc, Nam là tốt, nên mình hiểu là bỏ nắng Tây và Đông. Mặt Đông, mặt Tây làm đặc, đặt thang, kho, vệ sinh, kỹ thuật ở đó.</td></tr>
+      <tr><td>Không phòng nào bị nhét giữa nhà, bị bí, không có nắng (ở A cả tầng 1 và tầng 2 đều bí ở giữa).</td><td><span class="src s-thay">Thầy</span> 04/11</td><td>Mọi điểm trong phòng có người cách cửa sổ Bắc/Nam không quá <b>8 m</b> <span class="src s-minh">Mình hiểu</span>. Nhà sâu thì chia khối, khoét sân, hoặc lấy sáng mái ở tầng trên cùng. Giữa nhà chỉ để kho, thang, vệ sinh, kỹ thuật.</td></tr>
+      <tr><td>Khối đọc phía Bắc không được bị khối sự kiện che mất sáng.</td><td><span class="src s-thay">Thầy</span> 04/11</td><td>Góc từ chân cửa sổ tới đỉnh khối đối diện không quá <b>45°</b> <span class="src s-minh">Mình hiểu</span>. Sân giữa hai khối phải đủ rộng.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>3 · Lối vào thư viện và bảo mật sách</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Muốn vào khu đọc sách luôn phải qua quầy lễ tân hoặc quầy giữ đồ, tức là phải qua khối A. Kể cả phòng thiếu nhi.</td><td><span class="src s-thay">Thầy</span> 04/11 <span class="src s-ban">Bạn</span> 05/11</td><td>Từ cửa vào chỉ tới được mọi phòng B (gồm B3 thiếu nhi) sau khi qua sảnh đón tiếp A1 rồi quầy gửi đồ, mượn trả A4 có cổng từ. Trang dò mọi đường đi qua cửa để kiểm tra.</td></tr>
+      <tr><td>Không có cầu thang nào lên thẳng khu đọc mà không qua quầy (ở A: thang khu sự kiện và thang phía Nam lên thẳng khu đọc).</td><td><span class="src s-thay">Thầy</span> 04/11</td><td>Thang nào lên tới khu đọc thì chân thang nằm sau quầy A4. Thang thoát hiểm của khu đọc ở tầng 1 chỉ có cửa thoát nạn có chuông báo.</td></tr>
+      <tr><td>Khu sự kiện (phòng đa năng, chuyên đề) cũng phải đi qua sảnh đón tiếp.</td><td><span class="src s-ban">Bạn</span> 05/11, khớp Hình 1 của đề</td><td>Không có lối riêng từ ngoài vào thẳng D1, D4; chỉ còn cửa thoát nạn.</td></tr>
+      <tr><td>Mang sách ra khỏi khu đọc cũng phải qua quầy có cổng từ.</td><td><span class="src s-minh">Mình hiểu</span> từ góp ý bảo mật sách</td><td>Cửa thoát nạn khu đọc là cửa có chuông, chỉ mở khi khẩn cấp.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>4 · Đi lại, kho sách, vệ sinh, thang</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Kho sách không được ở xa thư viện; giao thông vừa logic vừa tiết kiệm thời gian.</td><td><span class="src s-ban">Bạn</span> 05/11</td><td>Tiếp nhận → xử lý → kho đóng liền nhau, sát lõi thang có thang máy chở sách. Mốc trang đo (mỗi lần đổi tầng cộng 6 m): tiếp nhận → xử lý ≤ 15 m, xử lý → kho ≤ 15 m, quầy ↔ xử lý ≤ 25 m, kho → kệ xa nhất ≤ 50 m, sảnh A1 → quầy A4 ≤ 15 m <span class="src s-minh">Mình đặt số</span>.</td></tr>
+      <tr><td>Vệ sinh bố trí logic.</td><td><span class="src s-ban">Bạn</span> 05/11</td><td>Mỗi tầng khu đọc có một cụm trong khu đọc (≤ 35 m từ chỗ đọc xa nhất); một cụm sát sảnh và khu sự kiện, mở ngoài giờ; thiếu nhi có vệ sinh ngay cạnh (≤ 15 m); các tầng xếp chồng thẳng hàng.</td></tr>
+      <tr><td>Thang bộ, thang máy logic và có hệ quả với nhau.</td><td><span class="src s-ban">Bạn</span> 05/11</td><td>Mỗi tầng trên có 2 thang bộ thẳng hàng với tầng dưới và thang máy nằm trong chính khu đó.</td></tr>
+      <tr><td>Đường thoát nạn xa nhất.</td><td><span class="src s-de">Đề</span> QCVN 06:2022 <span class="src s-minh">Mình đặt số</span></td><td>Trang cảnh báo khi quá 30 m; con số này mình tự đặt, cần đối chiếu QCVN khi làm hồ sơ.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>5 · Tiếng ồn</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Sự kiện và sách thiếu nhi không ở gần đọc yên tĩnh và các khu đọc khác; học nhóm cũng ồn.</td><td><span class="src s-ban">Bạn</span> 05/11 <span class="src s-de">Đề</span></td><td>Phòng ồn: phòng đa năng, bục trình bày, chuyên đề, cà phê, thiếu nhi, học nhóm. Đọc yên tĩnh cách mọi phòng ồn cùng tầng ≥ 8 m. Đọc mở, tra cứu số, đọc linh hoạt không chung vách với phòng ồn. Không xếp chồng phòng ồn lên hoặc dưới phòng đọc.</td></tr>
+      <tr><td>Văn phòng, phòng nhân viên tránh gần khu ồn.</td><td><span class="src s-ban">Bạn</span> 05/11</td><td>Không chung vách với phòng ồn hay phòng kỹ thuật; không nằm ngay trên, dưới phòng đa năng, thiếu nhi, học nhóm, cà phê.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>6 · Đề bài (các mục bắt buộc trang kiểm tra)</h3>
+  <div class="scroll sheet"><table>
+    <thead><tr><th>Yêu cầu</th><th>Nguồn</th><th>Mình áp dụng thế nào</th></tr></thead>
+    <tbody>
+      <tr><td>Tổng sàn không quá 3.000 m²; mỗi phòng lệch diện tích không quá ±10%.</td><td><span class="src s-de">Đề</span> mục 4</td><td>Trang đo từng phòng trên mặt bằng.</td></tr>
+      <tr><td>200 chỗ đọc, phòng đa năng 120 người, chuyên đề 24, cà phê 32.</td><td><span class="src s-de">Đề</span></td><td>Đếm từ ghế vẽ thật trong phòng.</td></tr>
+      <tr><td>Khu sự kiện hoạt động ngoài giờ khi khu đọc và kho đóng; khóa cửa không chặn thoát nạn.</td><td><span class="src s-de">Đề</span> mục 1.4, tình huống 2</td><td>Cửa khóa ngoài giờ màu đỏ, không nằm trên đường thoát của khu sự kiện; có vệ sinh mở ngoài giờ.</td></tr>
+      <tr><td>Chuỗi sách tiếp nhận → xử lý → kho → kệ → mượn trả; tách sách mới và sách trả.</td><td><span class="src s-de">Đề</span> nhóm C</td><td>Vẽ tuyến sách trên mặt bằng, đo quãng đường.</td></tr>
+      <tr><td>12 nhân viên toàn công trình.</td><td><span class="src s-de">Đề</span></td><td>Đếm chỗ trực theo 4 tình huống, mỗi tình huống ≤ 12.</td></tr>
+      <tr><td>Kho và nghiệp vụ ở tầng 1 phía Tây, gần lối giao sách; thiếu nhi ở tầng 1 có sân.</td><td><span class="src s-ban">Bạn</span></td><td>Tiếp nhận sách mở ra lối Tây; thiếu nhi tầng 1 có vườn tường bao.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h3>Mấy chỗ mình tự hiểu, bạn hỏi lại thầy giúp</h3>
+  <ol class="ask">
+    <li>"Nắng tây và bắc phải bỏ": mình đang hiểu là bỏ nắng <b>Tây và Đông</b>, giữ Bắc và Nam. Nếu thầy thật sự muốn bỏ Bắc thì cả bộ kiểm tra ánh sáng phải đổi.</li>
+    <li>Hướng Bắc, Nam đang lấy theo trục dọc khu đất (lệch khoảng 20° so với Bắc thật). Thầy có muốn tính theo Bắc thật không?</li>
+    <li>Con số "cách cửa sổ không quá 8 m" và "góc che không quá 45°" là mình đặt để đo "không bí", "không bị che". Thầy có mốc khác không?</li>
+    <li>Tầng trên cùng được lấy sáng bằng cửa mái hướng Bắc thay cho cửa sổ. Thầy có chấp nhận cửa mái không, hay bắt buộc cửa sổ đứng?</li>
+    <li>Sự kiện cũng phải qua sảnh đón tiếp A1 là bạn nhắc thêm theo Hình 1 của đề, không phải thầy nói thẳng.</li>
+  </ol>
+</section>
+</div>
