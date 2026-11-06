@@ -201,9 +201,9 @@
     <div class="dv" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"></div>
     <div class="td">
       <div id="x10-3d" aria-label="Khối 3D: kéo khối để di chuyển, kéo chỗ trống để xoay"></div><svg class="iso" id="x10-iso" hidden></svg>
-      <div class="ov tl"><button type="button" class="btn" data-v="l">⟲</button><button type="button" class="btn" data-v="r">⟳</button><button type="button" class="btn" data-v="top">Nhìn từ trên</button><button type="button" class="btn" data-v="0">Góc mặc định</button></div>
+      <div class="ov tl"><button type="button" class="btn" data-v="l">⟲</button><button type="button" class="btn" data-v="r">⟳</button><button type="button" class="btn" data-v="top">Nhìn từ trên</button><button type="button" class="btn" data-v="0">Góc mặc định</button><button type="button" class="btn" id="x10-pan" aria-pressed="false" title="Bật: kéo chuột trái hoặc một ngón tay để di chuyển góc nhìn">✥ Di chuyển</button></div>
       <div class="ov tr"><button type="button" class="btn" id="x10-up" title="Lên tầng trên">▲</button><span class="flv" id="x10-flv"></span><button type="button" class="btn" id="x10-dn" title="Xuống tầng dưới">▼</button></div>
-      <p class="hint">Kéo khối để di chuyển · kéo chỗ trống (hoặc giữ Shift) để xoay · cuộn để phóng to · PageUp/PageDown đưa khối lên, xuống tầng</p>
+      <p class="hint">Kéo khối để di chuyển khối · kéo chỗ trống để xoay · chuột phải, Ctrl/Alt + kéo hoặc nút ✥ để di chuyển góc nhìn · cuộn để phóng to · PageUp/PageDown đưa khối lên, xuống tầng</p>
     </div>
     <div class="card" id="x10-sel"></div>
     <div class="info">
@@ -232,7 +232,8 @@
     $("#x10-cut").addEventListener("change", e => { UI.cut = e.target.checked; saveUI(); iso(); });
     $("#x10-sh").addEventListener("change", e => { UI.shadow = e.target.checked; saveUI(); iso(); });
     $("#x10-pp").addEventListener("change", e => { UI.people = e.target.checked; saveUI(); iso(); });
-    host.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.v; if (v === "l") VIEW.yaw -= 45; else if (v === "r") VIEW.yaw += 45; else if (v === "top") VIEW.pitch = 88; else { VIEW.yaw = 35; VIEW.pitch = 32; VIEW.zoom = 1; } T3 ? draw3() : isoSvg(); }));
+    host.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.v; if (v === "l") VIEW.yaw -= 45; else if (v === "r") VIEW.yaw += 45; else if (v === "top") VIEW.pitch = 88; else { VIEW.yaw = 35; VIEW.pitch = 32; VIEW.zoom = 1; VIEW.tx = 24; VIEW.tz = 52; } T3 ? draw3() : isoSvg(); }));
+    $("#x10-pan").addEventListener("click", e => { VIEW.pan = !VIEW.pan; e.currentTarget.setAttribute("aria-pressed", String(VIEW.pan)); });
     $("#x10-up").addEventListener("click", () => setMode(String(mode === "all" ? 1 : Math.min(NF, +mode + 1))));
     $("#x10-dn").addEventListener("click", () => setMode(String(mode === "all" ? 1 : Math.max(1, +mode - 1))));
     $("#x10-save").addEventListener("click", saveForClaude);
@@ -730,7 +731,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
   }
 
   /* ---------- khối 3D dự phòng bằng SVG (khi trình duyệt không chạy được WebGL) ---------- */
-  const VIEW = { yaw: 35, pitch: 32, zoom: 1 };
+  const VIEW = { yaw: 35, pitch: 32, zoom: 1, tx: 24, tz: 52, pan: false };
   function isoSvg() {
     const s = host.querySelector("#x10-iso"); if (!s) return; s.hidden = false; s.innerHTML = "";
     const cx = 24, cy = 52, yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, cs = Math.cos(yr), sn = Math.sin(yr), sp = Math.sin(pr), cp = Math.cos(pr), K = 9 * VIEW.zoom;
@@ -782,6 +783,8 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     cv.addEventListener("contextmenu", e => e.preventDefault());
     cv.addEventListener("pointerdown", e => {
       cv.setPointerCapture(e.pointerId);
+      const panIt = e.button === 1 || e.button === 2 || e.ctrlKey || e.metaKey || e.altKey || VIEW.pan;
+      if (panIt) { st = { k: "pan", x: e.clientX, y: e.clientY, tx: VIEW.tx, tz: VIEW.tz }; cv.style.cursor = "move"; e.preventDefault(); return; }
       const id = e.button === 0 && !e.shiftKey ? hit(e) : null, b = id && S.blocks.find(q => q.id === id);
       if (b) {
         sel = b.id; let rebuilt = false;
@@ -796,6 +799,14 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
       if (!st) { // rê chuột: khối dưới con trỏ sáng lên ở cả mặt bằng
         if (e.pointerType === "mouse") raf("hv3", () => { const id = hit(e); setHover(id); cv.style.cursor = id ? "pointer" : "grab"; });
         return;
+      }
+      if (st.k === "pan") {
+        // kéo cảnh theo tay: sang phải thì cảnh sang phải, kéo xuống thì tiến về phía trước
+        const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, Hc = cv.clientHeight || 500;
+        const k = 2 * d * Math.tan(16 * Math.PI / 180) / Hc, dx = e.clientX - st.x, dy = e.clientY - st.y, f = 1 / Math.max(0.35, Math.sin(pr));
+        VIEW.tx = Math.max(-40, Math.min(110, st.tx - Math.cos(yr) * dx * k - Math.sin(yr) * dy * k * f));
+        VIEW.tz = Math.max(-30, Math.min(140, st.tz + Math.sin(yr) * dx * k - Math.cos(yr) * dy * k * f));
+        raf("d3", draw3); return;
       }
       if (st.k === "orb") { VIEW.yaw = st.yaw + (e.clientX - st.x) * 0.5; VIEW.pitch = Math.max(8, Math.min(89, st.pitch + (e.clientY - st.y) * 0.3)); raf("d3", draw3); return; }
       if (!st.moved && Math.hypot(e.clientX - st.sx, e.clientY - st.sy) < 4) return;
@@ -919,7 +930,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     const H = Math.round(UI.layout === "3d" || !planH ? Math.max(420, Math.min((window.innerHeight || 900) - 60, W * 0.62)) : Math.max(320, Math.min(W * 0.85, planH * 0.56)));
     { const sc = host.querySelector("#x10-sel"); if (sc) sc.style.maxHeight = planH && UI.layout === "split" && window.innerWidth > 900 ? Math.max(200, planH - H - 14) + "px" : ""; }
     T3.r.setSize(W, H, false); T3.r.domElement.style.height = H + "px"; T3.cam.aspect = W / H; T3.cam.updateProjectionMatrix();
-    const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, tx = 24, tz = 52, ty = 3 + UI.explode;
+    const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, tx = VIEW.tx, tz = VIEW.tz, ty = 3 + UI.explode;
     T3.cam.position.set(tx + d * Math.cos(pr) * Math.sin(yr), ty + d * Math.sin(pr), tz + d * Math.cos(pr) * Math.cos(yr)); T3.cam.lookAt(tx, ty, tz);
     T3.r.render(T3.sc, T3.cam);
   }
