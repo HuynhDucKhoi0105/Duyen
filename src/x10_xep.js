@@ -14,7 +14,7 @@
   const KEY = "arc329.xep.v1", UIKEY = "arc329.xep.ui", SNAP = 0.25, FH = [0, 0.45, 4.95, 9.45], TOP = [0, 4.95, 9.45, 13.95], NF = 3, OH = 4;
   const SITE = { x0: 6, x1: 41.5, y0: 12, y1: 89 }, STAGE_X = 50;
   // bàn nháp cạnh khu đất: đặt vài khối ra xoay, đổi tỉ lệ, tách đôi trước khi kéo vào xếp (không tính vào kiểm tra)
-  const DRAFT = { x0: 50, x1: 75, y0: 8, y1: 92 };
+  const DRAFT = { x0: 50, x1: 88, y0: 8, y1: 92 };
   // phòng có người dùng cần cửa sổ Bắc/Nam (góp ý của thầy)
   const LIT = /^(A[1-4]|B[1-6]|C2|D1|D4|E[123])$/, NOISY = /^(D1|D2|D4|A3|B3|B4)$/;
 
@@ -109,7 +109,13 @@
 .x10 .main.l-plan { grid-template-areas: "stk stk stk" "kho kho kho" "plan dv sel" "plan dv sel" "info info info"; }
 .x10 .main.l-3d { grid-template-columns: 0 0 minmax(0, 1fr); grid-template-areas: "stk stk stk" "kho kho kho" "td td td" "sel sel sel" "info info info"; }
 .x10 .main.l-plan .td, .x10 .main.l-3d .cv, .x10 .main.l-3d .dv { display: none; }
-.x10 #x10-sel { grid-area: sel; }
+.x10 #x10-sel { grid-area: sel; overflow: auto; padding: 8px 12px; }
+.x10 #x10-sel h4 { font-size: 14.5px; margin-bottom: 4px; }
+.x10 #x10-sel p { font-size: 12.5px; margin: 2px 0 4px; line-height: 1.45; }
+.x10 #x10-sel .k { font-size: 12px; }
+.x10 #x10-sel .btn, .x10 #x10-sel .seg button { font-size: 12.5px; padding: 4px 8px; }
+.x10 #x10-sel input[type=range] { margin: 2px 0 4px; }
+.x10 .scg { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2px 16px; }
 .x10 .info { grid-area: info; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); align-items: start; }
 .x10 .cv { position: relative; }
 .x10 .cv .ov { position: absolute; display: flex; gap: 4px; align-items: center; }
@@ -272,7 +278,7 @@
   }
 
   /* ---------- vẽ mặt bằng khu đất ---------- */
-  const VB0 = { x: -1, y: 6.5, w: 77, h: 86 }, PX = 10;
+  const VB0 = { x: -1, y: 6.5, w: 90, h: 86 }, PX = 10;
   let VB = { ...VB0 };
   const setVB = () => { if (svg) svg.setAttribute("viewBox", `${VB.x * PX} ${VB.y * PX} ${VB.w * PX} ${VB.h * PX}`); };
   // phóng to quanh điểm (px, py) theo hệ mét; giữ tỉ lệ khung để mặt bằng không méo
@@ -349,9 +355,9 @@
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
     // bàn nháp
     R(DRAFT.x0 - 0.5, DRAFT.y0, DRAFT.x1 - DRAFT.x0 + 1, DRAFT.y1 - DRAFT.y0, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "10 6", rx: 12 });
-    T("Bàn nháp", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 2.2, { "font-size": 20, "font-weight": 800, fill: "var(--ink)" });
-    T("đặt khối ra đây để chỉnh", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 4.4, { "font-size": 15 });
-    T("rồi kéo sang khu đất", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 6.2, { "font-size": 15 });
+    T("Bàn nháp", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 2.2, { "font-size": 24, "font-weight": 800, fill: "var(--ink)" });
+    T("đặt vài khối ra đây để xoay, đổi tỉ lệ, tách đôi", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 4.4, { "font-size": 16 });
+    T("rồi kéo sang khu đất", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 6.2, { "font-size": 16 });
     for (const b of S.blocks.filter(b => b.draft)) drawBlock(b);
     if (drag && drag.b && !onSite(drag.b) && !drag.b.draft) drawBlock(drag.b); // khối đang kéo từ kho
     el("g", { id: "x10-guides", "pointer-events": "none" }, svg);
@@ -492,7 +498,7 @@
   // đưa khối ra bàn nháp vào chỗ trống
   function toDraft(b) {
     const on = S.blocks.filter(o => o !== b && o.draft);
-    for (let y = DRAFT.y0 + 7; y + b.h <= DRAFT.y1; y += 0.5) for (let x = DRAFT.x0; x + Math.min(b.w, 25) <= DRAFT.x1 + 0.01; x += 0.5) {
+    for (let y = DRAFT.y0 + 7; y + b.h <= DRAFT.y1; y += 0.5) for (let x = DRAFT.x0; x + Math.min(b.w, DRAFT.x1 - DRAFT.x0) <= DRAFT.x1 + 0.01; x += 0.5) {
       const t = { x, y, w: b.w, h: b.h };
       if (!on.some(o => ovl(t, { x: o.x - 1, y: o.y - 1, w: o.w + 2, h: o.h + 2 }) > 0)) { b.x = x; b.y = y; b.draft = true; return; }
     }
@@ -618,10 +624,12 @@
     const k = (G.KHOI || []).find(q => q.c === b.c), room = b.kind === "room", a = area(b);
     const wMin = room ? Math.max(2, +(b.a / 40).toFixed(1)) : 1.5, wMax = room ? Math.min(42, +(b.a / 2).toFixed(1)) : 40;
     box.innerHTML = `<h4>${esc(label(b))} · ${esc(b.n)}</h4>
+<div class="scg"><div class="sci">
 <p>${nf(a, 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : b.draft ? " · đang ở bàn nháp" : " · đang ở kho"}</p>
-${room && briefA(b.c) ? areaCtl(b) : ""}
 ${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc hoặc Nam là đủ sáng." : b.h <= 16 ? "Sâu 8–16 m: cần hở cả mặt Bắc và mặt Nam." : "Sâu quá 16 m: giữa phòng sẽ tối, nên đổi tỉ lệ hoặc tách đôi."}</p>` : ""}
 ${k ? `<p style="color:var(--ink-2)">Nối với: ${esc(k.noi)}<br>Tránh: ${esc(k.tranh)}</p>` : ""}
+</div><div class="scc">
+${room && briefA(b.c) ? areaCtl(b) : ""}
 <label class="k" for="x10-w">${room ? "Đổi tỉ lệ (diện tích giữ nguyên)" : "Rộng Đông – Tây"}</label><input type="range" id="x10-w" min="${wMin}" max="${wMax}" step="0.25" value="${b.w}">
 ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input type="range" id="x10-h" min="1.5" max="40" step="0.25" value="${b.h}">`}
 <div class="bar" style="margin-top:6px">
@@ -632,7 +640,7 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
   ${room && parts(b).length > 1 ? `<button type="button" class="btn" id="x10-merge">Gộp lại (${parts(b).length} phần)</button>` : ""}
   ${room && LIT.test(b.c) ? `<button type="button" class="btn" id="x10-top" aria-pressed="${!!b.top}">${b.top ? "✓ " : ""}Lấy sáng mái hướng Bắc</button>` : ""}
   ${room ? (onSite(b) || b.draft ? `<button type="button" class="btn" id="x10-back">Cất vào kho</button>` : `<button type="button" class="btn" id="x10-todraft">Đưa ra bàn nháp</button>`) : `<button type="button" class="btn" id="x10-del">Xóa</button>`}
-</div>`;
+</div></div></div>`;
     box.querySelector("#x10-w").addEventListener("input", e => setW(b, e.target.value));
     const ar = box.querySelector("#x10-a"); if (ar) ar.addEventListener("input", e => setA(b, +e.target.value));
     const hh = box.querySelector("#x10-h"); if (hh) hh.addEventListener("input", e => { b.h = +e.target.value; keep(); raf("all", render); });
@@ -909,6 +917,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     const box = host.querySelector("#x10-3d"), cv = host.querySelector(".x10 .cv"), W = box.clientWidth || 700;
     const planH = cv && cv.offsetParent && window.innerWidth > 900 ? cv.clientHeight : 0;
     const H = Math.round(UI.layout === "3d" || !planH ? Math.max(420, Math.min((window.innerHeight || 900) - 60, W * 0.62)) : Math.max(320, Math.min(W * 0.85, planH * 0.56)));
+    { const sc = host.querySelector("#x10-sel"); if (sc) sc.style.maxHeight = planH && UI.layout === "split" && window.innerWidth > 900 ? Math.max(200, planH - H - 14) + "px" : ""; }
     T3.r.setSize(W, H, false); T3.r.domElement.style.height = H + "px"; T3.cam.aspect = W / H; T3.cam.updateProjectionMatrix();
     const yr = VIEW.yaw * Math.PI / 180, pr = VIEW.pitch * Math.PI / 180, d = 118 / VIEW.zoom, tx = 24, tz = 52, ty = 3 + UI.explode;
     T3.cam.position.set(tx + d * Math.cos(pr) * Math.sin(yr), ty + d * Math.sin(pr), tz + d * Math.cos(pr) * Math.cos(yr)); T3.cam.lookAt(tx, ty, tz);
