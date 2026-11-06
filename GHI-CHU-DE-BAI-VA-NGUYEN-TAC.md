@@ -679,6 +679,8 @@ Bạn xin thêm 10 ý tưởng xếp khối đơn giản 2–3 tầng để lấ
 
 - Ngoại lệ cần biết: S.14 đặt xử lý nghiệp vụ C2 và kho đóng C1 ở tầng 2 (sát thang máy chở sách) để nhường tầng 1 cho thiếu nhi; S.16 sát giới hạn (tổng sàn 2.999 m², góc che 44,5°, vài phòng lệch −9 đến −10%).
 - Cảnh báo còn lại (không phải lỗi): sách đi giữa C4, C2, C1, A4 qua sảnh thư viện ở S.7, S.12, S.13, S.14; vệ sinh tầng 2 chưa chồng thẳng ở S.12.
+- **Tab "Tự xếp khối" bản 2 (06/11, bạn duyệt cả 7 đề xuất):** mặt bằng và 3D cạnh nhau (kéo vạch giữa để đổi cỡ), chọn hoặc rê chuột một bên sáng cả hai; tầng dưới nét đứt xám (chỉnh độ đậm), tầng trên viền chấm; sọc đỏ chỗ đua quá 4 m, sọc xanh mái lộ; tách tầng 0–8 m; cắt 3D theo tầng đang xếp, tên phòng và diện tích trên mặt sàn 3D; cột chồng tầng thu nhỏ; bóng đổ, thước cao độ, người 1,7 m; kéo khối ngay trên 3D, PageUp/PageDown đổi tầng; hút mép, canh thẳng hàng (cả tâm khối, khối tầng trên, dưới, mép vùng xây dựng, lưới cột 8 m) có đường dóng hồng; thả lấn ít (≤ 2,5 m) thì tự đẩy khít; kho khối thành danh sách bên dưới. Bản xếp cũ giữ nguyên.
+- **Chỉnh diện tích từng phòng:** đề mục 4 cho phép "diện tích từng phòng và mỗi nhóm chức năng được phép điều chỉnh trong khoảng ±10%", tổng sàn không quá 3.000 m²; vượt ±10% cần lý do và giảng viên xác nhận. Tab có thanh "Diện tích phòng" giới hạn ±10% đề (tính cả các phần đã tách) và không cho tăng khi tổng sàn đã chạm 3.000 m².
 - Kế hoạch làm tab "Tự xếp khối" dễ hình dung hơn (7 đề xuất có hình): https://claude.ai/artifact/QQZ4VFFy2u5ced8f9pdfSN, chờ bạn duyệt.
 
 ---
