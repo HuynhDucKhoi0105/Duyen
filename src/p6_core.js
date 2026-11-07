@@ -432,7 +432,59 @@
   }
   const P6K = k => (DOORK[k] ? DOORK[k].t : k).toLowerCase();
 
-  const api = { LIT, DL, EF, rectP, area, cen, bbox, inPoly, clip, convex, sharedSegs, extSegs, doorsOf, furnish, graph, route, analyse, prepare, DOORK, dist };
+  /* ---------- mặt bằng sống: dựng lại phương án nguồn theo các khối đang sửa ở tab Tự xếp khối ----------
+     blocks: khối đang nằm trong khu đất {id, c, n, kind, x, y, w, h, f}; id dạng "X.7:1:D1" (·n nếu đã tách đôi).
+     Phòng còn nguyên vị trí giữ đa giác cũ; phòng đổi cỡ, dời chỗ lấy khung mới, cửa vẫn theo phòng nguồn. */
+  function fromBlocks(src, blocks) {
+    const code = src ? src.code : "", eq = (p, q) => Math.abs(p - q) < 0.011;
+    const nl = Math.max(src ? src.levels.length : 1, ...blocks.map(b => b.f || 1));
+    const levels = [], srcRoom = new Map(), used = new Set(), moved = new Set();
+    if (src) src.levels.forEach((L, li) => L.rooms.forEach(z => srcRoom.set(`${code}:${li + 1}:${z.id}`, { z, li })));
+    for (let li = 0; li < nl; li++) {
+      const L0 = src && src.levels[li], zz = L0 ? L0.z : 0.45 + 4.5 * li;
+      levels.push({ ...(L0 || { k: "t" + (li + 1), title: `Tầng ${li + 1} · sàn +${zz.toFixed(3)}` }), z: zz, rooms: [], env: [], staff: L0 ? L0.staff : [] });
+    }
+    const ids = new Set();
+    for (const b of blocks) {
+      if (b.kind === "court") continue;
+      const li = Math.max(0, (b.f || 1) - 1), rid = String(b.id).split("·")[0], s = srcRoom.get(rid), box = [b.x, b.y, b.w, b.h];
+      let z;
+      if (s && !used.has(rid)) {
+        used.add(rid);
+        const o = s.z, ob = o.r || o.bb || bbox(o.p), same = li === s.li && eq(ob[0], b.x) && eq(ob[1], b.y) && eq(ob[2], b.w) && eq(ob[3], b.h);
+        z = { ...o };
+        for (const k of ["a", "cn", "bb", "furn"]) delete z[k];
+        if (!same) {
+          if (o.r || !o.p) { z.r = box; delete z.p; }
+          else { const [x0, y0, w0, h0] = ob; z.p = o.p.map(([x, y]) => [b.x + (x - x0) / (w0 || 1) * b.w, b.y + (y - y0) / (h0 || 1) * b.h]); }
+          delete z.fr; z.noclip = true; moved.add(rid);
+          levels[li].env.push(rectP(box));
+        } else if (o.p) z.p = o.p.map(q => q.slice());
+        if (li !== s.li) { moved.add(rid); if (same) levels[li].env.push(rectP(box)); }
+        if (li !== s.li) z.d = (o.d || []).filter(d => /^(N|S|E|W|X)$/.test(d[0]));
+      } else {
+        const kd = b.kind;
+        z = { id: String(b.id).replace(/^.*:/, "").replace(/·/g, "_"), n: b.n || "", r: box, noclip: true, nz: 1 };
+        if (kd === "room") z.c = b.c; else if (kd === "circ") z.c = "circ";
+        else z.core = { st: kd === "book" ? "u+l+b" : kd === "lift" ? "u+l" : "u" };
+        levels[li].env.push(rectP(box));
+      }
+      while (ids.has(z.id)) z.id += "'";
+      ids.add(z.id); levels[li].rooms.push(z);
+    }
+    // vỏ: giữ vỏ cũ trừ khung của phòng đã dời hay bỏ đi
+    if (src) src.levels.forEach((L, li) => {
+      if (!levels[li]) return;
+      const gone = L.rooms.filter(z => { const k = `${code}:${li + 1}:${z.id}`; return !used.has(k) || moved.has(k); }).map(z => z.r || z.bb).filter(Boolean);
+      const isGone = e => { const bb = bbox(e); return e.length === 4 && gone.some(r => eq(r[0], bb[0]) && eq(r[1], bb[1]) && eq(r[2], bb[2]) && eq(r[3], bb[3])); };
+      levels[li].env.unshift(...(L.env || []).filter(e => !isGone(e)));
+    });
+    for (const L of levels) if (!L.env.length) L.env = L.rooms.map(z => z.p || rectP(z.r));
+    while (levels.length > 1 && !levels[levels.length - 1].rooms.length) levels.pop();
+    return { ...(src || { code: "Tự xếp", name: "Bản đang xếp", from: "", site: { staff: [] } }), levels, live: true, __R: null };
+  }
+
+  const api = { LIT, DL, EF, rectP, area, cen, bbox, inPoly, clip, convex, sharedSegs, extSegs, doorsOf, furnish, graph, route, analyse, prepare, fromBlocks, DOORK, dist };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof window !== "undefined") { window.G3 = window.G3 || {}; window.G3.P6 = api; }
 })();

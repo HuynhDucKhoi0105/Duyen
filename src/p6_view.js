@@ -373,6 +373,17 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const fills = `<span><i style="border-color:var(--dTudong);border-top-width:6px"></i>Cửa sổ hướng Bắc/Nam</span><span><i style="border-color:var(--dTudong);border-top-style:dashed"></i>Cửa mái hướng Bắc (răng cưa)</span><span><i class="f" style="background:var(--warn);border-radius:50%;width:8px;height:8px"></i>Chỗ cách cửa sổ quá 8 m</span><span><i class="f" style="border:3px solid var(--dTnbd);background:transparent"></i>Quầy kiểm soát, cổng từ</span><span><i class="f" style="background:var(--cStair)"></i>Thang bộ</span><span><i class="f" style="background:var(--cLift)"></i>Thang bộ + thang máy</span>` + ["A", "B", "C", "D", "E"].map(z => `<span><i class="f" style="background:var(--z${z})"></i>${{ A: "A Đón tiếp", B: "B Đọc", C: "C Kho, nghiệp vụ", D: "D Văn hóa", E: "E Hỗ trợ" }[z]}</span>`).join("") + `<span><i class="f" style="background:var(--zCirc)"></i>Giao thông</span>${sc === "2" ? `<span><i class="f" style="background:repeating-linear-gradient(45deg,var(--ink-2) 0 2px,transparent 2px 5px)"></i>Khu đóng</span>` : ""}<span><i class="f" style="background:var(--rStaff);border-radius:50%"></i>Người trực</span>`;
     host.querySelector("#p6-leg").innerHTML = dk + rt + fills;
   }
+  // cho tab Tự xếp khối vẽ mặt bằng chi tiết của bản đang sửa (dùng chung bộ vẽ, không đụng trạng thái tab này)
+  G.P6V = {
+    css() { if (!document.getElementById("p6-style")) { const s = document.createElement("style"); s.id = "p6-style"; s.textContent = CSS; document.head.appendChild(s); } },
+    draw(svg, plan, lvl, opt = {}) {
+      const k = { ...st }, s0 = sc;
+      Object.assign(st, { orient: "v" }, opt); if (opt.sc != null) sc = opt.sc;
+      try { if (!plan.__R) plan.__R = P6.analyse(plan, DT); drawLevel(svg, plan, plan.levels[lvl], lvl); }
+      finally { Object.assign(st, k); sc = s0; }
+      return plan.__R;
+    }
+  };
   let started = false;
   const start = () => { if (started) return; started = true; build(); };
   const tabBtn = document.querySelector('.tabs [data-tab="g9"]');

@@ -726,7 +726,33 @@ Bạn hỏi vì sao bản xếp chỉ khoảng 2.500 m², còn 500 m² "biến �
   - Không phòng đọc nào cách thiếu nhi, sự kiện, cà phê dưới 4 m hay chồng trên các phòng đó.
   - Trên B3 tầng 2 chỉ có học nhóm, kho đệm, hành lang.
 
+### 3.19 X.7 khít lại, X.8–X.10, và hai sửa trên trang (07/11/2026)
+- **Hàng chọn phương án** (tab Phương án chốt): trước dồn hơn 40 nút vào một dòng nên X.1–X.6 bị che. Giờ chia nhóm, "Từ bản xếp của bạn" lên đầu; tiêu đề mặt bằng có mã phương án.
+- **Tab Tự xếp khối:**
+  - Nút "🔒 Đã khoá khung" trên khung mặt bằng, mặc định khoá. Khi khoá, cuộn chuột chỉ cuộn trang, không phóng to hay kéo hình. Mở khoá để phóng thu, kéo hình.
+  - Nút 🔓/🔒 ở đầu vạch chia giữa mặt bằng và 3D, để giữ cỡ hai khung.
+- **X.7 Bản xếp của bạn, khít lại, sửa chỗ nhầm** (2.714 m², 13 lỗi do bản xếp; X.1 có 14):
+  - Bạn yêu cầu giữ y chang, chỉ làm khít. Khối chỉ dời (≤ 2,9 m), không đổi kích thước, không đổi phòng. Khe dưới 3 m giữa các khối từ 38 còn 8. Khe còn lại không khép được vì vướng thang hai tầng phải thẳng nhau, hoặc vì các khối khác kích thước.
+  - Sửa chỗ đặt nhầm trong file JSON:
+    - lõi sách tầng 2 (còn trên bàn nháp) đặt thẳng trên lõi sách tầng 1;
+    - khối CN dưới thang Bắc tầng 2 thành thang bộ + thang máy;
+    - mẩu vệ sinh 13,5 m² còn trong kho thành vệ sinh thiếu nhi;
+    - hai thang máy phía Nam canh thẳng nhau.
+  - Các lỗi do cách đặt phòng (lấn lối Tây, đọc trên thiếu nhi, E4 sát E2, phòng thiếu cửa sổ) giữ nguyên và được liệt kê trong phương án.
+- **X.8 Tầng 2 trọn cho đọc** (2.927 m²): tầng 1 chỉ có công cộng, sự kiện, thiếu nhi, kho, nhân viên. Qua A4 là một sảnh thang đưa thẳng lên tầng 2 đọc.
+- **X.9 Ồn hai đầu, yên ở giữa** (2.921 m²): sự kiện ở đầu Bắc, thiếu nhi ở đầu Nam. Đọc yên tĩnh ở giữa cánh Tây tầng 2, trên kho. Hai lõi: lõi Bắc sau A4, lõi Nam cạnh B3.
+- **X.10 Đi ngắn nhất, ít hành lang** (2.725 m², giao thông 504 m², ít nhất trong các bản X): đường sách C1 tới kệ xa nhất ngắn nhất (28 m), thoát nạn xa nhất 24 m. Đổi lại, văn phòng E1 cách quầy A4 khoảng 30 m.
+- **Kiểm tra:** X.8–X.10 qua mọi kiểm tra, mọi phòng 97–105% đề, không phòng đọc nào gần hay chồng trên phòng ồn.
+
 ---
+
+### 3.20 Chỉnh cỡ khối trong tab Tự xếp khối (07/11/2026)
+
+- Thanh "Đổi tỉ lệ" không còn giật: trước đây mỗi lần kéo, thẻ chỉnh bị vẽ lại nên thanh mất tay kéo. Thanh giờ theo thang log (đoạn gần vuông mịn hơn) và tự hút khi rộng hoặc sâu trùng cỡ một khối cùng tầng, tầng trên hoặc dưới (hiện dòng "Khớp … với …"). Có thêm nút "Rộng = khối cạnh", "Sâu = khối cạnh".
+- Ô nhập rộng Đông – Tây, sâu Bắc – Nam, diện tích. Phòng giữ diện tích: đổi rộng thì sâu tự đổi và ngược lại. Ô diện tích chỉ nhận trong ±10% đề (tính cả các phần đã tách); chọn giữ sâu hay giữ rộng khi đổi diện tích.
+- Bấm giữ mép khối trên mặt bằng rồi kéo để đổi cỡ: phòng giữ diện tích (mép đối diện cố định, mép vuông góc tự lùi, tiến); giữ Shift để đổi cả diện tích trong ±10%. Mép tự hút vào mép khối khác, có đường dóng.
+- Quy tắc của bạn: đổi cỡ (kéo mép, thanh trượt, ô nhập) không được đâm xuyên khối cùng tầng; khối tự dừng ở mép khối chặn và báo "Chạm …".
+- Khung bên phải có nút "Mặt bằng chi tiết": dựng lại phương án nguồn (vd X.7) theo cỡ, vị trí khối đang sửa, ngay khi sửa. Cửa, nội thất, đường đi giữ theo phương án nguồn; tổng sàn và số lỗi kiểm tra mặt bằng đầy đủ cập nhật theo. Phòng dời xa khỏi phòng nó có cửa tới thì cửa đó báo lỗi "không có cạnh chung".
 
 ## 4. Những gì đã có trên trang phương án
 

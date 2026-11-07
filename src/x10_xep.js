@@ -53,7 +53,7 @@
   let sel = null, hover = null, mode = "1", seq = 1, ISS = [], BAD = new Set();
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h" }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -128,6 +128,18 @@
 .x10 svg.plan { display: block; height: var(--planH, 860px); width: auto; max-width: none; touch-action: none; user-select: none; -webkit-user-select: none; }
 .x10 svg.plan.dragging .ovh { display: none; }
 .x10 svg.plan g.blk { cursor: grab; }
+.x10 svg.plan rect.hd { fill: var(--accent); fill-opacity: 0; }
+.x10 svg.plan rect.hd.ew { cursor: ew-resize; } .x10 svg.plan rect.hd.ns { cursor: ns-resize; }
+.x10 svg.plan g.blk rect.hd:hover { fill-opacity: 0.45; }
+.x10 svg.plan.dragging rect.hd { display: none; }
+.x10 svg.plan.rs-ew, .x10 svg.plan.rs-ew * { cursor: ew-resize !important; } .x10 svg.plan.rs-ns, .x10 svg.plan.rs-ns * { cursor: ns-resize !important; }
+.x10 .dims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 2px; }
+.x10 .dims label { display: grid; gap: 2px; font-size: 12px; color: var(--ink-2); }
+.x10 .dims label > span { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.x10 .dims input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
+.x10 #x10-sel .btn.sm { font-size: 12px; padding: 3px 7px; }
+.x10 .snap { color: var(--accent) !important; font-weight: 700; min-height: 1.2em; margin: 0 0 4px; }
+.x10 #x10-sel .seg button { font-size: 12px; padding: 1px 7px; }
 .x10 svg.plan.dragging, .x10 svg.plan.dragging g.blk { cursor: grabbing; }
 .x10 svg.plan g.hv > rect.body { stroke: var(--accent); stroke-width: 5px; }
 .x10 .ov .btn.lk { font-size: 12.5px; }
@@ -151,6 +163,16 @@
 .x10 .td .ov .btn { padding: 4px 9px; font-size: 12.5px; opacity: .94; }
 .x10 .td .ov.tr .btn { font-size: 15px; line-height: 1; padding: 6px 10px; }
 .x10 .td .flv { font: 700 12.5px var(--mono, monospace); text-align: center; background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 4px 0; }
+.x10 .tdsw { position: absolute; right: 8px; bottom: 26px; z-index: 3; }
+.x10 .tdsw .seg button { font-size: 12px; padding: 4px 9px; }
+.x10 .td.mbv .tdsw { position: static; padding: 8px 8px 0; }
+.x10 .x10mb { display: none; }
+.x10 .td.mbv .x10mb { display: block; padding: 4px 8px 8px; }
+.x10 .td.mbv #x10-3d, .x10 .td.mbv #x10-iso, .x10 .td.mbv .ov, .x10 .td.mbv .hint { display: none !important; }
+.x10 .x10mb .plan { border: 0; overflow: hidden; }
+.x10 .x10mb svg { display: block; width: 100%; height: calc(var(--planH, 860px) - 90px); }
+.x10 .x10mb .mbt { font-size: 12.5px; margin: 0 0 4px; color: var(--ink-2); }
+.x10 .x10mb .mbe { font-size: 12px; } .x10 .x10mb .mbe ul { margin: 4px 0 0; padding-left: 18px; max-height: 180px; overflow: auto; }
 .x10 .td .hint { position: absolute; left: 8px; bottom: 6px; right: 8px; margin: 0; font-size: 11px; opacity: .8; color: var(--ink-2); pointer-events: none; text-shadow: 0 0 3px var(--paper); }
 .x10 .stk { grid-area: stk; display: flex; flex-wrap: wrap; gap: 8px; }
 .x10 .stk button { font: inherit; display: flex; gap: 10px; align-items: center; padding: 5px 12px 5px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--sheet); color: var(--ink); cursor: pointer; text-align: left; min-width: 190px; align-items: flex-end; }
@@ -209,7 +231,9 @@
     <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào khu đất, vào 3D, hoặc ra bàn nháp bên phải mặt bằng (bấm đúp một khối để đưa ra bàn nháp)</span></div><div id="x10-kho" class="row"></div></div>
     <div class="cv"><svg class="plan" id="x10-svg" aria-label="Mặt bằng khu đất và các khối"></svg><div class="ov tl" id="x10-pt"></div><div class="ov tr"><button type="button" class="btn lk" id="x10-nl" aria-pressed="${UI.navLock}" title="Khoá thì cuộn chuột, kéo chỗ trống không làm phóng to, thu nhỏ hay dời hình; mở khoá để phóng thu, kéo hình">${UI.navLock ? "🔒 Đã khoá khung" : "🔓 Đang mở khung"}</button><span class="zm"><button type="button" class="btn" id="x10-zi" title="Phóng to (hoặc cuộn chuột)">＋</button><button type="button" class="btn" id="x10-zo" title="Thu nhỏ">−</button><button type="button" class="btn" id="x10-zf" title="Vừa khung" style="font-size:12.5px">Vừa khung</button></span></div></div>
     <div class="dv${UI.dvLock ? " locked" : ""}" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"><button type="button" class="dvl" id="x10-dvl" aria-pressed="${UI.dvLock}" title="${UI.dvLock ? "Vạch chia đang khoá: bấm để mở, rồi kéo đổi cỡ khung" : "Bấm để khoá vạch chia, giữ cỡ khung mặt bằng và 3D"}">${UI.dvLock ? "🔒" : "🔓"}</button></div>
-    <div class="td">
+    <div class="td${UI.tdView === "mb" ? " mbv" : ""}" id="x10-td">
+      <div class="tdsw"><span class="seg" role="group" aria-label="Khung bên phải">${[["3d", "Khối 3D"], ["mb", "Mặt bằng chi tiết"]].map(([k, t]) => `<button type="button" data-td="${k}" aria-pressed="${(UI.tdView || "3d") === k}">${t}</button>`).join("")}</span></div>
+      <div class="p6 x10mb" id="x10-mbw"><p class="mbt" id="x10-mbt"></p><div class="plan"><svg id="x10-mb" role="img" aria-label="Mặt bằng chi tiết của bản đang sửa"></svg></div><details class="mbe"><summary id="x10-mbs"></summary><ul id="x10-mbl"></ul></details></div>
       <div id="x10-3d" aria-label="Khối 3D: kéo khối để di chuyển, kéo chỗ trống để xoay"></div><svg class="iso" id="x10-iso" hidden></svg>
       <div class="ov tl"><button type="button" class="btn" data-v="l">⟲</button><button type="button" class="btn" data-v="r">⟳</button><button type="button" class="btn" data-v="top">Nhìn từ trên</button><button type="button" class="btn" data-v="0">Góc mặc định</button><button type="button" class="btn" id="x10-pan" aria-pressed="false" title="Bật: kéo chuột trái hoặc một ngón tay để di chuyển góc nhìn">✥ Di chuyển</button></div>
       <div class="ov tr"><button type="button" class="btn" id="x10-up" title="Lên tầng trên">▲</button><span class="flv" id="x10-flv"></span><button type="button" class="btn" id="x10-dn" title="Xuống tầng dưới">▼</button></div>
@@ -253,6 +277,7 @@
     $("#x10-from").addEventListener("change", e => { if (e.target.value === "") return; if (confirm("Thay bản đang xếp bằng các khối của ý tưởng này?")) fromPlan(+e.target.value); e.target.value = ""; });
     $("#x10-undo").addEventListener("click", undo);
     $("#x10-redo").addEventListener("click", redo);
+    host.querySelectorAll("[data-td]").forEach(q => q.addEventListener("click", () => { UI.tdView = q.dataset.td; saveUI(); host.querySelectorAll("[data-td]").forEach(p => p.setAttribute("aria-pressed", String(p === q))); $("#x10-td").classList.toggle("mbv", UI.tdView === "mb"); if (UI.tdView === "mb") mbDraw(true); else { T3 = null; iso(); } }));
     divider($("#x10-dv"));
     planNav();
     if (!window.__x10key) { window.__x10key = 1; document.addEventListener("keydown", onKey); }
@@ -307,9 +332,9 @@
     if (px == null) { px = VB.x + VB.w / 2; py = VB.y + VB.h / 2; }
     VB = { x: px - (px - VB.x) * r, y: py - (py - VB.y) * r, w: nw, h: VB.h * r }; setVB();
   }
-  let svg;
+  let svg, HT = 0.5; // HT: bề dày vùng bấm mép khối (m)
   function render() {
-    renderPlan(); renderStack(); renderKho(); sideCard(); checksList(ISS); areaTable(); iso();
+    renderPlan(); renderStack(); renderKho(); sideCard(); checksList(ISS); areaTable(); iso(); mbDraw();
     const fl = host.querySelector("#x10-flv"); if (fl) fl.textContent = mode === "all" ? "Cả" : "T" + mode;
   }
   // các dải ô 0,5 m thỏa điều kiện test, gộp thành hình chữ nhật
@@ -354,6 +379,7 @@
     { const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng"; }
 
     ISS = check(); BAD = new Set(ISS.filter(i => !i.ok).flatMap(i => i.ids || []));
+    { let ppm = 0; try { ppm = svg.getScreenCTM().a * PX; } catch (e) { /* chưa gắn vào trang */ } HT = ppm > 0 ? Math.max(0.2, Math.min(1.2, 9 / ppm)) : 0.5; }
     const P = S.blocks.filter(onSite);
     if (f) {
       // tầng dưới: nét đứt xám (đề xuất 1)
@@ -411,6 +437,14 @@
       const big = b.w >= 6 && b.h >= 4, t1 = el("text", { x: x + w / 2, y: y + h / 2 - (big ? 9 : 0), "text-anchor": "middle", "dominant-baseline": "middle", "font-size": big ? 24 : 15, "font-weight": 800, fill: "var(--ink)", "pointer-events": "none" }, g);
       t1.textContent = label(b) + (b.f >= 2 && mode === "all" ? " · T" + b.f : "") + (b.top ? " ☀" : "");
       if (big) { const t2 = el("text", { x: x + w / 2, y: y + h / 2 + 13, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 14, fill: "var(--ink-2)", "pointer-events": "none" }, g); t2.textContent = `${nf(area(b), 0)} m² · ${nf(b.w, 1)} × ${nf(b.h, 1)}`; }
+    }
+    // mép khối: bấm giữ rồi kéo để đổi cỡ (phòng giữ diện tích; giữ Shift thì đổi cả diện tích trong ±10%)
+    if (onSite(b) || b.draft) {
+      const hw = Math.min(HT, b.w / 4), hh = Math.min(HT, b.h / 4);
+      for (const [sd, rx, ry, rw, rh] of [["n", b.x + hw, b.y, b.w - 2 * hw, hh], ["s", b.x + hw, b.y + b.h - hh, b.w - 2 * hw, hh], ["w", b.x, b.y + hh, hw, b.h - 2 * hh], ["e", b.x + b.w - hw, b.y + hh, hw, b.h - 2 * hh]]) {
+        const r = el("rect", { class: "hd " + (sd === "n" || sd === "s" ? "ns" : "ew"), x: rx * PX, y: ry * PX, width: Math.max(0, rw) * PX, height: Math.max(0, rh) * PX }, g);
+        r.addEventListener("pointerdown", e => { e.stopPropagation(); startResize(e, b, sd); });
+      }
     }
     g.addEventListener("pointerdown", e => startDrag(e, b));
     g.addEventListener("pointerenter", () => { if (!drag) setHover(b.id); });
@@ -579,6 +613,69 @@
     if (wasStage) sideCard();
   }
 
+  // kéo mép khối để đổi cỡ
+  function startResize(e, b, sd) {
+    if (e.button > 0 || !svg) return;
+    e.preventDefault();
+    sel = b.id;
+    const o0 = { x: b.x, y: b.y, w: b.w, h: b.h, a: b.a }, room = b.kind === "room" && b.a > 0, hor = sd === "e" || sd === "w";
+    const AL = room && briefA(b.c) ? aLim(b) : null;
+    drag = { b, rs: sd };
+    const cls = hor ? "rs-ew" : "rs-ns";
+    renderPlan(); sideCard(); hi3d(); svg.classList.add(cls);
+    const ppm = () => svg.getScreenCTM().a * PX;
+    const others = S.blocks.filter(o => o !== b && (b.draft ? o.draft : onSite(o)));
+    const lines = ax => {
+      const L = [];
+      for (const o of others) { const w = o.f === b.f ? 0 : 0.04; if (ax === "x") L.push([o.x, w, o], [o.x + o.w, w, o]); else L.push([o.y, w, o], [o.y + o.h, w, o]); }
+      if (!b.draft) { if (ax === "x") { L.push([SITE.x0, 0.02, null], [SITE.x1, 0.02, null]); for (let v = 6; v <= 41.5; v += 8) L.push([v, 0.12, null]); } else { L.push([SITE.y0, 0.02, null], [SITE.y1, 0.02, null]); for (let v = 12; v <= 89; v += 8) L.push([v, 0.12, null]); } }
+      return L;
+    };
+    const LX = lines("x"), LY = lines("y"), LB = blockers(b);
+    const best = (L, v, M) => { let r = null; for (const [t, w, o] of L) { const dd = Math.abs(t - v); if (dd <= M && (!r || dd + w < r.s)) r = { t, s: dd + w, o }; } return r; };
+    const guide = (ax, t, o) => { const box = o || (ax === "x" ? { x: SITE.x0, y: SITE.y0, w: 0, h: SITE.y1 - SITE.y0 } : { x: SITE.x0, y: SITE.y0, w: SITE.x1 - SITE.x0, h: 0 }); return ax === "x" ? { x1: t, x2: t, y1: Math.min(b.y, box.y) - 1.5, y2: Math.max(b.y + b.h, box.y + box.h) + 1.5 } : { y1: t, y2: t, x1: Math.min(b.x, box.x) - 1.5, x2: Math.max(b.x + b.w, box.x + box.w) + 1.5 }; };
+    let moved = false;
+    const move = ev => {
+      if (!drag) return;
+      moved = true;
+      const [px, py] = pt(ev), M = Math.max(0.2, Math.min(1.2, 10 / ppm())), free = !room || ev.shiftKey;
+      const lo = hor ? o0.x : o0.y, hi = hor ? o0.x + o0.w : o0.y + o0.h, far = sd === "e" || sd === "s", L = hor ? LX : LY;
+      const raw = hor ? px : py, base = hor ? o0.w : o0.h, other0 = hor ? o0.h : o0.w;
+      let mn = 1.5, mx = 60;
+      if (room && !free) [mn, mx] = hor ? wRange(b) : hRange(b);
+      else if (room && free && AL) { mn = Math.max(mn, AL.lo / other0); mx = Math.min(mx, AL.hi / other0); }
+      const lenOf = edge => far ? edge - lo : hi - edge;
+      let s = best(L, raw, M), len = clamp(lenOf(s ? s.t : raw), mn, mx);
+      if (s && Math.abs(lenOf(s.t) - len) > 1e-6) s = null;
+      let perp = other0, s2 = null;
+      if (room && !free) {
+        perp = o0.a / len;
+        if (!s) { // thử hút mép vuông góc (mép Nam khi kéo Đông/Tây, mép Đông khi kéo Bắc/Nam)
+          const pb = hor ? o0.y : o0.x, c = best(hor ? LY : LX, pb + perp, M);
+          if (c && c.t - pb > 0.5) { const l2 = o0.a / (c.t - pb); if (l2 >= mn && l2 <= mx) { perp = c.t - pb; len = l2; s2 = c; } }
+        }
+      }
+      const fixP = s2 ? perp : null;
+      const ap = t => { const pp = room && !free ? (fixP && Math.abs(t - len) < 1e-9 ? fixP : o0.a / t) : other0;
+        if (hor) { b.w = R3(t); b.x = R3(far ? lo : hi - t); b.h = R3(pp); b.y = o0.y; } else { b.h = R3(t); b.y = R3(far ? lo : hi - t); b.w = R3(pp); b.x = o0.x; } };
+      const fr = fitTo(b, LB, ap, base, len); // không đâm xuyên khối khác: dừng ở mép khối chặn
+      if (fr.o) { s = null; s2 = null; }
+      if (room && free) b.a = +(b.w * b.h).toFixed(2); else if (room) b.a = o0.a;
+      const gs = [];
+      if (s) gs.push(guide(hor ? "x" : "y", s.t, s.o));
+      if (s2) gs.push(guide(hor ? "y" : "x", s2.t, s2.o));
+      raf("rs", () => { renderPlan(); svg.classList.add(cls); drawGuides(gs); cardVals(b); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = fr.o ? cutTxt({ ...fr, b }) : ""; mbDraw(); });
+    };
+    const up = () => {
+      if (!drag) return; drag = null;
+      window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+      svg.classList.remove(cls); drawGuides([]);
+      if (moved) keep();
+      render();
+    };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+  }
+
   function onKey(e) {
     const typing = /INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || "");
     if (!host.offsetParent || typing) return;
@@ -601,21 +698,84 @@
 
   /* ---------- thao tác trên khối đang chọn ---------- */
   function rotate(b) { const cx = b.x + b.w / 2, cy = b.y + b.h / 2; [b.w, b.h] = [b.h, b.w]; b.x = Math.round((cx - b.w / 2) / SNAP) * SNAP; b.y = Math.round((cy - b.h / 2) / SNAP) * SNAP; keep(); render(); }
-  function setW(b, w) { if (b.kind === "room") { b.w = +w; b.h = +(b.a / b.w).toFixed(2); } else b.w = +w; keep(); raf("all", render); }
+  // cỡ khối: phòng giữ diện tích (đổi rộng thì sâu tự đổi và ngược lại); khối phụ đổi tự do
+  const R3 = v => Math.round(v * 1000) / 1000;
+  function wRange(b) { if (b.kind !== "room") return [1.5, 42]; const lo = Math.max(2, b.a / 40), hi = Math.max(lo + 0.5, Math.min(42, b.a / 2)); return [lo, hi]; }
+  function hRange(b) { if (b.kind !== "room") return [1.5, 60]; const [lo, hi] = wRange(b); return [b.a / hi, b.a / lo]; }
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  // khối cùng tầng mà khối b chưa chạm: đổi cỡ không được đâm xuyên qua chúng
+  function blockers(b) { return S.blocks.filter(o => o !== b && o.f === b.f && (b.draft ? o.draft : onSite(o) && !o.draft) && ovl(o, b) < 0.05); }
+  const hit = (b, L) => L.find(o => ovl(o, b) > 0.05) || null;
+  // đi từ t0 tới t1, dừng ở chỗ xa nhất mà khối chưa đâm vào khối khác; apply(t) đặt cỡ khối theo t
+  function fitTo(b, L, apply, t0, t1) {
+    apply(t1); const o = hit(b, L); if (!o) return { t: t1 };
+    apply(t0); if (hit(b, L)) { apply(t1); return { t: t1 }; }
+    let lo = t0, hi = t1; for (let i = 0; i < 32; i++) { const m = (lo + hi) / 2; apply(m); if (hit(b, L)) hi = m; else lo = m; }
+    apply(lo); return { t: lo, o };
+  }
+  const cutTxt = r => r && r.o ? `<span style="color:var(--warn)">Chạm ${esc(label(r.o))}: đã dừng ở mép khối này (rộng ${nf(r.b.w, 2)} × sâu ${nf(r.b.h, 2)} m).</span>` : "";
+  function setW(b, w) { const [lo, hi] = wRange(b), ap = v => { b.w = R3(v); if (b.kind === "room") b.h = R3(b.a / b.w); }; return { ...fitTo(b, blockers(b), ap, b.w, clamp(+w, lo, hi)), b }; }
+  function setH(b, h) { const [lo, hi] = hRange(b), ap = v => { b.h = R3(v); if (b.kind === "room") b.w = R3(b.a / b.h); }; return { ...fitTo(b, blockers(b), ap, b.h, clamp(+h, lo, hi)), b }; }
+  // cỡ của các khối khác (cùng tầng, tầng trên, dưới) để hút theo khi kéo thanh tỉ lệ
+  function dimTargets(b) {
+    const out = [];
+    for (const o of S.blocks) {
+      if (o === b || o.kind === "court" || !(onSite(o) || (b.draft && o.draft))) continue;
+      if (!b.draft && Math.abs(o.f - b.f) > 1) continue;
+      const pr = (o.f === b.f && gap(o, b) < 3 ? 0 : o.f === b.f ? 0.002 : 0.004);
+      out.push({ ax: "w", v: o.w, o, pr }, { ax: "h", v: o.h, o, pr });
+    }
+    return out;
+  }
+  // tìm cỡ gần nhất trong tầm hút (tính theo phần trăm); trả về {w, h, t}
+  function snapDim(b, ax, v, tol = 0.014) {
+    const room = b.kind === "room", a = b.a;
+    let best = null;
+    for (const t of dimTargets(b)) {
+      let w, h;
+      if (ax === "w") { if (t.ax === "w") { w = t.v; h = room ? a / w : b.h; } else if (room) { h = t.v; w = a / h; } else continue; if (Math.abs(w - v) / v > tol) continue; }
+      else { if (t.ax === "h") { h = t.v; w = room ? a / h : b.w; } else if (room) { w = t.v; h = a / w; } else continue; if (Math.abs(h - v) / v > tol) continue; }
+      const d = Math.abs((ax === "w" ? w : h) - v) / v + t.pr;
+      if (!best || d < best.d) best = { d, w, h, t };
+    }
+    return best;
+  }
+  const snapTxt = s => s ? `Khớp ${s.t.ax === "w" ? "rộng Đông – Tây" : "sâu Bắc – Nam"} với ${esc(label(s.t.o))}${s.t.o.f !== undefined ? " tầng " + s.t.o.f : ""}: ${nf(s.t.v, 2)} m` : "";
+  // vẽ lại khi đang chỉnh cỡ: không dựng lại thẻ bên phải để thanh trượt, ô nhập không mất tay kéo
+  function live(b) { raf("live", () => { renderPlan(); renderStack(); renderKho(); checksList(ISS); areaTable(); cardVals(b); raf("iso", iso); mbDraw(); }); }
+  // mặt bằng chi tiết: dựng lại phương án nguồn (vd X.7) theo cỡ, vị trí khối đang sửa; cửa, nội thất, tuyến đi lấy theo phương án nguồn
+  let mbT = 0;
+  function mbDraw(now) {
+    if (UI.tdView !== "mb" || !G.P6 || !G.P6.fromBlocks || !G.P6V) return;
+    clearTimeout(mbT); mbT = setTimeout(mbNow, now ? 0 : 160);
+  }
+  function mbNow() {
+    const svgM = host.querySelector("#x10-mb"); if (!svgM || !svgM.closest(".td").offsetParent) return;
+    G.P6V.css();
+    const src = (G.CHOT || []).find(p => p.code === S.from) || null;
+    const bl = S.blocks.filter(b => onSite(b) && !b.draft && b.kind !== "court");
+    let plan, R;
+    try { plan = G.P6.fromBlocks(src, bl); const lv = Math.min(plan.levels.length - 1, (curF() || 1) - 1); R = G.P6V.draw(svgM, plan, lv, { route: false, staff: false, dim: false }); svgM.style.minWidth = "0";
+      const errs = R.err || [], t = host.querySelector("#x10-mbt");
+      t.innerHTML = `<b>Tầng ${lv + 1}</b> · ${src ? `dựng lại <b>${esc(src.code)}</b> theo các khối đang sửa` : "dựng từ các khối đang xếp (chưa chọn ý tưởng nguồn nên chưa có cửa)"} · tổng sàn ${nf(R.total)} m² · giao thông ${nf(R.circ)} m²`;
+      host.querySelector("#x10-mbs").innerHTML = errs.length ? `<b style="color:var(--warn)">${errs.length} lỗi</b> theo kiểm tra mặt bằng đầy đủ${src && src.__R ? ` (bản gốc ${src.code}: ${src.__R.err.length})` : ""} · bấm để xem` : `<b style="color:var(--accent)">Qua mọi kiểm tra mặt bằng</b>`;
+      host.querySelector("#x10-mbl").innerHTML = errs.map(e => `<li>${esc(e)}</li>`).join("");
+    } catch (e) { const t = host.querySelector("#x10-mbt"); if (t) t.textContent = "Chưa dựng được mặt bằng chi tiết: " + (e && e.message || e); }
+  }
   // giới hạn diện tích cho một khối: cả nhóm phần cùng mã trong ±10% đề; khối đang ở khu đất thì không cho tổng sàn vượt 3.000 m²
   function aLim(b) {
     const T = briefA(b.c), sum = codeSum(b.c), room3000 = onSite(b) ? MAXF - floorTot() : Infinity;
     const lo = Math.max(1, b.a - (sum - (1 - TOL) * T)), hi = Math.max(b.a, b.a + Math.min((1 + TOL) * T - sum, room3000));
     return { T, sum, lo: Math.min(lo, b.a), hi, cap: room3000 };
   }
-  function areaCtl(b) {
-    const L = aLim(b), dev = (L.sum - L.T) / L.T * 100, n = parts(b).length + (S.blocks.filter(o => o.kind === "room" && o.c === b.c).length - parts(b).length);
-    return `<label class="k" for="x10-a">Diện tích phòng (đề cho chỉnh ±10%)</label><input type="range" id="x10-a" min="${L.lo.toFixed(1)}" max="${L.hi.toFixed(1)}" step="0.5" value="${b.a}">
-<p class="k">${esc(b.c)}: ${n > 1 ? `tổng ${n} phần ${nf(L.sum, 1)}` : nf(L.sum, 1)} m² · đề ${nf(L.T)} m² (<b style="color:${Math.abs(dev) > 10.05 ? "var(--warn)" : "var(--accent)"}">${dev >= 0 ? "+" : ""}${nf(dev, 1)}%</b>) · cho phép ${nf((1 - TOL) * L.T, 1)}–${nf((1 + TOL) * L.T, 1)} m²${L.cap < 1 ? `<br><b style="color:var(--warn)">Tổng sàn đã chạm 3.000 m²: không tăng thêm được, muốn tăng phải giảm phòng khác.</b>` : L.cap < 40 ? `<br>Tổng sàn còn ${nf(L.cap, 1)} m² tới mức 3.000 m².` : ""}. Kéo thanh thì chiều sâu Bắc – Nam giữ nguyên, chiều rộng đổi theo.</p>`;
+  function aSum(b) {
+    const L = aLim(b), dev = (L.sum - L.T) / L.T * 100, n = S.blocks.filter(o => o.kind === "room" && o.c === b.c).length;
+    return `${esc(b.c)}: ${n > 1 ? `tổng ${n} phần ${nf(L.sum, 1)}` : nf(L.sum, 1)} m² · đề ${nf(L.T)} m² (<b style="color:${Math.abs(dev) > 10.05 ? "var(--warn)" : "var(--accent)"}">${dev >= 0 ? "+" : ""}${nf(dev, 1)}%</b>) · khối này nhập được ${nf(L.lo, 1)}–${nf(L.hi, 1)} m²${L.cap < 1 ? `<br><b style="color:var(--warn)">Tổng sàn đã chạm 3.000 m²: không tăng thêm được, muốn tăng phải giảm phòng khác.</b>` : L.cap < 40 ? `<br>Tổng sàn còn ${nf(L.cap, 1)} m² tới mức 3.000 m².` : ""}`;
   }
   function setA(b, v) {
-    const L = aLim(b), a = Math.max(L.lo, Math.min(L.hi, v));
-    b.a = +a.toFixed(2); b.w = +(b.a / b.h).toFixed(2); keep(); raf("all", render);
+    const L = aLim(b), a = clamp(+v, L.lo, L.hi), kw = UI.keepDim === "w";
+    const ap = t => { b.a = +t.toFixed(2); if (kw) b.h = R3(b.a / b.w); else b.w = R3(b.a / b.h); };
+    return { ...fitTo(b, blockers(b), ap, b.a, a), b };
   }
   function split(b) {
     const half = { ...b, id: root(b) + "·" + Date.now().toString(36).slice(-3) + (seq++), a: b.a / 2 };
@@ -637,21 +797,50 @@
     S.blocks.push({ id, c: k === "court" ? "SAN" : k === "circ" ? "circ" : "core", n: h.n, kind: k, w: h.w, h: h.h, x: 8, y: 14, f: mode === "all" ? 1 : +mode, a: null });
     sel = id; keep(); render();
   }
+  // thanh trượt thang log: t 0–1000
+  const t2w = (b, t) => { const [lo, hi] = wRange(b); return lo * Math.pow(hi / lo, t / 1000); };
+  const w2t = (b, w) => { const [lo, hi] = wRange(b); return Math.round(1000 * Math.log(clamp(w, lo, hi) / lo) / Math.log(hi / lo)); };
+  const t2h = (b, t) => { const [lo, hi] = hRange(b); return lo * Math.pow(hi / lo, t / 1000); };
+  const h2t = (b, h) => { const [lo, hi] = hRange(b); return Math.round(1000 * Math.log(clamp(h, lo, hi) / lo) / Math.log(hi / lo)); };
+  function infoHTML(b) {
+    const room = b.kind === "room";
+    return `<p>${nf(area(b), 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : b.draft ? " · đang ở bàn nháp" : " · đang ở kho"}</p>
+${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc hoặc Nam là đủ sáng." : b.h <= 16 ? "Sâu 8–16 m: cần hở cả mặt Bắc và mặt Nam." : "Sâu quá 16 m: giữa phòng sẽ tối, nên đổi tỉ lệ hoặc tách đôi."}</p>` : ""}`;
+  }
+  // cập nhật số trên thẻ mà không dựng lại thẻ (giữ tay kéo, giữ ô đang gõ)
+  function cardVals(b, force) {
+    const box = host.querySelector("#x10-sel"); if (!box || sel !== b.id) return;
+    const ae = document.activeElement, put = (id, v) => { const n = box.querySelector(id); if (n && (force || n !== ae)) n.value = v; };
+    const inf = box.querySelector("#x10-inf"); if (inf) inf.innerHTML = infoHTML(b);
+    const as = box.querySelector("#x10-asum"); if (as) as.innerHTML = aSum(b);
+    put("#x10-nw", +b.w.toFixed(2)); put("#x10-nh", +b.h.toFixed(2)); put("#x10-na", +area(b).toFixed(1));
+    const sw = box.querySelector("#x10-w"); if (sw && sw !== ae) sw.value = w2t(b, b.w);
+    const sh = box.querySelector("#x10-h"); if (sh && sh !== ae) sh.value = h2t(b, b.h);
+  }
   function sideCard() {
     const box = host.querySelector("#x10-sel"), b = S.blocks.find(q => q.id === sel);
     if (!box) return;
     if (!b) { box.innerHTML = `<h4>Chọn một khối</h4><p>Bấm vào khối trên mặt bằng hoặc trên 3D để xem và chỉnh. Phím mũi tên dịch 0,5 m (giữ Shift: 4 m), R xoay, PageUp/PageDown lên, xuống tầng.</p>`; return; }
-    const k = (G.KHOI || []).find(q => q.c === b.c), room = b.kind === "room", a = area(b);
-    const wMin = room ? Math.max(2, +(b.a / 40).toFixed(1)) : 1.5, wMax = room ? Math.min(42, +(b.a / 2).toFixed(1)) : 40;
+    const k = (G.KHOI || []).find(q => q.c === b.c), room = b.kind === "room", hasA = room && briefA(b.c);
+    const near = S.blocks.filter(o => o !== b && o.kind !== "court" && (onSite(o) || (b.draft && o.draft)) && o.f === b.f && gap(o, b) < 3).sort((p, q) => gap(p, b) - gap(q, b)).slice(0, 4);
+    const [wl, wh] = wRange(b), [hl, hh0] = hRange(b), chips = [];
+    for (const o of near) { if (o.w >= wl - 0.01 && o.w <= wh + 0.01 && Math.abs(o.w - b.w) > 0.01) chips.push(`<button type="button" class="btn sm" data-sw="${o.w}">Rộng = ${esc(label(o))} (${nf(o.w, 2)})</button>`); if (o.h >= hl - 0.01 && o.h <= hh0 + 0.01 && Math.abs(o.h - b.h) > 0.01) chips.push(`<button type="button" class="btn sm" data-sh="${o.h}">Sâu = ${esc(label(o))} (${nf(o.h, 2)})</button>`); }
     box.innerHTML = `<h4>${esc(label(b))} · ${esc(b.n)}</h4>
 <div class="scg"><div class="sci">
-<p>${nf(a, 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : b.draft ? " · đang ở bàn nháp" : " · đang ở kho"}</p>
-${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc hoặc Nam là đủ sáng." : b.h <= 16 ? "Sâu 8–16 m: cần hở cả mặt Bắc và mặt Nam." : "Sâu quá 16 m: giữa phòng sẽ tối, nên đổi tỉ lệ hoặc tách đôi."}</p>` : ""}
+<div id="x10-inf">${infoHTML(b)}</div>
 ${k ? `<p style="color:var(--ink-2)">Nối với: ${esc(k.noi)}<br>Tránh: ${esc(k.tranh)}</p>` : ""}
 </div><div class="scc">
-${room && briefA(b.c) ? areaCtl(b) : ""}
-<label class="k" for="x10-w">${room ? "Đổi tỉ lệ (diện tích giữ nguyên)" : "Rộng Đông – Tây"}</label><input type="range" id="x10-w" min="${wMin}" max="${wMax}" step="0.25" value="${b.w}">
-${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input type="range" id="x10-h" min="1.5" max="40" step="0.25" value="${b.h}">`}
+<div class="dims">
+  <label>Rộng Đông – Tây<span><input type="number" id="x10-nw" step="0.1" min="${wl.toFixed(2)}" max="${wh.toFixed(2)}" value="${+b.w.toFixed(2)}"> m</span></label>
+  <label>Sâu Bắc – Nam<span><input type="number" id="x10-nh" step="0.1" min="${hl.toFixed(2)}" max="${hh0.toFixed(2)}" value="${+b.h.toFixed(2)}"> m</span></label>
+  <label>Diện tích<span><input type="number" id="x10-na" step="0.5" ${hasA ? `min="${aLim(b).lo.toFixed(1)}" max="${aLim(b).hi.toFixed(1)}"` : ""} value="${+area(b).toFixed(1)}"> m²</span></label>
+</div>
+<p class="k">${room ? "Gõ số rồi bấm Enter. Đổi rộng thì sâu tự đổi (và ngược lại) để diện tích giữ đúng." : "Gõ số rồi bấm Enter. Khối phụ đổi rộng, sâu độc lập."}${hasA ? ` Đổi diện tích thì giữ <span class="seg" style="vertical-align:middle"><button type="button" data-kd="h" aria-pressed="${UI.keepDim !== "w"}">sâu</button><button type="button" data-kd="w" aria-pressed="${UI.keepDim === "w"}">rộng</button></span>.` : ""}</p>
+${hasA ? `<p class="k" id="x10-asum">${aSum(b)}</p>` : ""}
+<label class="k" for="x10-w">${room ? "Đổi tỉ lệ (diện tích giữ nguyên; tự hút khi trùng cỡ khối khác)" : "Rộng Đông – Tây (tự hút theo cỡ khối khác)"}</label><input type="range" id="x10-w" min="0" max="1000" step="1" value="${w2t(b, b.w)}">
+${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input type="range" id="x10-h" min="0" max="1000" step="1" value="${h2t(b, b.h)}">`}
+<p class="k snap" id="x10-snap"></p>
+${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
 <div class="bar" style="margin-top:6px">
   <button type="button" class="btn" id="x10-rot">Xoay 90°</button>
   ${room ? `<button type="button" class="btn" id="x10-d8">Sâu 8 m</button>` : ""}
@@ -661,11 +850,25 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
   ${room && LIT.test(b.c) ? `<button type="button" class="btn" id="x10-top" aria-pressed="${!!b.top}">${b.top ? "✓ " : ""}Lấy sáng mái hướng Bắc</button>` : ""}
   ${room ? (onSite(b) || b.draft ? `<button type="button" class="btn" id="x10-back">Cất vào kho</button>` : `<button type="button" class="btn" id="x10-todraft">Đưa ra bàn nháp</button>`) : `<button type="button" class="btn" id="x10-del">Xóa</button>`}
 </div></div></div>`;
-    box.querySelector("#x10-w").addEventListener("input", e => setW(b, e.target.value));
-    const ar = box.querySelector("#x10-a"); if (ar) ar.addEventListener("input", e => setA(b, +e.target.value));
-    const hh = box.querySelector("#x10-h"); if (hh) hh.addEventListener("input", e => { b.h = +e.target.value; keep(); raf("all", render); });
+    const sn = box.querySelector("#x10-snap"), done = () => { keep(); render(); };
+    // thanh trượt: thang log để đoạn giữa (gần vuông) mịn hơn; hút khi trùng cỡ khối khác
+    const slide = (ax, t) => {
+      const v = ax === "w" ? t2w(b, t) : t2h(b, t), s = snapDim(b, ax, v);
+      const r = s ? (s.t.ax === "w" || b.kind !== "room" ? (ax === "w" ? setW(b, s.w) : setH(b, s.h)) : setH(b, s.h)) : ax === "w" ? setW(b, v) : setH(b, v);
+      sn.innerHTML = r.o ? cutTxt(r) : snapTxt(s); live(b);
+    };
+    box.querySelector("#x10-w").addEventListener("input", e => slide("w", +e.target.value));
+    box.querySelector("#x10-w").addEventListener("change", done);
+    const hs = box.querySelector("#x10-h"); if (hs) { hs.addEventListener("input", e => slide("h", +e.target.value)); hs.addEventListener("change", done); }
+    const num = (id, f) => { const n = box.querySelector(id); n.addEventListener("change", () => { const v = parseFloat(String(n.value).replace(",", ".")); if (!isFinite(v) || v <= 0) { cardVals(b, true); return; } const r = f(v); sn.innerHTML = cutTxt(r); keep(); live(b); cardVals(b, true); }); n.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); n.dispatchEvent(new Event("change")); n.select(); } }); };
+    num("#x10-nw", v => setW(b, v));
+    num("#x10-nh", v => setH(b, v));
+    num("#x10-na", v => hasA ? setA(b, v) : setW(b, v / b.h));
+    box.querySelectorAll("[data-kd]").forEach(q => q.addEventListener("click", () => { UI.keepDim = q.dataset.kd; saveUI(); box.querySelectorAll("[data-kd]").forEach(p => p.setAttribute("aria-pressed", String(p === q))); }));
+    box.querySelectorAll("[data-sw]").forEach(q => q.addEventListener("click", () => { const r = setW(b, +q.dataset.sw); done(); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = cutTxt(r); }));
+    box.querySelectorAll("[data-sh]").forEach(q => q.addEventListener("click", () => { const r = setH(b, +q.dataset.sh); done(); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = cutTxt(r); }));
     box.querySelector("#x10-rot").addEventListener("click", () => rotate(b));
-    const d8 = box.querySelector("#x10-d8"); if (d8) d8.addEventListener("click", () => { b.h = 8; b.w = +(b.a / 8).toFixed(2); keep(); render(); });
+    const d8 = box.querySelector("#x10-d8"); if (d8) d8.addEventListener("click", () => { const r = setH(b, 8); done(); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = cutTxt(r); });
     box.querySelectorAll("[data-f]").forEach(q => q.addEventListener("click", () => { b.f = +q.dataset.f; keep(); if (mode !== "all" && onSite(b)) { mode = String(b.f); host.querySelectorAll("[data-m]").forEach(p => p.setAttribute("aria-pressed", String(p.dataset.m === mode))); } render(); }));
     const tp = box.querySelector("#x10-top"); if (tp) tp.addEventListener("click", () => { b.top = !b.top; keep(); render(); });
     const mg = box.querySelector("#x10-merge"); if (mg) mg.addEventListener("click", () => merge(b));
