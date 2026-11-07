@@ -6,7 +6,7 @@ Nguồn đề bài: `ARC329_NVTK_TrungTamVanHoaThuVien_2026F_v18_20261020.pdf` t
 
 Phần 1 chép số liệu từ đề. Phần 2 là giả định về khu đất dùng trong các phương án. Phần 3 là các nguyên tắc bạn đã đặt ra trong quá trình làm. Mỗi ý tưởng mới phải theo đủ cả ba phần.
 
-Cập nhật lần cuối: 06/11/2026.
+Cập nhật lần cuối: 07/11/2026.
 
 ---
 
@@ -682,6 +682,15 @@ Bạn xin thêm 10 ý tưởng xếp khối đơn giản 2–3 tầng để lấ
 - **Tab "Tự xếp khối" bản 2 (06/11, bạn duyệt cả 7 đề xuất):** mặt bằng và 3D cạnh nhau (kéo vạch giữa để đổi cỡ), chọn hoặc rê chuột một bên sáng cả hai; tầng dưới nét đứt xám (chỉnh độ đậm), tầng trên viền chấm; sọc đỏ chỗ đua quá 4 m, sọc xanh mái lộ; tách tầng 0–8 m; cắt 3D theo tầng đang xếp, tên phòng và diện tích trên mặt sàn 3D; cột chồng tầng thu nhỏ; bóng đổ, thước cao độ, người 1,7 m; kéo khối ngay trên 3D, PageUp/PageDown đổi tầng; hút mép, canh thẳng hàng (cả tâm khối, khối tầng trên, dưới, mép vùng xây dựng, lưới cột 8 m) có đường dóng hồng; thả lấn ít (≤ 2,5 m) thì tự đẩy khít; kho khối thành danh sách bên dưới. Bản xếp cũ giữ nguyên.
 - **Chỉnh diện tích từng phòng:** đề mục 4 cho phép "diện tích từng phòng và mỗi nhóm chức năng được phép điều chỉnh trong khoảng ±10%", tổng sàn không quá 3.000 m²; vượt ±10% cần lý do và giảng viên xác nhận. Tab có thanh "Diện tích phòng" giới hạn ±10% đề (tính cả các phần đã tách) và không cho tăng khi tổng sàn đã chạm 3.000 m².
 - Kế hoạch làm tab "Tự xếp khối" dễ hình dung hơn (7 đề xuất có hình): https://claude.ai/artifact/QQZ4VFFy2u5ced8f9pdfSN, chờ bạn duyệt.
+
+### 3.17 Từ bản xếp khối của bạn: X.1–X.4 (07/11/2026)
+Bạn gửi file `xep-khoi-arc329 (2).json` (44 khối trên khu đất, 2 tầng; bàn nháp và kho không tính). Yêu cầu: một ý tưởng giữ đúng y bản xếp, và ba ý tưởng dựa hoàn toàn vào hình khối đó nhưng sửa hành lang, giao thông, cầu thang, logic từng khối; mặt bằng đầy đủ.
+- **Đề bài về diện tích (mục 4):** mỗi phòng, mỗi nhóm được chỉnh ±10%; tổng sàn ≤ 3.000 m²; vượt ±10% cần lý do và giảng viên xác nhận.
+- **X.1 Đúng y bản xếp** (2.706 m²): giữ nguyên 44 khối (chỉ chỉnh mép ≤ 0,3 m cho tường khít), lấp khe giữa các khối bằng hành lang. Đi qua A1 → A4 và tách ngoài giờ đạt. Còn 14 lỗi do chính bản xếp: khối tầng 1 lấn lối Tây 6 m; thiếu nhi B3 nằm dưới phòng đọc tầng 2; E4 sát vách E2; A3, A4, C2 kẹt giữa không có cửa sổ Bắc/Nam; cửa sổ B3, E1, E2 bị tầng 2 che quá 45°; tầng 2 thiếu lõi sách và thang chưa thẳng hàng; vệ sinh xa; A2, B2 thiếu chỗ (−10%).
+- **X.2 Giữ chỗ từng khối, sửa giao thông** (2.977 m²): khối lùi ra khỏi lối Tây; A4 sát A1; trên B3 chỉ còn học nhóm, kho, lưu trữ; đổi chỗ E4 và C3; lõi sách và thang thẳng hàng hai tầng. Qua mọi kiểm tra.
+- **X.3 Trục hành lang Bắc – Nam** (2.997 m²): một trục hành lang thẳng từ khu sự kiện qua A1 → A4 xuống thư viện, hai tầng chồng nhau; một cửa khóa ngoài giờ giữa A1 và A4. Qua mọi kiểm tra.
+- **X.4 Sân trong giữa, hành lang vòng** (2.843 m²): khoảng trống giữa tầng 1 thành sân trong 22 × 12 m, hành lang thư viện quanh sân; B3 có vườn tường bao trong sân. Qua mọi kiểm tra.
+- Ở cả X.2–X.4, không phòng đọc nào (B1, B2, B5, B6) cách thiếu nhi, sự kiện, cà phê dưới 4 m cùng tầng hay chồng ngay trên các phòng đó.
 
 ---
 

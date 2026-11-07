@@ -52,7 +52,7 @@ if 'role="tab" data-tab="g10"' not in s:
 if 'data-panel="g10" hidden' not in s:
     b='<div id="g9-host" style="margin-top:48px"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'+s[i2:]
-s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+('S.1–S.16 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s16.js') else 'S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
+s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+('X.1–X.4 từ bản xếp của bạn, S.1–S.16 khối vuông' if os.path.exists(SP+'chot_x1.js') else 'S.1–S.16 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s16.js') else 'S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
 # tab "Yêu cầu của thầy": nội dung tĩnh từ yc_thay.html, thay lại mỗi lần dựng
 if 'role="tab" data-tab="yc"' not in s:
     a=s.index('<button type="button" role="tab" data-tab="g9"')
