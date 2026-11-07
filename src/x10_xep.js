@@ -53,7 +53,7 @@
   let sel = null, hover = null, mode = "1", seq = 1, ISS = [], BAD = new Set();
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h" }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h", dims: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -94,7 +94,9 @@
   const CSS = `
 #x10-host { width: min(1560px, calc(100vw - 40px)); margin-left: calc((100% - min(1560px, calc(100vw - 40px))) / 2); justify-self: start; }
 .x10 [hidden] { display: none !important; }
-.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; }
+.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; --xdimC: #0e7490; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .x10 { --xdimC: #5fd0e6; } }
+:root[data-theme="dark"] .x10 { --xdimC: #5fd0e6; }
 .x10 .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .x10 .btn:disabled { opacity: .45; cursor: default; }
 .x10 .seg { display: inline-flex; flex-wrap: wrap; gap: 0; }
@@ -224,6 +226,7 @@
     <label class="opt"><input type="checkbox" id="x10-cut" ${UI.cut ? "checked" : ""}> Cắt 3D theo tầng đang xếp</label>
     <label class="opt"><input type="checkbox" id="x10-sh" ${UI.shadow ? "checked" : ""}> Bóng đổ</label>
     <label class="opt"><input type="checkbox" id="x10-pp" ${UI.people ? "checked" : ""}> Người 1,7 m</label>
+    <label class="opt"><input type="checkbox" id="x10-dm" ${UI.dims ? "checked" : ""}> Kích thước tổng</label>
   </div>
   <div class="lg"><span><i style="border:2px dashed var(--ink-2)"></i>tầng dưới</span><span><i style="border:2px dotted var(--ink)"></i>tầng trên</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Red) 0 2px,transparent 2px 6px);border:1px solid var(--x10Red)"></i>đua quá 4 m, cần cột</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Green) 0 2px,transparent 2px 6px);border:1px solid var(--x10Green)"></i>mái lộ: lấy sáng mái, sân thượng</span><span><i style="background:#2f8fd6;height:4px"></i>mặt Bắc/Nam hở lấy sáng</span><span><i style="border-top:2px dashed var(--x10Guide)"></i>đường dóng khi kéo</span></div>
   <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
@@ -266,6 +269,7 @@
     $("#x10-cut").addEventListener("change", e => { UI.cut = e.target.checked; saveUI(); iso(); });
     $("#x10-sh").addEventListener("change", e => { UI.shadow = e.target.checked; saveUI(); iso(); });
     $("#x10-pp").addEventListener("change", e => { UI.people = e.target.checked; saveUI(); iso(); });
+    $("#x10-dm").addEventListener("change", e => { UI.dims = e.target.checked; saveUI(); renderPlan(); iso(); });
     host.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.v; if (v === "l") VIEW.yaw -= 45; else if (v === "r") VIEW.yaw += 45; else if (v === "top") VIEW.pitch = 88; else { VIEW.yaw = 35; VIEW.pitch = 32; VIEW.zoom = 1; VIEW.tx = 24; VIEW.tz = 52; } T3 ? draw3() : isoSvg(); }));
     $("#x10-pan").addEventListener("click", e => { VIEW.pan = !VIEW.pan; e.currentTarget.setAttribute("aria-pressed", String(VIEW.pan)); });
     $("#x10-up").addEventListener("click", () => setMode(String(mode === "all" ? 1 : Math.min(NF, +mode + 1))));
@@ -365,7 +369,7 @@
     const pat = (id, c, w = 1.5, op = 0.35) => { const p = el("pattern", { id, width: 8, height: 8, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs); el("line", { x1: 0, y1: 0, x2: 0, y2: 8, stroke: c, "stroke-width": w, opacity: op }, p); };
     pat("x10h", "var(--ink-2)"); pat("x10r", "var(--x10Red)", 3.2, 0.85); pat("x10g", "var(--x10Green)", 3, 0.75);
     R(0, 0, 41.5, 104, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5 });
-    R(0, 0, 6, 104, { fill: "var(--road)" }); T("Lối Tây · xe cứu hỏa, xe giao sách", 3, 52, { transform: `rotate(-90 ${3 * PX} ${52 * PX})` });
+    R(0, 0, 6, 104, { fill: "var(--road)" }); T("Lối Tây · xe cứu hỏa, xe giao sách", 4.6, 52, { transform: `rotate(-90 ${4.6 * PX} ${52 * PX})`, "font-size": 15 });
     R(6, 0, 35.5, 12, { fill: "var(--pave)" }); T("Quảng trường Bắc", 23.75, 6);
     R(6, 89, 35.5, 15, { fill: "var(--road)" }); T("Bãi xe", 23.75, 96.5);
     R(41.5, 0, 6, 104, { fill: "var(--water)" }); T("Bờ sông · Bạch Đằng", 44.5, 52, { transform: `rotate(90 ${44.5 * PX} ${52 * PX})` });
@@ -376,7 +380,7 @@
     const nAng = window.ARC_NORTH != null ? window.ARC_NORTH : 20, ng = el("g", { transform: `translate(${44.5 * PX} ${10 * PX}) rotate(${nAng}) scale(1.4)` }, svg);
     el("path", { d: "M0 -16 L8 8 L0 4 L-8 8 Z", fill: "var(--ink)" }, ng); const nt = el("text", { x: 0, y: -22, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "var(--ink)" }, ng); nt.textContent = "Bắc";
     const f = curF();
-    { const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng"; }
+    { const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = (f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng") + (UI.dims && G.XDIM ? " · " + G.XDIM.text(S.blocks.filter(b => onSite(b) && (!f || b.f === f))) : ""); }
 
     ISS = check(); BAD = new Set(ISS.filter(i => !i.ok).flatMap(i => i.ids || []));
     { let ppm = 0; try { ppm = svg.getScreenCTM().a * PX; } catch (e) { /* chưa gắn vào trang */ } HT = ppm > 0 ? Math.max(0.2, Math.min(1.2, 9 / ppm)) : 0.5; }
@@ -399,6 +403,8 @@
     for (const b of cur.sort((a, b) => (a.kind === "court") - (b.kind === "court") || a.f - b.f)) drawBlock(b);
     // khối tầng trên: viền chấm
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
+    // kích thước tổng: cả tầng (phía Bắc, Tây) và từng cụm khối liền nhau (phía Nam, Đông)
+    if (UI.dims && G.XDIM) G.XDIM.svg(svg, cur, PX, { fs: 16 });
     // bàn nháp
     R(DRAFT.x0 - 0.5, DRAFT.y0, DRAFT.x1 - DRAFT.x0 + 1, DRAFT.y1 - DRAFT.y0, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "10 6", rx: 12 });
     T("Bàn nháp", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 2.2, { "font-size": 24, "font-weight": 800, fill: "var(--ink)" });
@@ -1140,6 +1146,8 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
       if (UI.explode > 0 && b.f >= 2 && state !== "wire") for (const [x, z] of [[0, 0], [b.w, 0], [b.w, b.h], [0, b.h]]) { const v = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, 0, z), new THREE.Vector3(x, -UI.explode, z)]), new THREE.LineDashedMaterial({ color: C("var(--accent)"), dashSize: 0.5, gapSize: 0.4 })); v.computeLineDistances(); grp.add(v); }
       T3.objs[b.id] = { grp, mesh, edges, edgeCol: ec, b };
     }
+    // kích thước tổng trong 3D: tầng đang xếp (ở cao độ sàn tầng đó) hoặc cả nhà (trên mặt đất)
+    if (UI.dims && G.XDIM) { const fl = f || null, bl = S.blocks.filter(b => onSite(b) && (!fl || b.f === fl)); G.XDIM.three(THREE, g, bl, fl ? FH[fl] + (fl - 1) * UI.explode + 0.12 : 0.3, { ink: inkHex, cl: cssCol("var(--xdimC, #0e7490)", scope) || "#0e7490", halo: cssCol("var(--sheet)", scope) }); }
     // nhãn từng tầng khi tách tầng
     if (UI.explode > 0) for (let fl = 1; fl <= NF; fl++) {
       const on = S.blocks.filter(b => onSite(b) && isFloor(b) && b.f === fl); if (!on.length) continue;

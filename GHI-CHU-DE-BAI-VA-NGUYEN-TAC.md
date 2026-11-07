@@ -754,6 +754,15 @@ Bạn hỏi vì sao bản xếp chỉ khoảng 2.500 m², còn 500 m² "biến �
 - Quy tắc của bạn: đổi cỡ (kéo mép, thanh trượt, ô nhập) không được đâm xuyên khối cùng tầng; khối tự dừng ở mép khối chặn và báo "Chạm …".
 - Khung bên phải có nút "Mặt bằng chi tiết": dựng lại phương án nguồn (vd X.7) theo cỡ, vị trí khối đang sửa, ngay khi sửa. Cửa, nội thất, đường đi giữ theo phương án nguồn; tổng sàn và số lỗi kiểm tra mặt bằng đầy đủ cập nhật theo. Phòng dời xa khỏi phòng nó có cửa tới thì cửa đó báo lỗi "không có cạnh chung".
 
+### 3.21 Tab Final 1 và kích thước tổng (08/11/2026)
+
+- **Tab Final 1:** file `xep-khoi-arc329.json` bạn gửi, giữ nguyên 100%. Bạn dặn: không thêm, sửa, xoá khối nào, mặt bằng cũng y nguyên.
+  - 53 khối: 48 trên khu đất (tầng 1: 30, tầng 2: 18), 5 khối còn trên bàn nháp (không tính).
+  - Có: mặt bằng khối từng tầng, khối 3D, bảng đủ 53 khối với toạ độ, cỡ lấy thẳng từ file, nút tải lại file JSON gốc.
+  - Mặt bằng chi tiết dựng y như khung "Mặt bằng chi tiết" lúc xếp: lấy X.7, đặt từng phòng đúng theo khối; cửa, nội thất theo X.7; không vá cửa hay hành lang. Kết quả: tổng sàn 2.544 m², các phòng 2.131 m², giao thông 412 m², 89 lỗi kiểm tra (phần lớn do cửa của X.7 không còn cạnh chung vì khối đã dời, và hành lang tầng 2 còn trên bàn nháp).
+- **Kích thước tổng** (tab Tự xếp khối, cả mặt bằng và 3D; tab Final 1): đường kích thước tổng Đông – Tây (phía Bắc) và tổng Bắc – Nam (phía Tây) của tầng đang xếp, hoặc cả nhà khi xem cả các tầng. Mỗi cụm khối liền nhau (chạm nhau dọc một cạnh ≥ 0,5 m, từ 2 khối trở lên) có thêm kích thước riêng ở phía Nam, phía Đông. Dòng trên góc mặt bằng ghi tổng và số cụm rời. Tắt bằng ô "Kích thước tổng" ở hàng Hiển thị.
+  - Bản Final 1: tầng 1 tổng 33,27 × 72,45 m, 3 cụm rời; tầng 2 tổng 33,28 × 50,03 m, 4 cụm rời.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).

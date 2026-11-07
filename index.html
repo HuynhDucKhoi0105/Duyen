@@ -140,6 +140,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <button type="button" role="tab" data-tab="yc" aria-selected="false">Yêu cầu của thầy<small>mình đang ghi nhớ gì, bạn soát giúp</small></button>
     <button type="button" role="tab" data-tab="g9" aria-selected="false">Phương án chốt · mặt bằng<small>X.1–X.10 từ bản xếp của bạn, S.1–S.16 khối vuông</small></button>
     <button type="button" role="tab" data-tab="g10" aria-selected="false">Tự xếp khối<small>20 khối A1–E6 theo diện tích đề, kéo thả, gửi Claude</small></button>
+    <button type="button" role="tab" data-tab="f1" aria-selected="false">Final 1<small>bản xếp khối của bạn, giữ nguyên 100%, có mặt bằng</small></button>
   </div>
 </div>
 
@@ -416,9 +417,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <!--/yc--></div>
 <div class="tab" data-panel="g9" hidden><div id="g9p-host"></div><div id="g9-host" style="margin-top:48px"></div></div>
 <div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>
+<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261107-222100"</script>
+<script>window.ARC_BUILD="20261108-001212"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -20126,13 +20128,17 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const plan = G.CHOT[ci], svg = host.querySelector("#p6-svg");
     drawLevel(svg, plan, li >= 0 ? plan.levels[li] : null, li);
     host.querySelector("#p6-scn").textContent = SCN.find(s => s[0] === sc)[2];
+    host.querySelector("#p6-leg").innerHTML = legend(sc);
+  }
+  function legend(sc) {
     const dk = Object.entries(P6.DOORK).map(([k, v]) => `<span><i style="border-color:var(--${v.c});${k === "o" ? "border-top-style:dashed" : ""}"></i>${v.t}</span>`).join("");
     const rt = sc === "0" ? "" : [["rLib", "Người đọc, khách cà phê"], ["rEv", "Khách sự kiện"], ["rBook", "Đường sách"], ["rStaff", "Nhân viên mang sách trả"]].map(([c, t]) => `<span><i style="border-color:var(--${c})"></i>${t}</span>`).join("");
     const fills = `<span><i style="border-color:var(--dTudong);border-top-width:6px"></i>Cửa sổ hướng Bắc/Nam</span><span><i style="border-color:var(--dTudong);border-top-style:dashed"></i>Cửa mái hướng Bắc (răng cưa)</span><span><i class="f" style="background:var(--warn);border-radius:50%;width:8px;height:8px"></i>Chỗ cách cửa sổ quá 8 m</span><span><i class="f" style="border:3px solid var(--dTnbd);background:transparent"></i>Quầy kiểm soát, cổng từ</span><span><i class="f" style="background:var(--cStair)"></i>Thang bộ</span><span><i class="f" style="background:var(--cLift)"></i>Thang bộ + thang máy</span>` + ["A", "B", "C", "D", "E"].map(z => `<span><i class="f" style="background:var(--z${z})"></i>${{ A: "A Đón tiếp", B: "B Đọc", C: "C Kho, nghiệp vụ", D: "D Văn hóa", E: "E Hỗ trợ" }[z]}</span>`).join("") + `<span><i class="f" style="background:var(--zCirc)"></i>Giao thông</span>${sc === "2" ? `<span><i class="f" style="background:repeating-linear-gradient(45deg,var(--ink-2) 0 2px,transparent 2px 5px)"></i>Khu đóng</span>` : ""}<span><i class="f" style="background:var(--rStaff);border-radius:50%"></i>Người trực</span>`;
-    host.querySelector("#p6-leg").innerHTML = dk + rt + fills;
+    return dk + rt + fills;
   }
   // cho tab Tự xếp khối vẽ mặt bằng chi tiết của bản đang sửa (dùng chung bộ vẽ, không đụng trạng thái tab này)
   G.P6V = {
+    SCN, legend, checks: p => { if (!p.__R) p.__R = P6.analyse(p, DT); return checks(p); }, roomTable: p => { if (!p.__R) p.__R = P6.analyse(p, DT); return roomTable(p); },
     css() { if (!document.getElementById("p6-style")) { const s = document.createElement("style"); s.id = "p6-style"; s.textContent = CSS; document.head.appendChild(s); } },
     draw(svg, plan, lvl, opt = {}) {
       const k = { ...st }, s0 = sc;
@@ -20150,6 +20156,88 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   if (panel && !panel.hidden) start();
   window.addEventListener("arc-north", () => { if (started) draw(); });
 })(window.G3);
+
+/* ================= Kích thước tổng của bản xếp khối (bạn yêu cầu 08/11/2026) =================
+   Tổng dài Bắc – Nam, tổng rộng Đông – Tây của cả tầng, và của từng cụm khối liền nhau.
+   Dùng chung cho tab Tự xếp khối (mặt bằng + 3D) và tab Final 1. Khối: {x, y, w, h, kind}, đơn vị mét. */
+(function () {
+  const G = window.G3 = window.G3 || {};
+  const NS = "http://www.w3.org/2000/svg";
+  const nf = (v, d = 2) => (+v).toLocaleString("vi-VN", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const solid = b => b && b.kind !== "court";
+  const box = L => L.length ? { x0: Math.min(...L.map(b => b.x)), y0: Math.min(...L.map(b => b.y)), x1: Math.max(...L.map(b => b.x + b.w)), y1: Math.max(...L.map(b => b.y + b.h)) } : null;
+  // cụm liền: hai khối chạm hoặc chồng nhau dọc một cạnh chung ≥ 0,5 m (chạm góc không tính)
+  function clusters(blocks, tol = 0.1) {
+    const L = blocks.filter(solid), n = L.length, p = L.map((_, i) => i), f = i => p[i] === i ? i : (p[i] = f(p[i]));
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const a = L[i], b = L[j];
+      const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+      if ((ox >= -tol && oy >= 0.5) || (oy >= -tol && ox >= 0.5)) p[f(i)] = f(j);
+    }
+    const m = new Map(); L.forEach((b, i) => { const r = f(i); if (!m.has(r)) m.set(r, []); m.get(r).push(b); });
+    return [...m.values()].map(bs => ({ ...box(bs), n: bs.length, blocks: bs })).sort((a, b) => a.y0 - b.y0 || a.x0 - b.x0);
+  }
+  // các đường cần vẽ: tổng (phía Bắc, phía Tây) và từng cụm từ 2 khối (phía Nam, phía Đông)
+  function dims(blocks) {
+    const L = blocks.filter(solid); if (!L.length) return { all: null, cl: [], sh: [], lines: [] };
+    const all = box(L), cl = clusters(L), lines = [];
+    const W = all.x1 - all.x0, H = all.y1 - all.y0;
+    lines.push({ ax: "x", a: all.x0, b: all.x1, at: all.y0 - 4.2, from: all.y0, t: `Tổng Đông – Tây ${nf(W)} m`, tot: 1 });
+    lines.push({ ax: "y", a: all.y0, b: all.y1, at: all.x0 - 4.2, from: all.x0, t: `Tổng Bắc – Nam ${nf(H)} m`, tot: 1 });
+    const same = c => Math.abs(c.x0 - all.x0) < 0.02 && Math.abs(c.x1 - all.x1) < 0.02 && Math.abs(c.y0 - all.y0) < 0.02 && Math.abs(c.y1 - all.y1) < 0.02;
+    const sh = cl.filter(c => c.n >= 2 && !same(c));
+    sh.forEach((c, i) => {
+      lines.push({ ax: "x", a: c.x0, b: c.x1, at: c.y1 + 1.4, from: c.y1, t: `Cụm ${i + 1}: ${nf(c.x1 - c.x0)} m`, ci: i + 1 });
+      lines.push({ ax: "y", a: c.y0, b: c.y1, at: c.x1 + 1.4, from: c.x1, t: `Cụm ${i + 1}: ${nf(c.y1 - c.y0)} m`, ci: i + 1 });
+    });
+    return { all, cl, sh, lines, W, H };
+  }
+  // vẽ lên mặt bằng SVG (PX đơn vị SVG cho 1 m)
+  function svg(parent, blocks, PX, o = {}) {
+    const D = dims(blocks); if (!D.all) return D;
+    const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
+    const g = el("g", { class: "xdim", "pointer-events": "none" }, parent), fs = o.fs || 15, tk = 0.45;
+    for (const l of D.lines) {
+      const c = l.tot ? "var(--ink)" : "var(--xdimC, #0e7490)", sw = l.tot ? 1.6 : 1.3, gg = el("g", {}, g);
+      const P = (u, v) => l.ax === "x" ? [u * PX, v * PX] : [v * PX, u * PX];
+      const [x1, y1] = P(l.a, l.at), [x2, y2] = P(l.b, l.at);
+      el("line", { x1, y1, x2, y2, stroke: c, "stroke-width": sw }, gg);
+      for (const u of [l.a, l.b]) {
+        const [ex1, ey1] = P(u, l.from + (l.at > l.from ? 0.3 : -0.3)), [ex2, ey2] = P(u, l.at + (l.at > l.from ? 0.6 : -0.6));
+        el("line", { x1: ex1, y1: ey1, x2: ex2, y2: ey2, stroke: c, "stroke-width": 0.9, opacity: 0.8 }, gg);
+        const [tx1, ty1] = P(u - tk, l.at + tk), [tx2, ty2] = P(u + tk, l.at - tk);
+        el("line", { x1: tx1, y1: ty1, x2: tx2, y2: ty2, stroke: c, "stroke-width": 2.2 }, gg);
+      }
+      const mid = (l.a + l.b) / 2, off = l.at > l.from ? 0.95 : -0.95, [tx, ty] = P(mid, l.at + off);
+      const t = el("text", { x: tx, y: ty, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": l.tot ? fs + 1 : fs - 1, "font-weight": l.tot ? 800 : 700, fill: c, stroke: "var(--sheet)", "stroke-width": 4, "paint-order": "stroke", "font-family": "var(--body)", transform: l.ax === "y" ? `rotate(-90 ${tx} ${ty})` : null }, gg);
+      t.textContent = l.t;
+    }
+    return D;
+  }
+  // vẽ trong 3D (three.js): đường kích thước nằm ở cao độ z, nhãn là sprite
+  function three(THREE, group, blocks, z, o = {}) {
+    const D = dims(blocks); if (!D.all) return D;
+    const ink = new THREE.Color(o.ink || "#222"), tc = new THREE.Color(o.cl || "#0e7490");
+    const tex = (t, col) => { const cv = document.createElement("canvas"); cv.width = 1024; cv.height = 128; const x = cv.getContext("2d"); x.font = `bold 64px "Be Vietnam Pro", system-ui, sans-serif`; x.textAlign = "center"; x.textBaseline = "middle"; x.lineWidth = 14; x.strokeStyle = o.halo || "rgba(255,255,255,0.92)"; x.strokeText(t, 512, 66); x.fillStyle = col; x.fillText(t, 512, 66); return new THREE.CanvasTexture(cv); };
+    for (const l of D.lines) {
+      const col = l.tot ? ink : tc, m = new THREE.LineBasicMaterial({ color: col, depthTest: false, transparent: true });
+      const P = (u, v) => l.ax === "x" ? new THREE.Vector3(u, z, v) : new THREE.Vector3(v, z, u);
+      const L = pts => { const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), m); ln.renderOrder = 5; group.add(ln); };
+      L([P(l.a, l.at), P(l.b, l.at)]);
+      for (const u of [l.a, l.b]) { L([P(u, l.from), P(u, l.at + (l.at > l.from ? 0.6 : -0.6))]); L([P(u - 0.5, l.at + 0.5), P(u + 0.5, l.at - 0.5)]); }
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex(l.t, "#" + col.getHexString()), depthTest: false, transparent: true }));
+      const k = o.scale || 1, q = P((l.a + l.b) / 2, l.at + (l.at > l.from ? 1.8 : -1.8) * k); sp.position.set(q.x, z + 0.9 * k, q.z); const s = (l.tot ? 1.2 : 1) * k; sp.scale.set(20 * s, 2.5 * s, 1); sp.renderOrder = 6; group.add(sp);
+    }
+    return D;
+  }
+  // một dòng chữ tóm tắt
+  function text(blocks) {
+    const D = dims(blocks); if (!D.all) return "";
+    const cl = D.sh;
+    return `Tổng Đông – Tây ${nf(D.W)} m × Bắc – Nam ${nf(D.H)} m` + (D.cl.length > 1 ? ` · ${D.cl.length} cụm rời${cl.length ? ": " + cl.map((c, i) => `cụm ${i + 1} ${nf(c.x1 - c.x0, 1)} × ${nf(c.y1 - c.y0, 1)} m`).join(", ") : ""}` : " · liền một khối");
+  }
+  G.XDIM = { clusters, dims, svg, three, text };
+})();
 
 /* ================= Tự xếp khối: 20 khối A1–E6 đúng diện tích đề, kéo thả lên khu đất, 2–3 tầng =================
    Bạn tự xếp hình khối; bấm "Lưu cho Claude" để Claude đọc bản xếp (db: xepkhoi/ban-moi-nhat) rồi làm mặt bằng hoàn chỉnh.
@@ -20206,7 +20294,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   let sel = null, hover = null, mode = "1", seq = 1, ISS = [], BAD = new Set();
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h" }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h", dims: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -20247,7 +20335,9 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
   const CSS = `
 #x10-host { width: min(1560px, calc(100vw - 40px)); margin-left: calc((100% - min(1560px, calc(100vw - 40px))) / 2); justify-self: start; }
 .x10 [hidden] { display: none !important; }
-.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; }
+.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; --xdimC: #0e7490; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .x10 { --xdimC: #5fd0e6; } }
+:root[data-theme="dark"] .x10 { --xdimC: #5fd0e6; }
 .x10 .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .x10 .btn:disabled { opacity: .45; cursor: default; }
 .x10 .seg { display: inline-flex; flex-wrap: wrap; gap: 0; }
@@ -20377,6 +20467,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     <label class="opt"><input type="checkbox" id="x10-cut" ${UI.cut ? "checked" : ""}> Cắt 3D theo tầng đang xếp</label>
     <label class="opt"><input type="checkbox" id="x10-sh" ${UI.shadow ? "checked" : ""}> Bóng đổ</label>
     <label class="opt"><input type="checkbox" id="x10-pp" ${UI.people ? "checked" : ""}> Người 1,7 m</label>
+    <label class="opt"><input type="checkbox" id="x10-dm" ${UI.dims ? "checked" : ""}> Kích thước tổng</label>
   </div>
   <div class="lg"><span><i style="border:2px dashed var(--ink-2)"></i>tầng dưới</span><span><i style="border:2px dotted var(--ink)"></i>tầng trên</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Red) 0 2px,transparent 2px 6px);border:1px solid var(--x10Red)"></i>đua quá 4 m, cần cột</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Green) 0 2px,transparent 2px 6px);border:1px solid var(--x10Green)"></i>mái lộ: lấy sáng mái, sân thượng</span><span><i style="background:#2f8fd6;height:4px"></i>mặt Bắc/Nam hở lấy sáng</span><span><i style="border-top:2px dashed var(--x10Guide)"></i>đường dóng khi kéo</span></div>
   <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
@@ -20419,6 +20510,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     $("#x10-cut").addEventListener("change", e => { UI.cut = e.target.checked; saveUI(); iso(); });
     $("#x10-sh").addEventListener("change", e => { UI.shadow = e.target.checked; saveUI(); iso(); });
     $("#x10-pp").addEventListener("change", e => { UI.people = e.target.checked; saveUI(); iso(); });
+    $("#x10-dm").addEventListener("change", e => { UI.dims = e.target.checked; saveUI(); renderPlan(); iso(); });
     host.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => { const v = b.dataset.v; if (v === "l") VIEW.yaw -= 45; else if (v === "r") VIEW.yaw += 45; else if (v === "top") VIEW.pitch = 88; else { VIEW.yaw = 35; VIEW.pitch = 32; VIEW.zoom = 1; VIEW.tx = 24; VIEW.tz = 52; } T3 ? draw3() : isoSvg(); }));
     $("#x10-pan").addEventListener("click", e => { VIEW.pan = !VIEW.pan; e.currentTarget.setAttribute("aria-pressed", String(VIEW.pan)); });
     $("#x10-up").addEventListener("click", () => setMode(String(mode === "all" ? 1 : Math.min(NF, +mode + 1))));
@@ -20518,7 +20610,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const pat = (id, c, w = 1.5, op = 0.35) => { const p = el("pattern", { id, width: 8, height: 8, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs); el("line", { x1: 0, y1: 0, x2: 0, y2: 8, stroke: c, "stroke-width": w, opacity: op }, p); };
     pat("x10h", "var(--ink-2)"); pat("x10r", "var(--x10Red)", 3.2, 0.85); pat("x10g", "var(--x10Green)", 3, 0.75);
     R(0, 0, 41.5, 104, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5 });
-    R(0, 0, 6, 104, { fill: "var(--road)" }); T("Lối Tây · xe cứu hỏa, xe giao sách", 3, 52, { transform: `rotate(-90 ${3 * PX} ${52 * PX})` });
+    R(0, 0, 6, 104, { fill: "var(--road)" }); T("Lối Tây · xe cứu hỏa, xe giao sách", 4.6, 52, { transform: `rotate(-90 ${4.6 * PX} ${52 * PX})`, "font-size": 15 });
     R(6, 0, 35.5, 12, { fill: "var(--pave)" }); T("Quảng trường Bắc", 23.75, 6);
     R(6, 89, 35.5, 15, { fill: "var(--road)" }); T("Bãi xe", 23.75, 96.5);
     R(41.5, 0, 6, 104, { fill: "var(--water)" }); T("Bờ sông · Bạch Đằng", 44.5, 52, { transform: `rotate(90 ${44.5 * PX} ${52 * PX})` });
@@ -20529,7 +20621,7 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     const nAng = window.ARC_NORTH != null ? window.ARC_NORTH : 20, ng = el("g", { transform: `translate(${44.5 * PX} ${10 * PX}) rotate(${nAng}) scale(1.4)` }, svg);
     el("path", { d: "M0 -16 L8 8 L0 4 L-8 8 Z", fill: "var(--ink)" }, ng); const nt = el("text", { x: 0, y: -22, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "var(--ink)" }, ng); nt.textContent = "Bắc";
     const f = curF();
-    { const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng"; }
+    { const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = (f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng") + (UI.dims && G.XDIM ? " · " + G.XDIM.text(S.blocks.filter(b => onSite(b) && (!f || b.f === f))) : ""); }
 
     ISS = check(); BAD = new Set(ISS.filter(i => !i.ok).flatMap(i => i.ids || []));
     { let ppm = 0; try { ppm = svg.getScreenCTM().a * PX; } catch (e) { /* chưa gắn vào trang */ } HT = ppm > 0 ? Math.max(0.2, Math.min(1.2, 9 / ppm)) : 0.5; }
@@ -20552,6 +20644,8 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     for (const b of cur.sort((a, b) => (a.kind === "court") - (b.kind === "court") || a.f - b.f)) drawBlock(b);
     // khối tầng trên: viền chấm
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
+    // kích thước tổng: cả tầng (phía Bắc, Tây) và từng cụm khối liền nhau (phía Nam, Đông)
+    if (UI.dims && G.XDIM) G.XDIM.svg(svg, cur, PX, { fs: 16 });
     // bàn nháp
     R(DRAFT.x0 - 0.5, DRAFT.y0, DRAFT.x1 - DRAFT.x0 + 1, DRAFT.y1 - DRAFT.y0, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "10 6", rx: 12 });
     T("Bàn nháp", (DRAFT.x0 + DRAFT.x1) / 2, DRAFT.y0 + 2.2, { "font-size": 24, "font-weight": 800, fill: "var(--ink)" });
@@ -21293,6 +21387,8 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
       if (UI.explode > 0 && b.f >= 2 && state !== "wire") for (const [x, z] of [[0, 0], [b.w, 0], [b.w, b.h], [0, b.h]]) { const v = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, 0, z), new THREE.Vector3(x, -UI.explode, z)]), new THREE.LineDashedMaterial({ color: C("var(--accent)"), dashSize: 0.5, gapSize: 0.4 })); v.computeLineDistances(); grp.add(v); }
       T3.objs[b.id] = { grp, mesh, edges, edgeCol: ec, b };
     }
+    // kích thước tổng trong 3D: tầng đang xếp (ở cao độ sàn tầng đó) hoặc cả nhà (trên mặt đất)
+    if (UI.dims && G.XDIM) { const fl = f || null, bl = S.blocks.filter(b => onSite(b) && (!fl || b.f === fl)); G.XDIM.three(THREE, g, bl, fl ? FH[fl] + (fl - 1) * UI.explode + 0.12 : 0.3, { ink: inkHex, cl: cssCol("var(--xdimC, #0e7490)", scope) || "#0e7490", halo: cssCol("var(--sheet)", scope) }); }
     // nhãn từng tầng khi tách tầng
     if (UI.explode > 0) for (let fl = 1; fl <= NF; fl++) {
       const on = S.blocks.filter(b => onSite(b) && isFloor(b) && b.f === fl); if (!on.length) continue;
@@ -21389,4 +21485,221 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
   document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
   setTimeout(check, 5000);
 })();
+
+/* Final 1: file xep-khoi-arc329.json bạn gửi ngày 08/11/2026, giữ nguyên 100%, không thêm sửa xoá */
+(function(){window.G3=window.G3||{};window.G3.F1={"kind": "arc329-xep-khoi", "v": 1, "savedAt": "2026-11-07T16:59:20.636Z", "note": "Bắt đầu từ X.7 · Bản xếp của bạn, khít lại, sửa chỗ nhầm. Bắt đầu từ A.4 · Khe chéo, lõi sách ở bản lề. ", "from": "X.7", "blocks": [{"id": "X.7:1:D2", "c": "D2", "n": "Bục trình bày", "kind": "room", "a": 24.08, "x": 6.57, "y": 16.55, "w": 3.756, "h": 6.411, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:D3", "c": "D3", "n": "Kho bàn ghế sự kiện", "kind": "room", "a": 22, "x": 6.57, "y": 22.96, "w": 3.758, "h": 5.854, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:D1", "c": "D1", "n": "Phòng đa năng", "kind": "room", "a": 190.5, "x": 10.32, "y": 16.55, "w": 15.46, "h": 12.322, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:D4", "c": "D4", "n": "Phòng sinh hoạt chuyên đề", "kind": "room", "a": 67.5, "x": 25.78, "y": 16.55, "w": 9.5, "h": 7.11, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:WCP", "c": "E5", "n": "Vệ sinh công cộng, sự kiện (mở ngoài giờ)", "kind": "room", "a": 26.66, "x": 35.28, "y": 16.55, "w": 3.75, "h": 7.11, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:CO3", "c": "circ", "n": "Hành lang sự kiện", "kind": "circ", "a": null, "x": 25.78, "y": 23.66, "w": 13.25, "h": 5.207, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:FOYA", "c": "circ", "n": "Sảnh sự kiện, cà phê", "kind": "circ", "a": null, "x": 27.9, "y": 28.87, "w": 4.048, "h": 9.937, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:A3", "c": "A3", "n": "Cà phê sách", "kind": "room", "a": 70, "x": 31.95, "y": 28.86, "w": 7.051, "h": 9.927, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:A1", "c": "A1", "n": "Đón tiếp và thông tin", "kind": "room", "a": 82, "x": 19.03, "y": 38.79, "w": 10, "h": 8.2, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:A2", "c": "A2", "n": "Trưng bày", "kind": "room", "a": 82, "x": 29.03, "y": 38.79, "w": 10, "h": 8.2, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:CS", "c": "core", "n": "Lõi sách: thang bộ + thang máy + tời sách", "kind": "book", "a": null, "x": 6, "y": 38.79, "w": 8.5, "h": 4, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:C1", "c": "C1", "n": "Kho đóng", "kind": "room", "a": 116, "x": 6, "y": 42.79, "w": 8.5, "h": 13.647, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:HA", "c": "circ", "n": "Lối vào quầy (khóa ngoài giờ)", "kind": "circ", "a": null, "x": 19.03, "y": 46.957, "w": 1.5, "h": 14.646, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:A4", "c": "A4", "n": "Gửi đồ, mượn trả, cổng từ (kiểm soát sách)", "kind": "room", "a": 30, "x": 14.5, "y": 53.11, "w": 3.53, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:C2", "c": "C2", "n": "Xử lý nghiệp vụ", "kind": "room", "a": 66, "x": 6, "y": 56.44, "w": 8.5, "h": 7.765, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:C4", "c": "C4", "n": "Tiếp nhận sách", "kind": "room", "a": 33, "x": 6, "y": 64.2, "w": 8.5, "h": 3.882, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:HL", "c": "circ", "n": "Sảnh thư viện sau cổng từ", "kind": "circ", "a": null, "x": 14.5, "y": 61.606, "w": 6.03, "h": 5.874, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:B3", "c": "B3", "n": "Thiếu nhi và gia đình", "kind": "room", "a": 165.5, "x": 19.7, "y": 67.48, "w": 19.47, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:WCB", "c": "E5", "n": "Vệ sinh thiếu nhi, thay tã", "kind": "room", "a": 13.4, "x": 35.42, "y": 80.44, "w": 3.35, "h": 4, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:WCL1", "c": "E5", "n": "Vệ sinh tầng 1 (nhân viên)", "kind": "room", "a": 20.25, "x": 10, "y": 71.48, "w": 4.5, "h": 4.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:E6", "c": "E6", "n": "Dụng cụ vệ sinh, kho chung", "kind": "room", "a": 18, "x": 6, "y": 71.48, "w": 4, "h": 4.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:E1", "c": "E1", "n": "Văn phòng", "kind": "room", "a": 80.8, "x": 9.9, "y": 80.44, "w": 9.5, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:E2", "c": "E2", "n": "Phòng nhân viên", "kind": "room", "a": 40, "x": 19.4, "y": 80.44, "w": 4.7, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:E4", "c": "E4", "n": "Kỹ thuật (điện, bơm, máy lạnh)", "kind": "room", "a": 55.3, "x": 24.1, "y": 80.44, "w": 6.5, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:C3", "c": "C3", "n": "Lưu trữ tài liệu địa phương", "kind": "room", "a": 41, "x": 30.6, "y": 80.5, "w": 4.824, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:LC", "c": "circ", "n": "Lối nhân viên", "kind": "circ", "a": null, "x": 69.25, "y": 71.48, "w": 4, "h": 4.5, "f": 1, "top": false, "onSite": false, "draft": true}, {"id": "X.7:1:E3", "c": "E3", "n": "Trực bảo vệ", "kind": "room", "a": 15.1, "x": 35.42, "y": 84.44, "w": 3.356, "h": 4.5, "f": 1, "top": false, "onSite": true}, {"id": "X.7:1:STE2", "c": "core", "n": "Thang thoát hiểm Tây Nam", "kind": "stair", "a": null, "x": 5.9, "y": 82.76, "w": 4, "h": 6, "f": 1, "top": false, "onSite": true}, {"id": "X.7:2:CS2", "c": "core", "n": "Lõi sách tầng 2 (thẳng lõi tầng 1)", "kind": "book", "a": null, "x": 5.9, "y": 38.79, "w": 8.5, "h": 4, "f": 2, "top": false, "onSite": true}, {"id": "X.7:2:STS", "c": "core", "n": "Thang bộ Bắc", "kind": "stair", "a": null, "x": 14.8, "y": 38.79, "w": 4, "h": 6, "f": 2, "top": false, "onSite": true}, {"id": "X.7:2:B1e", "c": "B1", "n": "Đọc mở và kệ (trên sảnh)", "kind": "room", "a": 99.41, "x": 9.99, "y": 80.36, "w": 11.835, "h": 8.4, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B1b", "c": "B1", "n": "Đọc mở và kệ (góc Tây Bắc)", "kind": "room", "a": 23.27, "x": 16.03, "y": 46.99, "w": 4.5, "h": 5.171, "f": 2, "top": false, "onSite": true}, {"id": "X.7:2:B1f", "c": "B1", "n": "Bàn đọc cá nhân", "kind": "room", "a": 17.5, "x": 16.03, "y": 52.15, "w": 4.5, "h": 3.889, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B5", "c": "B5", "n": "Tra cứu số", "kind": "room", "a": 90, "x": 6, "y": 42.783, "w": 6.78, "h": 13.274, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B6", "c": "B6", "n": "Đọc linh hoạt, hỗ trợ tra cứu", "kind": "room", "a": 51.5, "x": 16.03, "y": 56.04, "w": 4.5, "h": 11.444, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B4a", "c": "B4", "n": "Học nhóm 1", "kind": "room", "a": 24.8, "x": 6.13, "y": 63.67, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B4c", "c": "B4", "n": "Học nhóm 2", "kind": "room", "a": 24.8, "x": 6.13, "y": 59.86, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B4d", "c": "B4", "n": "Học nhóm 3", "kind": "room", "a": 24.8, "x": 6.13, "y": 67.48, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B4b", "c": "B4", "n": "Học nhóm 4", "kind": "room", "a": 24.8, "x": 6.13, "y": 56.05, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:SpA0", "c": "circ", "n": "Hành lang đệm dưới tra cứu số", "kind": "circ", "a": null, "x": 56, "y": 65.2, "w": 6.5, "h": 2.05, "f": 2, "top": false, "onSite": false, "draft": true}, {"id": "X.7:2:SpA", "c": "circ", "n": "Hành lang học nhóm", "kind": "circ", "a": null, "x": 79.74, "y": 59.24, "w": 4.02, "h": 20.29, "f": 2, "top": false, "onSite": false, "draft": true}, {"id": "X.7:2:B1a", "c": "B1", "n": "Đọc mở và kệ (trên thiếu nhi, Tây)", "kind": "room", "a": 72.3, "x": 18.8, "y": 38.79, "w": 8.817, "h": 8.2, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B1w", "c": "B1", "n": "Đọc mở và kệ (trên thiếu nhi, Đông)", "kind": "room", "a": 165.6, "x": 19.7, "y": 67.48, "w": 19.482, "h": 8.5, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:WCL2", "c": "E5", "n": "Vệ sinh thư viện tầng 2", "kind": "room", "a": 16.69, "x": 6.13, "y": 71.48, "w": 3.71, "h": 4.499, "f": 2, "top": false, "onSite": true}, {"id": "X.7:2:KW", "c": "circ", "n": "Lối vào vệ sinh", "kind": "circ", "a": null, "x": 60, "y": 82.76, "w": 2.5, "h": 3, "f": 2, "top": false, "onSite": false, "draft": true}, {"id": "X.7:2:B1m", "c": "B1", "n": "Đọc mở và kệ (dải Nam)", "kind": "room", "a": 93.2, "x": 27.62, "y": 38.73, "w": 11.366, "h": 8.2, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:B2", "c": "B2", "n": "Đọc yên tĩnh", "kind": "room", "a": 144, "x": 21.82, "y": 80.36, "w": 17.18, "h": 8.38, "f": 2, "top": true, "onSite": true}, {"id": "X.7:2:STW2", "c": "core", "n": "Thang thoát hiểm Tây Nam", "kind": "stair", "a": null, "x": 6, "y": 82.76, "w": 4, "h": 6, "f": 2, "top": false, "onSite": true}, {"id": "stair·oflc1", "c": "core", "n": "Thang bộ", "kind": "stair", "a": null, "x": 15.7, "y": 69.98, "w": 4, "h": 6, "f": 2, "top": false, "onSite": true}, {"id": "stair·tbuq1", "c": "core", "n": "Thang bộ", "kind": "stair", "a": null, "x": 15.03, "y": 38.79, "w": 4.008, "h": 6, "f": 1, "top": false, "onSite": true}, {"id": "circ·zwdz2", "c": "circ", "n": "Sảnh, hành lang", "kind": "circ", "a": null, "x": 62.5, "y": 45.76, "w": 8.5, "h": 2.9, "f": 1, "top": false, "onSite": false, "draft": true}, {"id": "circ·ki153", "c": "circ", "n": "Sảnh, hành lang", "kind": "circ", "a": null, "x": 15.03, "y": 44.79, "w": 4.008, "h": 8.345, "f": 1, "top": false, "onSite": true}, {"id": "stair·tvts4", "c": "core", "n": "Thang bộ", "kind": "stair", "a": null, "x": 15.7, "y": 69.98, "w": 4, "h": 6, "f": 1, "top": false, "onSite": true}]};})();
+
+/* ================= Tab Final 1: bản xếp khối của bạn, giữ nguyên 100% =================
+   Dữ liệu là file xep-khoi-arc329.json bạn gửi (G3.F1), không thêm, sửa, xoá khối nào.
+   Mặt bằng chi tiết dựng y như khung "Mặt bằng chi tiết" trong tab Tự xếp khối:
+   P6.fromBlocks(phương án nguồn trong file, các khối trên khu đất), không vá cửa hay hành lang. */
+(function (G) {
+  if (!G || !G.F1) return;
+  const host = document.getElementById("f1-host");
+  if (!host) return;
+  const F = G.F1, NS = "http://www.w3.org/2000/svg";
+  const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const nf = (v, d = 0) => (+v).toLocaleString("vi-VN", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const KIND = { room: "Phòng", circ: "Sảnh, hành lang", stair: "Thang bộ", lift: "Thang bộ + thang máy", book: "Lõi sách", court: "Sân trong" };
+  const col = b => b.kind === "room" ? `var(--z${b.c[0]})` : b.kind === "stair" ? "var(--f1Stair)" : b.kind === "lift" || b.kind === "book" ? "var(--f1Lift)" : b.kind === "court" ? "var(--zOut)" : "var(--zCirc)";
+  const label = b => b.kind === "room" ? b.c : b.kind === "book" ? "Lõi sách" : b.kind === "circ" ? "Sảnh, hành lang" : KIND[b.kind] || b.kind;
+  const onSite = b => b.onSite && !b.draft;
+  const SITEB = F.blocks.filter(onSite), DRAFT = F.blocks.filter(b => !onSite(b));
+  const floors = [...new Set(SITEB.map(b => b.f))].sort();
+  const saved = (() => { try { return new Date(F.savedAt).toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh", hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit", year: "numeric" }); } catch (e) { return F.savedAt; } })();
+  const CSS = `
+.f1 { display: grid; gap: 28px; --f1Stair: #e08a3c; --f1Lift: #8a6cc7; --xdimC: #0e7490; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .f1 { --xdimC: #5fd0e6; } }
+:root[data-theme="dark"] .f1 { --xdimC: #5fd0e6; }
+.f1 .bar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.f1 .bar .k { font: 600 12px var(--mono); color: var(--ink-2); }
+.f1 .seg button { font: 600 13px var(--body); padding: 6px 10px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; margin-right: -1px; }
+.f1 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.f1 .seg button:focus-visible, .f1 .btn:focus-visible, .f1 label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.f1 .btn { font: 600 13px var(--body); padding: 6px 12px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; border-radius: 3px; }
+.f1 label.ck { font: 600 13px var(--body); display: inline-flex; gap: 5px; align-items: center; }
+.f1 .stat { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; }
+.f1 .stat b { font-variant-numeric: tabular-nums; }
+.f1 .kp { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; align-items: start; }
+.f1 .kp figure { margin: 0; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); }
+.f1 .kp figcaption { font: 700 13px var(--body); padding: 8px 10px 0; }
+.f1 .kp svg { display: block; width: 100%; height: auto; }
+.f1 .v3 { position: relative; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); height: min(62vh, 560px); touch-action: none; cursor: grab; }
+.f1 .v3 canvas { display: block; width: 100%; height: 100%; }
+.f1 .v3 .zm { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; }
+.f1 .v3 .zm button { width: 30px; height: 30px; font: 700 16px var(--body); border: 1px solid var(--ink); background: var(--sheet); color: var(--ink); cursor: pointer; border-radius: 3px; }
+.f1 .leg { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; }
+.f1 .leg span { display: inline-flex; align-items: center; gap: 6px; }
+.f1 .leg i { display: inline-block; width: 12px; height: 12px; border: 1px solid var(--ink); }
+.f1 .tw { overflow-x: auto; }
+.f1 table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.f1 th, .f1 td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.f1 td.num, .f1 th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.f1 .note { font-size: 13px; color: var(--ink-2); }
+.f1 details.er summary { cursor: pointer; font-weight: 700; }
+.f1 details.er ul { font-size: 13px; columns: 2 360px; margin: 8px 0 0; padding-left: 18px; }
+.f1 .p6 { gap: 12px; }
+`;
+  /* ---------- mặt bằng khối từng tầng (giống khung xếp khối) ---------- */
+  function blockPlan(f) {
+    const PX = 10, svg = el("svg", { viewBox: `-2 ${7 * PX} ${48.5 * PX} ${87 * PX}`, role: "img", "aria-label": `Bản xếp khối tầng ${f}` });
+    const R = (x, y, w, h, a) => el("rect", { x: x * PX, y: y * PX, width: w * PX, height: h * PX, ...a }, svg);
+    const T = (s, x, y, a = {}) => { const e = el("text", { x: x * PX, y: y * PX, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 13, fill: "var(--ink-2)", "font-family": "var(--body)", ...a }, svg); e.textContent = s; return e; };
+    R(0, 0, 41.5, 104, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5 });
+    R(0, 0, 6, 104, { fill: "var(--road)" }); T("Lối Tây", 4.9, 30, { transform: `rotate(-90 ${4.9 * PX} ${30 * PX})`, "font-size": 11 });
+    R(6, 0, 35.5, 12, { fill: "var(--pave)" }); T("Quảng trường Bắc", 23.75, 8.6);
+    R(6, 89, 35.5, 15, { fill: "var(--road)" }); T("Bãi xe", 23.75, 91.5);
+    R(41.5, 0, 6, 104, { fill: "var(--water)" }); T("Bờ sông · Bạch Đằng", 44.5, 52, { transform: `rotate(90 ${44.5 * PX} ${52 * PX})` });
+    for (let x = 6; x <= 41.5; x += 8) el("line", { x1: x * PX, y1: 12 * PX, x2: x * PX, y2: 89 * PX, stroke: "var(--line)", "stroke-dasharray": "4 6" }, svg);
+    for (let y = 12; y <= 89; y += 8) el("line", { x1: 6 * PX, y1: y * PX, x2: 41.5 * PX, y2: y * PX, stroke: "var(--line)", "stroke-dasharray": "4 6" }, svg);
+    R(6, 12, 35.5, 77, { fill: "none", stroke: "var(--accent)", "stroke-width": 1.5, "stroke-dasharray": "8 5" });
+    // tầng khác: chỉ viền nét đứt để so
+    for (const b of SITEB.filter(b => b.f !== f)) R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink-2)", "stroke-width": 1, "stroke-dasharray": b.f < f ? "5 4" : "2 3", opacity: 0.8 });
+    for (const b of SITEB.filter(b => b.f === f)) {
+      R(b.x, b.y, b.w, b.h, { fill: col(b), stroke: "var(--ink)", "stroke-width": 1.2, opacity: 0.96 });
+      if (b.w * b.h >= 6) {
+        const big = b.w >= 6 && b.h >= 4, cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+        const t1 = T(label(b) + (b.top ? " ☀" : ""), cx, cy - (big ? 0.9 : 0), { "font-size": big ? 19 : b.w < 4.5 ? 10 : 12, "font-weight": 800, fill: "var(--ink)" });
+        if (!big && b.w < 2) t1.setAttribute("transform", `rotate(-90 ${cx * PX} ${cy * PX})`);
+        if (big) T(`${nf(b.w * b.h, 0)} m² · ${nf(b.w, 1)} × ${nf(b.h, 1)}`, cx, cy + 1.3, { "font-size": 11.5 });
+      }
+    }
+    if (G.XDIM) G.XDIM.svg(svg, SITEB.filter(b => b.f === f), PX, { fs: 13 });
+    const nAng = window.ARC_NORTH != null ? window.ARC_NORTH : 20, ng = el("g", { transform: `translate(${44.5 * PX} ${15 * PX}) rotate(${nAng}) scale(1.2)` }, svg);
+    el("path", { d: "M0 -16 L8 8 L0 4 L-8 8 Z", fill: "var(--ink)" }, ng); const nt = el("text", { x: 0, y: -22, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "var(--ink)" }, ng); nt.textContent = "Bắc";
+    return svg;
+  }
+  /* ---------- khối 3D ---------- */
+  let V = null;
+  function view3d(box) {
+    const THREE = window.THREE; if (!THREE) { box.innerHTML = `<p class="note" style="padding:12px">Trình duyệt chưa nạp được 3D.</p>`; return; }
+    let r; try { r = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { box.innerHTML = `<p class="note" style="padding:12px">Trình duyệt không mở được WebGL.</p>`; return; }
+    r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); box.prepend(r.domElement);
+    const cs = getComputedStyle(host), C = v => { const m = /var\((--[\w-]+)\)/.exec(v); return new THREE.Color((m ? cs.getPropertyValue(m[1]) : v).trim() || "#999"); };
+    const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, 1, 2000);
+    sc.add(new THREE.HemisphereLight(0xffffff, 0x8a8f8c, 0.62)); sc.add(new THREE.AmbientLight(0xffffff, 0.25));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.6); sun.position.set(70, 90, 110); sc.add(sun);
+    const g = new THREE.Group(); sc.add(g);
+    const slab = (x0, y0, x1, y1, z0, z1, c, op) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, z1 - z0, y1 - y0), new THREE.MeshLambertMaterial({ color: C(c), transparent: op != null, opacity: op ?? 1 })); m.position.set((x0 + x1) / 2, (z0 + z1) / 2, (y0 + y1) / 2); g.add(m); return m; };
+    slab(-6, -6, 54, 110, -0.3, -0.05, "var(--road)");
+    slab(0, 0, 41.5, 104, -0.05, 0.02, "var(--sheet)");
+    slab(41.5, -6, 54, 110, -0.3, -0.02, "var(--water)");
+    const edge = new THREE.LineBasicMaterial({ color: C("var(--ink)"), transparent: true, opacity: 0.55 });
+    const z0 = f => 0.45 + 4.5 * (f - 1);
+    for (const b of SITEB) {
+      const core = /^(stair|lift|book)$/.test(b.kind);
+      const above = core && SITEB.some(o => o.f === b.f + 1 && /^(stair|lift|book)$/.test(o.kind) && Math.min(o.x + o.w, b.x + b.w) - Math.max(o.x, b.x) > 1 && Math.min(o.y + o.h, b.y + b.h) - Math.max(o.y, b.y) > 1);
+      const top = z0(b.f) + 4.5 + (core && !above ? 1.6 : 0);
+      const m = slab(b.x, b.y, b.x + b.w, b.y + b.h, z0(b.f), top, col(b), b.kind === "circ" ? 0.75 : null);
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), edge); e.position.copy(m.position); g.add(e);
+    }
+    const dg = new THREE.Group(); g.add(dg);
+    const dimsAt = k => { for (const c of [...dg.children]) { dg.remove(c); if (c.geometry) c.geometry.dispose(); if (c.material) { if (c.material.map) c.material.map.dispose(); c.material.dispose(); } }
+      if (!G.XDIM || k === "off") return; const fl = k === "all" ? null : +k; G.XDIM.three(THREE, dg, SITEB.filter(b => !fl || b.f === fl), fl ? z0(fl) + 0.12 : 0.3, { ink: "#" + C("var(--ink)").getHexString(), cl: "#" + C("var(--xdimC)").getHexString(), halo: "#" + C("var(--sheet)").getHexString() }); };
+    dimsAt(box.dataset.dk || "all");
+    box.parentNode.querySelectorAll("[data-dk]").forEach(b => b.addEventListener("click", () => { box.parentNode.querySelectorAll("[data-dk]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); dimsAt(b.dataset.dk); draw(); }));
+    const tgt = new THREE.Vector3(23.75, 4, 52);
+    const S = { th: -0.75, ph: 0.62, d: 115 };
+    const place = () => { cam.position.set(tgt.x + S.d * Math.cos(S.ph) * Math.sin(S.th), tgt.y + S.d * Math.sin(S.ph), tgt.z + S.d * Math.cos(S.ph) * Math.cos(S.th)); cam.lookAt(tgt); };
+    const draw = () => { const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); place(); r.render(sc, cam); };
+    let drag = null;
+    box.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; drag = { x: e.clientX, y: e.clientY, th: S.th, ph: S.ph }; box.setPointerCapture && box.setPointerCapture(e.pointerId); box.style.cursor = "grabbing"; });
+    box.addEventListener("pointermove", e => { if (!drag) return; S.th = drag.th - (e.clientX - drag.x) * 0.008; S.ph = Math.max(0.12, Math.min(1.45, drag.ph + (e.clientY - drag.y) * 0.006)); draw(); });
+    const up = () => { drag = null; box.style.cursor = ""; }; box.addEventListener("pointerup", up); box.addEventListener("pointercancel", up);
+    box.querySelector("[data-z='+']").addEventListener("click", () => { S.d = Math.max(50, S.d / 1.2); draw(); });
+    box.querySelector("[data-z='-']").addEventListener("click", () => { S.d = Math.min(400, S.d * 1.2); draw(); });
+    if (window.ResizeObserver) new ResizeObserver(draw).observe(box);
+    V = { draw }; draw();
+  }
+  /* ---------- mặt bằng chi tiết: y như khung "Mặt bằng chi tiết" lúc xếp ---------- */
+  let plan = null, R = null, src = null, lv = 0, sc = "0";
+  const ly = { furn: true, light: true, dim: false, staff: false, route: false, lab: true };
+  function makePlan() {
+    src = (G.CHOT || []).find(p => p.code === F.from) || null;
+    plan = G.P6.fromBlocks(src, SITEB.filter(b => b.kind !== "court"));
+    return plan;
+  }
+  function drawMB() {
+    const svg = host.querySelector("#f1-mb"); if (!svg || !G.P6V) return;
+    R = G.P6V.draw(svg, plan, lv, { ...ly, sc });
+    svg.style.minWidth = "0";
+    const S = G.P6V.SCN ? G.P6V.SCN.find(s => s[0] === sc) : null;
+    host.querySelector("#f1-scn").textContent = S ? S[2] : "";
+    host.querySelector("#f1-leg").innerHTML = G.P6V.legend ? G.P6V.legend(sc) : "";
+  }
+  /* ---------- khung trang ---------- */
+  function build() {
+    if (!document.getElementById("f1-style")) { const s = document.createElement("style"); s.id = "f1-style"; s.textContent = CSS; document.head.appendChild(s); }
+    if (G.P6V) G.P6V.css();
+    host.classList.add("f1");
+    const cnt = f => SITEB.filter(b => b.f === f).length;
+    const rooms = SITEB.filter(b => b.kind === "room"), sumR = rooms.reduce((t, b) => t + b.w * b.h, 0), sumC = SITEB.filter(b => b.kind !== "room" && b.kind !== "court").reduce((t, b) => t + b.w * b.h, 0);
+    let mbOk = true; try { makePlan(); } catch (e) { mbOk = false; console.error(e); }
+    host.innerHTML = `
+<section style="display:grid;gap:10px">
+  <p class="eyebrow">Final 1 · bản xếp khối của bạn</p>
+  <h2>Final 1: khối và mặt bằng, giữ nguyên 100%</h2>
+  <p class="lede">Đây là đúng file <b>xep-khoi-arc329.json</b> bạn xếp trong tab Tự xếp khối (lưu lúc ${esc(saved)}). Không khối nào bị thêm, sửa, xoá hay dời: vị trí, kích thước, tầng, mã phòng đều lấy thẳng từ file.</p>
+  <div class="stat"><span><b>${F.blocks.length}</b> khối trong file</span><span><b>${SITEB.length}</b> khối trên khu đất (${floors.map(f => `tầng ${f}: ${cnt(f)}`).join(", ")})</span><span><b>${DRAFT.length}</b> khối còn trên bàn nháp</span><span>Phòng cộng <b>${nf(sumR)}</b> m²</span><span>Thang, sảnh, hành lang <b>${nf(sumC)}</b> m²</span><span>Bắt đầu từ <b>${esc(F.from || "–")}</b></span></div>
+  ${F.note ? `<p class="note">Ghi chú trong file: ${esc(F.note)}</p>` : ""}
+  <div class="bar"><button type="button" class="btn" id="f1-dl">Tải file JSON gốc</button><span class="note">Mở lại trong tab Tự xếp khối bằng nút Nhập file của tab đó.</span></div>
+</section>
+<section style="display:grid;gap:12px">
+  <h3>Bản xếp khối từng tầng</h3>
+  <div class="kp">${floors.map(f => `<figure><figcaption>Tầng ${f} · ${cnt(f)} khối${G.XDIM ? `<br><span class="note" style="font-weight:500">${esc(G.XDIM.text(SITEB.filter(b => b.f === f)))}</span>` : ""}</figcaption><div data-kp="${f}"></div></figure>`).join("")}</div>
+  <div class="leg">${["A", "B", "C", "D", "E"].map(z => `<span><i style="background:var(--z${z})"></i>${{ A: "A Đón tiếp", B: "B Đọc", C: "C Kho, nghiệp vụ", D: "D Văn hóa", E: "E Hỗ trợ" }[z]}</span>`).join("")}<span><i style="background:var(--zCirc)"></i>Sảnh, hành lang</span><span><i style="background:var(--f1Stair)"></i>Thang bộ</span><span><i style="background:var(--f1Lift)"></i>Thang máy, lõi sách</span><span><i style="background:transparent;border-style:dashed"></i>Khối tầng khác</span><span>☀ lấy sáng mái</span></div>
+</section>
+<section style="display:grid;gap:10px">
+  <h3>Khối 3D</h3>
+  <div class="bar"><span class="k">Kích thước tổng</span><span class="seg" role="group" aria-label="Kích thước tổng trong 3D">${[["all", "Cả nhà"], ...floors.map(f => [String(f), "Tầng " + f]), ["off", "Ẩn"]].map(([k, t], i) => `<button type="button" data-dk="${k}" aria-pressed="${i === 0}">${t}</button>`).join("")}</span></div>
+  <div class="v3" id="f1-3d" aria-label="Khối 3D, kéo để xoay"><div class="zm"><button type="button" data-z="+" aria-label="Phóng to">+</button><button type="button" data-z="-" aria-label="Thu nhỏ">−</button></div></div>
+  <p class="note">Kéo để xoay. Tầng 1 cao từ +0,45 tới +4,95 m, tầng 2 tới +9,45 m; thang nhô khỏi mái 1,6 m.</p>
+</section>
+<section style="display:grid;gap:12px" class="p6">
+  <h3>Mặt bằng chi tiết</h3>
+  ${mbOk ? `<p class="note">Dựng y như khung "Mặt bằng chi tiết" lúc bạn xếp: lấy phương án ${esc(F.from)} rồi đặt lại từng phòng đúng theo khối của bạn. Cửa, nội thất theo ${esc(F.from)}; không vá thêm cửa hay hành lang, nên chỗ nào khối đã dời xa phòng nó có cửa tới thì cửa đó báo lỗi bên dưới. Khối trên bàn nháp không tính.</p>
+  <div class="stat" id="f1-mst"></div>
+  <div class="bar"><span class="k">Tầng</span><span class="seg" role="group" aria-label="Tầng">${plan.levels.map((L, i) => `<button type="button" data-lv="${i}" aria-pressed="${i === lv}">Tầng ${i + 1}</button>`).join("")}</span></div>
+  <div class="bar"><span class="k">Tình huống</span><span class="seg" role="group" aria-label="Tình huống">${(G.P6V && G.P6V.SCN || []).map(([k, t]) => `<button type="button" data-sc="${k}" aria-pressed="${k === sc}">${esc(t)}</button>`).join("")}</span></div>
+  <div class="bar"><span class="k">Lớp</span>${[["furn", "Nội thất"], ["light", "Cửa sổ Bắc/Nam, vùng tối"], ["dim", "Trục, kích thước"], ["staff", "Người trực"], ["route", "Tuyến đi"], ["lab", "Tên phòng"]].map(([k, t]) => `<label class="ck"><input type="checkbox" data-ly="${k}" ${ly[k] ? "checked" : ""}>${t}</label>`).join("")}</div>
+  <p class="note" id="f1-scn"></p>
+  <div class="plan"><svg id="f1-mb" role="img" aria-label="Mặt bằng chi tiết"></svg></div>
+  <div class="leg" id="f1-leg"></div>
+  <div class="two"><div style="display:grid;gap:10px"><h3>Kiểm tra theo đề</h3><ul class="chk" id="f1-chk"></ul></div>
+    <div style="display:grid;gap:10px"><h3>Diện tích và số chỗ so với đề</h3><div class="sheet scroll" id="f1-area"></div></div></div>
+  <details class="er" id="f1-er"><summary></summary><ul></ul></details>` : `<p class="note">Chưa dựng được mặt bằng chi tiết trên trình duyệt này.</p>`}
+</section>
+<section style="display:grid;gap:10px">
+  <h3>Bảng ${F.blocks.length} khối trong file</h3>
+  <p class="note">Toạ độ như các mặt bằng khác: x đi về phía Đông (sông), y đi về phía Nam, đơn vị mét. Số liệu lấy thẳng từ file, làm tròn khi hiển thị.</p>
+  <div class="tw"><table><thead><tr><th>Tầng</th><th>Mã</th><th>Tên</th><th>Loại</th><th class="num">x</th><th class="num">y</th><th class="num">Rộng Đ–T</th><th class="num">Sâu B–N</th><th class="num">m²</th><th>Ở đâu</th></tr></thead><tbody>
+  ${[...SITEB.slice().sort((a, b) => a.f - b.f || a.y - b.y || a.x - b.x), ...DRAFT].map(b => `<tr><td>${b.f}</td><td><b>${esc(b.kind === "room" ? b.c : "")}</b></td><td>${esc(b.n)}</td><td>${esc(KIND[b.kind] || b.kind)}</td><td class="num">${nf(b.x, 2)}</td><td class="num">${nf(b.y, 2)}</td><td class="num">${nf(b.w, 2)}</td><td class="num">${nf(b.h, 2)}</td><td class="num">${nf(b.w * b.h, 1)}</td><td>${onSite(b) ? "Khu đất" + (b.top ? " · lấy sáng mái" : "") : "Bàn nháp"}</td></tr>`).join("")}
+  </tbody></table></div>
+</section>`;
+    for (const f of floors) host.querySelector(`[data-kp="${f}"]`).appendChild(blockPlan(f));
+    host.querySelector("#f1-dl").addEventListener("click", () => {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(F, null, 1)], { type: "application/json" })); a.download = "xep-khoi-arc329-final1.json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+    view3d(host.querySelector("#f1-3d"));
+    if (!mbOk) return;
+    drawMB();
+    host.querySelector("#f1-mst").innerHTML = `<span>Tổng sàn <b>${nf(R.total)}</b> m²</span><span>Các phòng <b>${nf(R.use)}</b> m²</span><span>Giao thông <b>${nf(R.circ)}</b> m²</span><span><b style="color:${R.err.length ? "var(--warn)" : "var(--accent)"}">${R.err.length + R.levels.reduce((t, M) => t + M.err.length, 0)}</b> lỗi theo kiểm tra mặt bằng đầy đủ</span>`;
+    host.querySelector("#f1-chk").innerHTML = G.P6V.checks(plan).map(([ok, t]) => `<li><span class="${ok ? "ok" : "bad"}">${ok ? "Đạt" : "Chưa đạt"}</span> · ${esc(t)}</li>`).join("");
+    host.querySelector("#f1-area").innerHTML = G.P6V.roomTable(plan);
+    const all = [...R.levels.flatMap((M, i) => M.err.map(e => `Tầng ${i + 1}: ${e}`)), ...R.err];
+    host.querySelector("#f1-er summary").textContent = all.length ? `Xem đủ ${all.length} lỗi kiểm tra` : "Qua mọi kiểm tra";
+    host.querySelector("#f1-er ul").innerHTML = all.map(e => `<li>${esc(e)}</li>`).join("");
+    host.querySelectorAll("[data-lv]").forEach(b => b.addEventListener("click", () => { lv = +b.dataset.lv; host.querySelectorAll("[data-lv]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); drawMB(); }));
+    host.querySelectorAll("[data-sc]").forEach(b => b.addEventListener("click", () => { sc = b.dataset.sc; host.querySelectorAll("[data-sc]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); drawMB(); }));
+    host.querySelectorAll("[data-ly]").forEach(c => c.addEventListener("change", () => { ly[c.dataset.ly] = c.checked; drawMB(); }));
+  }
+  let started = false;
+  const start = () => { if (started) { if (V) V.draw(); return; } started = true; build(); };
+  const tabBtn = document.querySelector('.tabs [data-tab="f1"]');
+  if (tabBtn) tabBtn.addEventListener("click", () => setTimeout(start, 50));
+  const panel = document.querySelector('[data-panel="f1"]');
+  if (panel && !panel.hidden) start();
+  window.addEventListener("arc-north", () => { if (started) { host.querySelectorAll("[data-kp]").forEach(d => { d.innerHTML = ""; d.appendChild(blockPlan(+d.dataset.kp)); }); drawMB(); } });
+})(window.G3);
 </script>

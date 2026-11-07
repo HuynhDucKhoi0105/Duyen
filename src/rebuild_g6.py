@@ -3,7 +3,7 @@ SP=os.path.dirname(os.path.abspath(__file__))+'/'
 F='/Users/khoihuynh/Documents/Duyên/so-do-phuong-an-mat-tien.html'
 import subprocess, sys
 six=sorted(f for f in os.listdir(SP) if re.match(r'^g[678]_.*\.js$', f) and f!='g6_kit.js' and (len(sys.argv)<2 or f in sys.argv[1:]))
-files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','x10_xep.js','x11_capnhat.js']
+files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','xdim.js','x10_xep.js','x11_capnhat.js','f1_data.js','f1_final.js']
 js='\n'.join(open(SP+f).read() for f in files)
 s=open(F).read()
 tag='<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>\n<script>'
@@ -53,6 +53,12 @@ if 'data-panel="g10" hidden' not in s:
     b='<div id="g9-host" style="margin-top:48px"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'+s[i2:]
 s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương án chốt · mặt bằng<small>'+(('X.1–X.%d từ bản xếp của bạn, S.1–S.16 khối vuông' % max(int(re.match(r'chot_x(\d+)\.js$',f).group(1)) for f in os.listdir(SP) if re.match(r'chot_x\d+\.js$',f))) if os.path.exists(SP+'chot_x1.js') else 'S.1–S.16 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s16.js') else 'S.1–S.6 khối vuông 2–3 tầng, cùng các đợt trước' if os.path.exists(SP+'chot_s1.js') else 'khe Hải Vân, hộp xếp: nội thất, cửa, giao thông')+'</small>',s)
+if 'role="tab" data-tab="f1"' not in s:
+    a=s.index('role="tab" data-tab="g10"'); a=s.index('</button>',a)+len('</button>')
+    s=s[:a]+'\n    <button type="button" role="tab" data-tab="f1" aria-selected="false">Final 1<small>bản xếp khối của bạn, giữ nguyên 100%, có mặt bằng</small></button>'+s[a:]
+if 'data-panel="f1" hidden' not in s:
+    b='<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'
+    i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'+s[i2:]
 # tab "Yêu cầu của thầy": nội dung tĩnh từ yc_thay.html, thay lại mỗi lần dựng
 if 'role="tab" data-tab="yc"' not in s:
     a=s.index('<button type="button" role="tab" data-tab="g9"')
