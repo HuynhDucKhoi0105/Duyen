@@ -692,6 +692,40 @@ Bạn gửi file `xep-khoi-arc329 (2).json` (44 khối trên khu đất, 2 tần
 - **X.4 Sân trong giữa, hành lang vòng** (2.843 m²): khoảng trống giữa tầng 1 thành sân trong 22 × 12 m, hành lang thư viện quanh sân; B3 có vườn tường bao trong sân. Qua mọi kiểm tra.
 - Ở cả X.2–X.4, không phòng đọc nào (B1, B2, B5, B6) cách thiếu nhi, sự kiện, cà phê dưới 4 m cùng tầng hay chồng ngay trên các phòng đó.
 
+### 3.18 Diện tích bản xếp và hai ý tưởng X.5–X.6 (07/11/2026)
+Bạn hỏi vì sao bản xếp chỉ khoảng 2.500 m², còn 500 m² "biến đâu mất".
+- **Không thiếu phòng nào:** bản xếp có đủ 24 phòng A1–E6 trên khu đất.
+- **Đề bài chia 3.000 m² thành hai phần (mục 4):** 2.220 m² cho các phòng; 780 m² dự trù cho giao thông chung, tường và cấu kiện. Đề nói rõ không được bỏ bớt khoản 780 m² cho vừa 3.000 m² khi bản vẽ chưa có điều chỉnh tương ứng.
+- **Bản xếp:** các phòng cộng 2.121 m², vì nhiều phòng vẽ nhỏ hơn đề 7–10%:
+  - đọc mở B1: 473 / 520;
+  - đọc yên tĩnh B2: 144 / 160;
+  - thiếu nhi B3: 166 / 180;
+  - kho đóng C1: 112 / 120;
+  - trưng bày A2: 81 / 90;
+  - chuyên đề D4: 68 / 75;
+  - vệ sinh E5: 63 / 70, thêm một mẩu 13,5 m² còn để trong kho.
+
+  Thang, sảnh, hành lang mới vẽ 355 m². Cộng lại 2.476 m². Phần còn lại là hành lang nối các khối, tường, cột chưa vẽ. Lõi sách tầng 2 còn nằm trên bàn nháp.
+- **Trên trang:**
+  - X.1 có thêm ghi chú về diện tích như trên.
+  - Bảng diện tích trong tab "Tự xếp khối" có thêm hai dòng để so với 2.220 m² và 780 m² của đề: "Cộng các phòng" và "Thang, sảnh, hành lang đã vẽ".
+- **X.5 Mặt trước – mặt sau, đủ diện tích đề** (2.915 m²; nhóm A 277 · B 1.098 · C 257 · D 300 · E 279):
+  - Mặt sau là một dải nghiệp vụ chữ L áp lối Tây và mặt Nam: C4 → C2 → C1 → lõi sách (dùng lõi tầng 2 trên bàn nháp) → cửa nhân viên của A4 → các phòng E. Sách và nhân viên không đi qua khu công cộng hay khu đọc.
+  - Mặt trước quay ra quảng trường, sân trong, sông.
+  - Vệ sinh tầng 2 chồng thẳng trên tầng 1.
+  - A4 dời khoảng 13 m vào dải giữa, giữa C2 và A1. Bản xếp đặt A4 đứng riêng giữa sân.
+- **X.6 Sảnh đọc thông tầng sau quầy** (2.829 m², đã trừ 37,7 m² thông tầng; nhóm A 273 · B 1.115 · C 260 · D 301 · E 283):
+  - Qua A1 → A4 là sảnh đọc thông tầng 6,5 × 5,8 m có thang chính mở. Tầng 2 có hành lang và bàn đọc quanh lỗ thông tầng.
+  - Đọc yên tĩnh B2 ở cuối cánh Tây tầng 2, xa lỗ thông tầng hơn 11 m.
+  - Đổi chỗ A2 và A3 để trưng bày nằm trên đường sang khu sự kiện.
+  - Dời quá 2 m (có lý do trong ghi chú của phương án): A1 khoảng 4,5 m, lõi sách khoảng 12 m, thang chính khoảng 6 m, B3 nới 3,5 m về phía Tây. Bỏ thang máy thứ hai.
+- **Kết quả kiểm tra:**
+  - Cả hai qua mọi kiểm tra, không còn cảnh báo.
+  - Hai cảnh báo X.2–X.4 còn có đã hết ở cả hai bản: đường sách C2 → A4 qua khu công cộng, và vệ sinh tầng 2 không chồng.
+  - Mọi phòng 97–105% đề, đủ chỗ ngồi.
+  - Không phòng đọc nào cách thiếu nhi, sự kiện, cà phê dưới 4 m hay chồng trên các phòng đó.
+  - Trên B3 tầng 2 chỉ có học nhóm, kho đệm, hành lang.
+
 ---
 
 ## 4. Những gì đã có trên trang phương án

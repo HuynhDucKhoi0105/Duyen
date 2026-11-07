@@ -418,7 +418,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261107-200059"</script>
+<script>window.ARC_BUILD="20261107-202947"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -19018,6 +19018,18 @@ ${cfg.intro(rules)}
 :root[data-theme="dark"] .p6 { --dChinh: #6aa9e9; --dTudong: #8cc6f5; --dP: #a9b4b0; --dO: #6c7773; --dK: #ff7a6e; --dNv: #c3a6f2; --dTn: #4fd18b; --dTnbd: #5fd0e6; --dCuon: #f0c04c; --dThang: #ffa45c; --cStair: #8a5a33; --cLift: #5b4a85; --rLib: #6cc7ac; --rEv: #f08a63; --rBook: #f0c04c; --rStaff: #c3a6f2; --rEsc: #4fd18b; }
 .p6 .bar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 .p6 .bar .k { font: 600 12px var(--mono); color: var(--ink-2); }
+.p6 .pick { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+.p6 .pick .pk-h { margin: 0; font: 700 14px var(--body); color: var(--ink); }
+.p6 .pick .pk-h span { font-weight: 500; color: var(--ink-2); }
+.p6 .pick .pg { display: grid; grid-template-columns: 150px 1fr; gap: 8px; align-items: start; }
+.p6 .pick .pg .k { font: 600 12px var(--mono); color: var(--ink-2); padding-top: 6px; }
+.p6 .pick .pb { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.p6 .pick .pb button { font: 500 12.5px/1.25 var(--body); padding: 5px 9px; border: 1px solid var(--line); border-radius: 3px; background: transparent; color: var(--ink); cursor: pointer; text-align: left; max-width: 280px; }
+.p6 .pick .pb button b { font-weight: 700; margin-right: 3px; }
+.p6 .pick .pb button:hover { border-color: var(--ink); }
+.p6 .pick .pb button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.p6 .pick .pb button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 640px) { .p6 .pick .pg { grid-template-columns: 1fr; } }
 .p6 .seg button { font: 600 13px var(--body); padding: 6px 10px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; margin-right: -1px; }
 .p6 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
 .p6 .seg button:focus-visible, .p6 label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -19049,6 +19061,7 @@ ${cfg.intro(rules)}
   ];
   // mở sẵn ý tưởng khe Hải Vân mới nhất (sửa theo góp ý của thầy), nếu có
   const pick = re => (G.CHOT || []).findIndex(p => re.test(p.code));
+  const PGRP = [["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
   let ci = [pick(/^X\./), pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
   const st = { furn: true, dim: true, staff: true, route: true, lab: true, light: true, orient: window.matchMedia && window.matchMedia("(min-width: 900px)").matches ? "h" : "v" };
 
@@ -19316,8 +19329,8 @@ ${KH.length ? `<details class="p6-khoi"><summary><b>Tìm hiểu 20 khối A1–E
 </details>` : ""}
 <section style="display:grid;gap:10px">
   <p class="eyebrow">Phương án ${plan.code} · phát triển từ ${plan.from} · mặt bằng đầy đủ</p>
-  ${G.CHOT.length > 1 ? `<div class="bar"><span class="k">Phương án</span><span class="seg" role="group" aria-label="Phương án chốt">${G.CHOT.map((p, i) => `<button type="button" data-pa="${i}" aria-pressed="${i === ci}">${esc(p.code)} · ${esc(p.name)}</button>`).join("")}</span></div>` : ""}
-  <h2>${esc(plan.name)}: mặt bằng, cửa, giao thông, người trực</h2>
+  ${G.CHOT.length > 1 ? `<div class="pick" role="group" aria-label="Chọn phương án để xem mặt bằng"><p class="pk-h">Chọn phương án để xem mặt bằng <span>(đang xem ${esc(plan.code)})</span></p>${PGRP.map(([t, re]) => { const L = G.CHOT.map((p, i) => [p, i]).filter(([p]) => re.test(p.code)); return L.length ? `<div class="pg"><span class="k">${t}</span><div class="pb">${L.map(([p, i]) => `<button type="button" data-pa="${i}" aria-pressed="${i === ci}"><b>${esc(p.code)}</b> ${esc(p.name)}</button>`).join("")}</div></div>` : ""; }).join("")}</div>` : ""}
+  <h2>${esc(plan.code)} · ${esc(plan.name)}: mặt bằng, cửa, giao thông, người trực</h2>
   ${plan.intro || ""}
 </section>
 <section style="display:grid;gap:12px">
