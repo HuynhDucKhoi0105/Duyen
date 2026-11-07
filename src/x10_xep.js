@@ -724,10 +724,13 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
     const P = S.blocks.filter(onSite).filter(isFloor), f = n => P.filter(b => b.f === n).reduce((s, b) => s + b.w * b.h, 0);
     const z = c => P.filter(b => b.kind === "room" && b.c[0] === c).reduce((s, b) => s + area(b), 0), brief = { A: 270, B: 1110, C: 260, D: 300, E: 280 };
     const tot = [1, 2, 3].reduce((t, n) => t + f(n), 0);
+    const rm = P.filter(b => b.kind === "room").reduce((s, b) => s + b.w * b.h, 0), gt = tot - rm;
     box.innerHTML = `<table><tr><th>Nhóm</th><th class="n">Đã đặt</th><th class="n">Đề</th></tr>${Object.keys(brief).map(c => `<tr><td>${c}</td><td class="n">${nf(z(c))}</td><td class="n">${nf(brief[c])}</td></tr>`).join("")}
+<tr><td><b>Cộng các phòng</b></td><td class="n"><b>${nf(rm)}</b></td><td class="n">2.220</td></tr>
+<tr><td>Thang, sảnh, hành lang đã vẽ</td><td class="n">${nf(gt)}</td><td class="n">780</td></tr>
 ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn)</td><td class="n">${nf(f(n))}</td><td></td></tr>`).join("")}
 <tr><td><b>Tổng sàn</b></td><td class="n"><b style="color:${tot > 3000 ? "var(--warn)" : "inherit"}">${nf(tot)}</b></td><td class="n">≤ 3.000</td></tr></table>
-<p class="st">Tổng sàn tính cả thang, sảnh, hành lang đã thêm; còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho giao thông chung và tường.</p>`;
+<p class="st">Đề bài: 2.220 m² cho 24 phòng cộng 780 m² dự trù cho giao thông chung, tường và cấu kiện, tổng tối đa 3.000 m². Tổng sàn ở đây tính các khối đã đặt (phòng, thang, sảnh, hành lang). Còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho hành lang nối các khối, tường, cột chưa vẽ${rm < 2220 * 0.97 ? `; các phòng đang nhỏ hơn đề ${nf(2220 - rm)} m²` : ""}.</p>`;
   }
 
   /* ---------- khối 3D dự phòng bằng SVG (khi trình duyệt không chạy được WebGL) ---------- */

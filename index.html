@@ -138,7 +138,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <button type="button" role="tab" data-tab="g7" aria-selected="false">40 ý tưởng từ công trình đạt giải<small>khối nghệ thuật, có nguồn tham khảo</small></button>
     <button type="button" role="tab" data-tab="g8" aria-selected="false">Đợt 2–3 tầng<small>theo 9 ảnh mẫu và 6 phương án đã ghim</small></button>
     <button type="button" role="tab" data-tab="yc" aria-selected="false">Yêu cầu của thầy<small>mình đang ghi nhớ gì, bạn soát giúp</small></button>
-    <button type="button" role="tab" data-tab="g9" aria-selected="false">Phương án chốt · mặt bằng<small>X.1–X.4 từ bản xếp của bạn, S.1–S.16 khối vuông</small></button>
+    <button type="button" role="tab" data-tab="g9" aria-selected="false">Phương án chốt · mặt bằng<small>X.1–X.6 từ bản xếp của bạn, S.1–S.16 khối vuông</small></button>
     <button type="button" role="tab" data-tab="g10" aria-selected="false">Tự xếp khối<small>20 khối A1–E6 theo diện tích đề, kéo thả, gửi Claude</small></button>
   </div>
 </div>
@@ -418,7 +418,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261107-191828"</script>
+<script>window.ARC_BUILD="20261107-200059"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -16743,7 +16743,8 @@ ${cfg.intro(rules)}
     "Vệ sinh: cụm công cộng WCP mở ngoài giờ cạnh hành lang sự kiện; khu đọc tầng 1 có WCL1 ngay sau sảnh thư viện, tầng 2 có WCL2 (xếp chồng lên kho dụng cụ E6, gần thẳng WCL1).",
     "Tiếng ồn: cụm sự kiện, cà phê ở đầu Bắc, cách khu đọc tầng 2 bằng sân trước. Đọc yên tĩnh B2 ở đầu Đông Nam tầng 2, cách học nhóm hơn 15 m. Học nhóm B4 có hành lang giữa riêng, ngăn với tra cứu số B5 và đọc linh hoạt B6.",
     "Chỉnh mép để tường khít (đều ≤ 0,3 m, trừ cà phê A3 hạ mép Nam 0,32 m): bục D2 mở mép Đông 0,05 m; phòng đa năng D1 mở mép Đông 0,22 m; chuyên đề D4, vệ sinh WCP nâng mép Bắc 0,11–0,18 m; WCP, hành lang sự kiện lùi mép Tây 0,15 m; quầy A4 lùi mép Tây 0,3 m; xử lý C2 nâng mép Bắc 0,05 m, mở mép Đông 0,27 m; tiếp nhận C4 mở mép Đông 0,05 m; hành lang CO2, vệ sinh WCL1 lệch 0,05 m; thang máy Nam tầng 1 hạ mép Bắc 0,1 m, mở mép Đông 0,25 m; lối nhân viên LC kéo dài 0,04 m; tầng 2: B1b mở mép Nam 0,3 m, B5 nâng mép Bắc 0,11 m và mở mép Đông 0,3 m, B1f lùi mép Tây 0,31 m, B1e lùi mép Tây 0,3 m, học nhóm 1 lùi 0,1 m, học nhóm 4 dời lên 0,24 m, thang máy tầng 2 mở mép Đông 0,3 m, B1a lùi mép Tây 0,22 m, B1w hạ mép Bắc 0,1 m, B2 nâng mép Bắc 0,03 m.",
-    "Hành lang lấp khe (không phải khối mới): tầng 1 có khe nối KE giữa A1 và A2, sảnh trước quầy HA, sảnh thư viện HL, hành lang HL2; tầng 2 có hành lang Bắc KN, hành lang giữa SpA, sảnh thang máy SpB, lối vào vệ sinh KW. Các khoảng trống lớn (sân trước sảnh 20 × 12 m, sân giữa 17 × 20 m) giữ nguyên là sân."
+    "Hành lang lấp khe (không phải khối mới): tầng 1 có khe nối KE giữa A1 và A2, sảnh trước quầy HA, sảnh thư viện HL, hành lang HL2; tầng 2 có hành lang Bắc KN, hành lang giữa SpA, sảnh thang máy SpB, lối vào vệ sinh KW. Các khoảng trống lớn (sân trước sảnh 20 × 12 m, sân giữa 17 × 20 m) giữ nguyên là sân.",
+    "Diện tích (vì sao bản xếp chỉ khoảng 2.500 m²): bản xếp có đủ 24 phòng A1–E6 của đề, không thiếu phòng nào. Đề bài chia 3.000 m² thành 2.220 m² cho các phòng và 780 m² dự trù cho giao thông chung, tường, cấu kiện. Các phòng trong bản xếp cộng lại 2.121 m² (nhiều phòng vẽ nhỏ hơn đề 7–10%: đọc mở B1 473/520, đọc yên tĩnh B2 144/160, thiếu nhi B3 166/180, kho đóng C1 112/120, trưng bày A2 81/90, chuyên đề D4 68/75); thang, sảnh, hành lang mới vẽ 355 m², cộng 2.476 m². Phần còn lại không mất đi: đó là hành lang nối các khối, tường, cột chưa vẽ (bản X.1 lấp khe bằng hành lang nên lên 2.706 m²), cùng mẩu vệ sinh E5 13,5 m² còn trong kho và lõi sách tầng 2 còn trên bàn nháp."
   ];
   /* ---------- khối 3D: dựng thẳng từ các khối của bản xếp ---------- */
   const { B, col } = G.K;
@@ -17308,6 +17309,363 @@ ${cfg.intro(rules)}
   G.CHOT.push(plan);
 })(window.G3);
 
+/* ================= Ý tưởng X.5: Mặt trước – mặt sau (từ bản xếp khối của bạn, 07/11/2026) · khối + mặt bằng đầy đủ, đủ diện tích đề ================= */
+(function (G) {
+  // Giữ các khối, số tầng và vết nhà của bản xếp. Mặt sau (kho, nghiệp vụ, kỹ thuật, nhân viên) dồn thành dải chữ L áp lối Tây và mặt Nam;
+  // mặt trước (sự kiện, đón tiếp, cà phê, thiếu nhi, phòng đọc) quay ra quảng trường, sân trong và sông. Mọi phòng đủ diện tích đề (97–105%).
+  const KT = "Nam · Nữ · KT (người khuyết tật)";
+  const N = "N";
+  const Q = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+  const env = L => L.rooms.map(z => Q(...z.r));
+  // lưới chung hai tầng
+  const Y0 = 39.4, Y1 = 47.6, YB = 67.4, YB3 = 75.9, YH = 78.2, YS = 80.5, YE = 89;
+  const XC = 12.3, XS = 16.3, XH = 18.3;
+  const GARDEN = Q(XH, Y1, 23.2, YB - Y1), YARD = Q(10, 27.25, 18.65, Y0 - 27.25);
+
+  /* ---------- Tầng 1 ---------- */
+  const t1 = {
+    k: "t1", z: 0.45, title: "Tầng 1 · sàn +0.450",
+    rooms: [
+      // MẶT TRƯỚC · khối sự kiện phía Bắc (giữ chỗ của bản xếp, lùi về x ≥ 6), mở ra quảng trường
+      { id: "D2", c: "D2", n: "Bục trình bày", r: [6, 16, 4, 6.25], ctl: "sk", nz: 3, d: [["D1", 2.4, "o"]] },
+      { id: "D3", c: "D3", n: "Kho bàn ghế sự kiện (cửa ra lối Tây)", r: [6, 22.25, 4, 5], ctl: "sk", nz: 1, d: [["D1", 1.4, "p"], ["W", 1.4, "nv"]] },
+      { id: "D1", c: "D1", n: "Phòng đa năng", r: [10, 16, 16, 11.25], ctl: "sk", nz: 3, seat: 120, occ: 120, face: "W", top: N, d: [["N", 1.8, "tn", 0.3], ["N", 1.8, "tn", 0.75], ["S", 1.8, "tn", 0.5], ["CO3", 1.8, "p", 0.5]] },
+      { id: "D4", c: "D4", n: "Phòng sinh hoạt chuyên đề", r: [26, 16, 9.5, 7.9], ctl: "sk", nz: 2, seat: 24, top: N, d: [["CO3", 1.2, "p", 0.5]] },
+      { id: "E3", c: "E3", n: "Trực bảo vệ (nhìn quảng trường Bắc)", r: [35.5, 16, 3.9, 3.85], ctl: "nv", nz: 1, d: [["N", 0.9, "nv"], ["KSK", 0.9, "nv"]] },
+      { id: "KSK", c: "circ", n: "Kho phụ sự kiện, cà phê", r: [35.5, 19.85, 3.9, 4.05], ctl: "sk", nz: 1, d: [["CO3", 1.2, "p"]] },
+      { id: "CO3", c: "circ", n: "Sảnh sự kiện", r: [26, 23.9, 13.4, 4.6], ctl: "sk", nz: 2, occ: 40, d: [["E", 1.8, "tn"], ["FOYA", 1.8, "o"]] },
+      // nhánh cà phê bên sông: vệ sinh công cộng ngay cạnh sảnh, cà phê mở ra mặt Đông
+      { id: "WCP", c: "E5", n: "Vệ sinh công cộng (mở ngoài giờ)", r: [28.65, 28.5, 2.2, 10.9], ctl: "sk", nz: 1, wc: KT, d: [["FOYA", 1.0, "p", 0.6]] },
+      { id: "FOYA", c: "circ", n: "Sảnh cà phê, lối sang sự kiện", r: [30.85, 28.5, 2.05, 10.9], ctl: "sk", nz: 2, d: [["A3", 1.8, "o"], ["A2", 1.6, "o"]] },
+      { id: "A3", c: "A3", n: "Cà phê sách", r: [32.9, 28.5, 6.5, 10.9], ctl: "sk", nz: 3, seat: 32, top: N, d: [["E", 1.4, "tn", 0.5]] },
+      // dải giữa: xử lý nghiệp vụ (mặt sau) | quầy A4 | sảnh đón tiếp A1 | trưng bày A2 — mọi phòng có cửa sổ Bắc
+      { id: "C2", c: "C2", n: "Xử lý nghiệp vụ (cửa sổ Bắc, sau quầy)", r: [6, Y0, 8.3, Y1 - Y0], ctl: "nv", nz: 1, d: [["A4", 0.9, "nv"], ["C4", 1.2, "nv"]] },
+      { id: "A4", c: "A4", n: "Gửi đồ, mượn trả, cổng từ (kiểm soát sách)", r: [14.3, Y0, 3.65, Y1 - Y0], ctl: "tv", ctrl: 1, nz: 2, d: [["HT1", 1.4, "o"], ["STS", 1.2, "thang"]] },
+      { id: "A1", c: "A1", n: "Đón tiếp và thông tin", r: [17.95, Y0, 10, Y1 - Y0], ctl: "sk", nz: 2, seat: 20, occ: 40, d: [["N", 2.4, "chinh", 0.5], ["S", 2.4, "chinh", 0.5], ["A4", 2.0, "k"], ["A2", 2.4, "o"]] },
+      { id: "A2", c: "A2", n: "Trưng bày", r: [27.95, Y0, 11.45, Y1 - Y0], ctl: "sk", nz: 2, occ: 30, top: N, d: [["S", 1.4, "tn", 0.7]] },
+      // MẶT SAU · cột nghiệp vụ áp lối Tây: tiếp nhận → xử lý → kho đóng → lõi sách, kỹ thuật, sảnh nhân viên
+      { id: "C4", c: "C4", n: "Tiếp nhận sách", r: [6, Y1, 6.3, 4.8], ctl: "nv", nz: 1, d: [["W", 2.8, "cuon", 0.35], ["W", 1.0, "nv", 0.85], ["C1", 1.2, "nv"]] },
+      { id: "C1", c: "C1", n: "Kho đóng", r: [6, 52.4, 6.3, 18.9], ctl: "kho", nz: 1, d: [["CS", 1.2, "nv", 0.3], ["KXS", 1.2, "nv"], ["W", 1.0, "nv", 0.7]] },
+      { id: "STS", n: "Thang bộ thư viện (ngay sau quầy)", r: [XC, Y1, 4, 6.5], ctl: "tv", nz: 1, core: { st: "u", link: "STS" }, d: [["HT1", 1.2, "thang"]] },
+      { id: "CS", n: "Lõi sách: thang bộ + thang máy + tời sách", r: [XC, 54.1, 4, 5.55], ctl: "tv", nz: 1, core: { st: "u+l+b", link: "CS" }, d: [["HT1", 1.4, "thang"]] },
+      { id: "WCL1", c: "E5", n: "Vệ sinh thư viện tầng 1", r: [XC, 59.65, 4, 4], ctl: "tv", nz: 1, wc: KT, d: [["HT1", 1.0, "p"]] },
+      { id: "E6", c: "E6", n: "Dụng cụ vệ sinh, kho chung", r: [XC, 63.65, 4, 5], ctl: "nv", nz: 1, d: [["HT1", 0.9, "nv"]] },
+      { id: "KXS", c: "circ", n: "Kho xe đẩy sách", r: [XC, 68.65, 4, 2.65], ctl: "kho", nz: 1 },
+      { id: "E4", c: "E4", n: "Kỹ thuật (điện, bơm, máy lạnh; cửa ra lối Tây)", r: [6, 71.3, 10.3, 5.3], ctl: "kt", nz: 3, d: [["W", 1.4, "nv"], ["SCw", 1.2, "nv"]] },
+      { id: "SCw", c: "circ", n: "Sảnh nhân viên (cửa vào từ lối Tây)", r: [6, 76.6, 10.3, 3.9], ctl: "nv", nz: 1, d: [["W", 1.2, "nv"], ["E2", 0.9, "nv"], ["E1", 0.9, "nv"], ["STE2", 1.0, "nv"]] },
+      // hành lang thư viện tầng 1: từ quầy A4 chạy xuống phòng thiếu nhi và phòng đọc phía Nam, mặt kính nhìn sân trong
+      { id: "HT1", c: "circ", n: "Hành lang thư viện (sau cổng từ, nhìn sân trong)", r: [XS, Y1, 2, YS - Y1], ctl: "tv", nz: 1, d: [["E", 1.2, "tnbd", 0.4], ["LB", 1.8, "o"], ["HLs", 1.8, "o"]] },
+      { id: "LB", c: "circ", n: "Sảnh thiếu nhi, chỗ để xe đẩy", r: [XH, YB, 2.02, YH - YB], ctl: "tv", nz: 2, d: [["B3", 1.8, "p", 0.35], ["HLs", 1.6, "o"]] },
+      { id: "B3", c: "B3", n: "Thiếu nhi và gia đình (mở ra sân trong)", r: [20.32, YB, 21.18, YB3 - YB], ctl: "tv", nz: 3, seat: 32, d: [["N", 1.8, "tnbd", 0.6], ["WCK", 1.0, "p"], ["KDT", 1.2, "p", 0.4]] },
+      { id: "WCK", c: "E5", n: "Vệ sinh trẻ em, thay tã", r: [20.32, YB3, 5.87, YH - YB3], ctl: "tv", nz: 1, wc: "Trẻ em · thay tã" },
+      { id: "KDT", c: "circ", n: "Kho đồ chơi, sách thiếu nhi", r: [26.19, YB3, 15.31, YH - YB3], ctl: "tv", nz: 1 },
+      { id: "HLs", c: "circ", n: "Hành lang thư viện Nam", r: [XH, YH, 23.2, YS - YH], ctl: "tv", nz: 1, d: [["E", 1.2, "tnbd"], ["B1T", 1.8, "o"], ["C3", 1.0, "nv"], ["STE3", 1.2, "thang"]] },
+      // dải Nam: nhân viên (mặt sau, cửa sổ Nam) và phòng đọc tầng 1
+      { id: "STE2", n: "Thang thoát hiểm Tây Nam", r: [6, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE2" }, d: [["S", 1.2, "tnbd"]] },
+      { id: "E2", c: "E2", n: "Phòng nhân viên", r: [9, YS, 4.7, YE - YS], ctl: "nv", nz: 1 },
+      { id: "E1", c: "E1", n: "Văn phòng", r: [13.7, YS, 9.41, YE - YS], ctl: "nv", nz: 0 },
+      { id: "B1T", c: "B1", n: "Đọc mở, sách mới (cửa sổ Nam)", r: [23.11, YS, 8, YE - YS], ctl: "tv", nz: 1 },
+      { id: "C3", c: "C3", n: "Lưu trữ tài liệu địa phương", r: [31.11, YS, 4.7, YE - YS], ctl: "kho", nz: 1 },
+      { id: "STE3", n: "Thang thoát hiểm Đông Nam", r: [35.81, YS, 3.59, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE3" }, d: [["S", 1.2, "tnbd"]] }
+    ],
+    staff: [
+      { x: 22.9, y: 42.5, t: "Lễ tân", sc: ["1", "2", "3", "4"] },
+      { x: 16.1, y: 43, t: "Thủ thư mượn trả, cổng từ", sc: ["1", "3", "4"] },
+      { x: 37.4, y: 17.9, t: "Bảo vệ", sc: ["1", "2", "3", "4"] },
+      { x: 36, y: 31, t: "Quầy cà phê", sc: ["1", "2", "3", "4"] },
+      { x: 30, y: 71, t: "Thủ thư thiếu nhi", sc: ["1", "3"] },
+      { x: 10, y: 43.5, t: "Nghiệp vụ", sc: ["1", "3", "4"] },
+      { x: 9, y: 50, t: "Nhận sách", sc: ["4"] },
+      { x: 18.4, y: 84.7, t: "Văn phòng", sc: ["1", "3", "4"] },
+      { x: 31.9, y: 26.2, t: "Đón khách sự kiện", sc: ["2", "3"] },
+      { x: 8, y: 19, t: "Điều phối, âm thanh", sc: ["2", "3"] }
+    ]
+  };
+  /* ---------- Tầng 2: toàn bộ là thư viện (giữ các khối tầng 2 của bản xếp) ---------- */
+  const t2 = {
+    k: "t2", z: 4.95, title: "Tầng 2 · sàn +4.950",
+    rooms: [
+      // thanh Bắc: đọc yên tĩnh, xa học nhóm hơn 19 m
+      { id: "B1N", c: "B1", n: "Góc đọc Tây Bắc", r: [4, Y0, 4, Y1 - Y0], ctl: "tv", nz: 1, top: N, d: [["B5", 1.6, "o"]] },
+      { id: "B2", c: "B2", n: "Đọc yên tĩnh (thanh Bắc)", r: [8, Y0, 19.4, Y1 - Y0], ctl: "tv", nz: 0, seat: 40, top: N, d: [["HT2", 1.2, "p"], ["STS", 1.2, "thang", 0.3]] },
+      // cánh Tây: lõi thang, lõi sách và vệ sinh xếp thành một cột, phòng đọc quay về phía Tây
+      { id: "B5", c: "B5", n: "Tra cứu số", r: [4, Y1, 8.3, 12.05], ctl: "tv", nz: 1, seat: 16, top: N, d: [["STS", 1.2, "thang"], ["B6", 1.6, "o"]] },
+      { id: "STS", n: "Thang bộ thư viện (ngay sau quầy)", r: [XC, Y1, 4, 6.5], ctl: "tv", nz: 1, core: { st: "u", link: "STS" }, d: [["HT2", 1.2, "thang"]] },
+      { id: "CS", n: "Lõi sách: thang bộ + thang máy + tời sách", r: [XC, 54.1, 4, 5.55], ctl: "tv", nz: 1, core: { st: "u+l+b", link: "CS" }, d: [["HT2", 1.4, "thang"]] },
+      { id: "WC2", c: "E5", n: "Vệ sinh thư viện tầng 2 (chồng lên vệ sinh tầng 1)", r: [XC, 59.65, 4, 4], ctl: "tv", nz: 1, wc: KT, d: [["HT2", 1.0, "p"]] },
+      { id: "KD2a", c: "circ", n: "Kho xe sách tầng 2", r: [XC, 63.65, 4, 2.02], ctl: "tv", nz: 1, d: [["HT2", 0.9, "nv"]] },
+      { id: "B6", c: "B6", n: "Đọc linh hoạt, hỗ trợ tra cứu", r: [4, 59.65, 8.3, 6.02], ctl: "tv", nz: 1, steps: 4, top: N, d: [["B1W", 1.6, "o"]] },
+      { id: "B1W", c: "B1", n: "Đọc mở và kệ (cánh Tây)", r: [4, 65.67, 12.3, YS - 65.67], ctl: "tv", nz: 1, top: N, d: [["HT2", 2.0, "o"], ["B1S", 2.4, "o"], ["STE2", 1.2, "thang"]] },
+      { id: "HT2", c: "circ", n: "Hành lang đọc tầng 2 (nhìn sân trong)", r: [XS, Y1, 2, YS - Y1], ctl: "tv", nz: 1, d: [["B1S", 1.8, "o"], ["HB", 1.8, "o"]] },
+      // trên phòng thiếu nhi: học nhóm (ồn chồng lên ồn), hành lang, kho đệm; không có chỗ đọc nào
+      ...[0, 1, 2, 3].map(i => ({ id: "B4" + "abcd"[i], c: "B4", n: `Học nhóm ${i + 1}`, r: [XH + 4.075 * i, YB, 4.075, 6], ctl: "tv", nz: 2, top: N, d: [["HB", 0.9, "p"]] })),
+      { id: "KD2", c: "circ", n: "Kho đệm, máy in, đồ học nhóm", r: [34.6, YB, 4.8, 6], ctl: "tv", nz: 1, d: [["HB", 0.9, "nv"]] },
+      { id: "HB", c: "circ", n: "Hành lang học nhóm", r: [XH, 73.4, 21.1, 2.3], ctl: "tv", nz: 2, d: [["LKE", 1.8, "o"]] },
+      { id: "LKE", c: "circ", n: "Cầu nối Đông (ra thang thoát hiểm)", r: [35.81, 75.7, 3.59, YS - 75.7], ctl: "tv", nz: 1, d: [["STE3", 1.2, "thang"]] },
+      // thanh Nam: sảnh đọc lớn
+      { id: "STE2", n: "Thang thoát hiểm Tây Nam", r: [6, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE2" }, d: [["B1S", 1.2, "thang"]] },
+      { id: "B1S", c: "B1", n: "Sảnh đọc lớn phía Nam", r: [9, YS, 26.81, YE - YS], ctl: "tv", nz: 1, top: N, d: [["STE3", 1.2, "thang"]] },
+      { id: "STE3", n: "Thang thoát hiểm Đông Nam", r: [35.81, YS, 3.59, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE3" } }
+    ],
+    staff: [{ x: 8, y: 53.5, t: "Hỗ trợ tra cứu", sc: ["1", "3", "4"] }]
+  };
+  t1.env = env(t1); t2.env = env(t2);
+  const bikes = [];
+  for (const y of [89.5, 93.5, 95.5, 100]) for (let x = 16.2; x + 0.8 <= 41.3; x += 0.8) bikes.push([x, y, 0.8, 2]);
+  const plan = {
+    id: "chotX5", code: "X.5", name: "Mặt trước – mặt sau, đủ diện tích đề", from: "bản xếp của bạn",
+    yN: () => -999, yS: () => -999,
+    levels: [t1, t2],
+    grid: { x: [6, XC, XS, XH, 27.95, 39.4], y: [16, 27.25, Y0, Y1, YB, YB3, YS, YE] },
+    site: {
+      staff: [{ x: 9, y: 97, t: "Giữ xe", sc: ["1", "2", "3", "4"] }, { x: 3, y: 74, t: "Kỹ thuật, vệ sinh (đi tuần)", sc: ["1", "3", "4"] }],
+      park: { bikes, nBike: bikes.length, cars: [[6, 89.5, 3.5, 5.5, 1], [9.5, 89.5, 3.5, 5.5, 1], [13, 89.5, 2.8, 5.5, 0]], racks: [[10.5, 100.6, 5, 2.4]], nRack: 10, booth: [6.4, 100.6, 3.2, 2.4] },
+      routes: {
+        delivery: [[[3, 112], [3, 104], [3, 50], [5.2, 50]]],
+        staff: [[[3, 112], [3, 78.5], [5.2, 78.5]]],
+        fire: [[[-3, -12], [3, -4], [3, 102]], [[3, -2], [34, 7]]],
+        moto: [[[3, 112], [3, 97], [9, 97], [40, 98.8]]],
+        lib: [[[30, 103], [43, 96], [43, 58], [22.95, 58], [22.95, 48]]],
+        event: [[[24, -9], [5, 9], [5, 33], [22.95, 33], [22.95, 39]]]
+      },
+      routeNames: { lib: "Người đọc: từ bãi xe dọc bờ sông, vào sân trong tới cửa Nam sảnh đón tiếp", event: "Khách sự kiện: quảng trường Bắc, theo lối Tây vào sân trước, tới cửa Bắc sảnh đón tiếp", staff: "Nhân viên: lối Tây vào sảnh nhân viên ở góc Tây Nam", delivery: "Xe sách: lối Tây tới cửa cuốn tiếp nhận" },
+      hatch: [GARDEN, YARD],
+      labels: [[30, 57, "Sân trong (mặt trước)"], [18, 33.5, "Sân trước Bắc"], [3, 62, "Lối Tây · mặt sau"], [18, 21, "Khối sự kiện một tầng"]]
+    }
+  };
+  plan.intro = `<p class="lede">X.5 dựng từ bản xếp khối của bạn và chia nhà thành <b>mặt trước</b> và <b>mặt sau</b>. Mặt sau là một dải chữ L áp lối Tây và mặt Nam: tiếp nhận sách, xử lý, kho đóng, lõi sách, kỹ thuật, sảnh nhân viên, văn phòng; xe sách, nhân viên, thợ kỹ thuật đều vào từ lối Tây, không đi qua chỗ khách. Mặt trước quay ra quảng trường, sân trong và sông: khối sự kiện, cà phê, sảnh đón tiếp, trưng bày, phòng thiếu nhi và các phòng đọc. Ranh giới giữa hai mặt là quầy A4: phía khách là cửa khóa ngoài giờ từ A1, phía sau là cửa nhân viên sang phòng xử lý. Lần này <b>mọi phòng đủ diện tích đề</b> (97–105%), tổng sàn 2.915 m².</p>`;
+  plan.notes = [
+    "Đã sửa so với bản xếp: (1) các khối tầng 1 lấn lối Tây (D2, D3, lõi sách, C1, C2, C4, E6, vệ sinh, thang Tây Nam) lùi về x ≥ 6 để trả lối 6 m cho xe cứu hỏa, xe giao sách; tầng 2 vẫn đua ra lối Tây tới x = 4. (2) A4 đang đứng riêng giữa sân được đưa lên dải giữa, sát A1 và C2 (dời khoảng 13 m): ở chỗ cũ A4 nằm dưới khối đọc tầng 2, không có cửa sổ, không nối được A1. (3) Cột Tây sắp lại theo đường sách: xử lý C2 lên đầu cột lấy sáng Bắc (chỗ lõi sách cũ), tiếp nhận C4 ngay dưới, rồi kho đóng C1, lõi sách cạnh kho; khối thang máy sự kiện cũ ở dải giữa thành quầy A4. (4) Thang thư viện của bản xếp (STS) chỉ có ở tầng 2: thêm thang tầng 1 ngay sau quầy A4, cả hai tầng chung một cột thang với lõi sách và vệ sinh. Lõi sách tầng 2 đang để ở bàn nháp được đặt vào cột này. (5) Trên phòng thiếu nhi bản xếp đặt phòng đọc B1: đổi thành bốn phòng học nhóm, hành lang, kho đệm (ồn chồng lên ồn). Học nhóm của bản xếp ở cánh Tây đổi thành phòng đọc. (6) Đọc yên tĩnh B2 chuyển từ thanh Nam lên thanh Bắc tầng 2, cách học nhóm hơn 19 m; thanh Nam thành sảnh đọc lớn B1. (7) Kỹ thuật E4 chuyển sang cột Tây, cửa ra thẳng lối Tây cho thợ, không còn chung vách phòng nhân viên E2; chỗ cũ của E4 ở dải Nam thành phòng đọc sách mới tầng 1 (cửa sổ Nam); E1, E2 đổi chỗ cho nhau để cả hai mở ra sảnh nhân viên. (8) Hai khối thang máy giữa nhà (tầng 1 và tầng 2) bỏ: lõi sách đã có thang máy; chỗ đó thành sảnh thiếu nhi, hành lang đọc. Thêm thang thoát hiểm Đông Nam để thanh đọc Nam không phải đi quá 30 m. (9) Vệ sinh công cộng dời từ góc Đông Bắc vào nhánh cà phê, cạnh sảnh A1; góc Đông Bắc thành phòng bảo vệ nhìn quảng trường. (10) Lấp các khe giữa khối bằng hành lang: hành lang thư viện dọc sân, hành lang Nam giữa phòng thiếu nhi và dải nhân viên, sảnh nhân viên Tây Nam, khe giữa cánh Tây và thanh Nam tầng 2 (chỗ cầu kính của bản xếp), một cầu nối nhỏ 3,6 m ở góc Đông Nam tầng 2 ra thang thoát hiểm. (11) Thanh Nam tầng 2 thu lại x 6–39,4 (bản xếp x 4,45–41,13, lệch dưới 2 m) cho thẳng mép tầng 1.",
+    "Diện tích: nhóm A 277 m² (đề 270), B 1.098 (đề 1.110), C 257 (đề 260), D 300 (đề 300), E 279 (đề 280); từng phòng nằm trong 97–105% đề, có đủ mảnh vệ sinh trẻ em 13,5 m² bạn để trong kho. Bản xếp có đủ 24 phòng của đề nhưng nhiều phòng vẽ nhỏ hơn 7–10% (tổng phòng 2.121 m² so với 2.220), và mới vẽ khoảng 355 m² hành lang, thang. Đề dành 780 m² cho giao thông chung, tường, cấu kiện; ở X.5 phần này là hành lang thư viện, hành lang học nhóm, sảnh nhân viên, sảnh sự kiện, năm thang và lõi sách, nên tổng sàn lên 2.915 m², vẫn dưới 3.000.",
+    "Mặt sau (dải chữ L áp lối Tây và mặt Nam): xe sách vào lối Tây, dỡ qua cửa cuốn vào tiếp nhận C4 → xử lý C2 (liền vách) → kho đóng C1 (qua C4) → lõi sách có tời, liền kho. Sách trả: quầy A4 → cửa nhân viên sang thẳng C2, không bước ra khu công cộng hay khu đọc. Thợ kỹ thuật vào E4 từ lối Tây. Nhân viên vào sảnh nhân viên ở góc Tây Nam, tới văn phòng, phòng nhân viên, thang thoát hiểm; bảo vệ ở góc Đông Bắc nhìn quảng trường, có cửa riêng.",
+    "Mặt trước: khách tới từ quảng trường Bắc (qua sân trước) hoặc từ bờ sông (qua sân trong), vào sảnh đón tiếp A1 bằng cửa Bắc hoặc cửa Nam. Rẽ phải là trưng bày, cà phê, vệ sinh công cộng, sảnh sự kiện, phòng đa năng, chuyên đề. Rẽ trái qua cửa khóa ngoài giờ vào quầy gửi đồ, mượn trả A4 có cổng từ; sau quầy là thang thư viện và hành lang thư viện nhìn sân trong, dẫn tới phòng thiếu nhi, phòng đọc Nam tầng 1 và lên tầng 2. Không phòng đọc nào, kể cả thiếu nhi, có lối riêng.",
+    "Thang có hệ quả: thang thư viện mở ngay sau quầy A4; lõi sách có thang máy mở vào hành lang thư viện cả hai tầng (người khuyết tật, xe sách); hai thang thoát hiểm Tây Nam, Đông Nam ở tầng 1 chỉ có cửa thoát hiểm có chuông báo. Khối sự kiện một tầng nên không có thang nào lên khu đọc mà không qua A4.",
+    "Vệ sinh: cụm công cộng (mở ngoài giờ) ngay sau sảnh A1 trong nhánh cà phê, cách phòng đa năng khoảng 20 m; vệ sinh thư viện tầng 1 và tầng 2 chồng thẳng hàng trong cột thang (ống nước đi thẳng); phòng thiếu nhi có vệ sinh trẻ em, thay tã mở thẳng từ phòng.",
+    "Ánh sáng Bắc – Nam: xử lý nghiệp vụ, quầy A4, sảnh A1 có cửa sổ Bắc nhìn sân trước; sảnh A1 còn mở cửa Nam ra sân trong; khối sự kiện, cà phê, trưng bày một tầng lấy sáng cửa mái Bắc; phòng thiếu nhi mở cửa sổ Bắc ra sân trong rộng gần 20 m; văn phòng, phòng nhân viên, phòng đọc Nam tầng 1 có cửa sổ Nam. Tầng 2 là tầng trên cùng, mọi phòng đọc lấy sáng mái răng cưa kính quay Bắc. Mặt Đông, Tây đặc; hành lang thư viện có ô kính thấp nhìn sân.",
+    "Tiếng ồn: sự kiện, cà phê dồn về đầu Bắc; phòng thiếu nhi ở đáy sân, phía trên chỉ có học nhóm, hành lang, kho đệm; đọc yên tĩnh ở thanh Bắc tầng 2, cách học nhóm hơn 19 m, bên dưới là xử lý, quầy, sảnh (sàn cách âm); phòng đọc Nam tầng 1 cách phòng thiếu nhi một hành lang và kho đồ chơi (hơn 4 m); văn phòng, phòng nhân viên không chung vách phòng ồn hay kỹ thuật.",
+    "Ngoài giờ: khóa một cửa giữa A1 và A4; sảnh A1, trưng bày, cà phê, vệ sinh công cộng, sảnh sự kiện, phòng đa năng, chuyên đề vẫn mở và thoát ra sân trước, quảng trường, mặt sông, không đi qua khu đọc hay mặt sau.",
+    "Kết cấu: khung bê tông lưới theo cột thang (x = 12,3 / 16,3 / 18,3) và các dải 8,2–8,5 m; phòng đa năng 16 × 11,25 m dầm ứng lực trước; tầng 2 đua tối đa 2 m (qua lối Tây), không cần cột chống thêm."
+  ];
+  /* ---------- khối 3D: sinh từ chính các phòng ---------- */
+  const { B, col } = G.K;
+  const PUB = /^(D\d|A[123]|WCP|KSK|CO3|FOYA|E3)$/;
+  plan.idea = {
+    id: "chotX5", fam: "chot", code: "X.5", from: "bản xếp của bạn", name: "Mặt trước – mặt sau, đủ diện tích đề", rule: "Giữ khối của bản xếp; dải nghiệp vụ chữ L áp lối Tây và mặt Nam, mặt khách quay ra sân và sông",
+    tag: "Từ bản xếp khối của bạn: mặt sau (kho, nghiệp vụ, kỹ thuật, nhân viên) là dải chữ L áp lối Tây và mặt Nam; mặt trước quay ra quảng trường, sân trong, sông; mọi phòng đủ diện tích đề",
+    story: "Bản xếp của bạn đã đặt kho, nghiệp vụ dọc lối Tây và nhân viên ở đầu Nam. X.5 làm rõ ý đó: phía sau là một dải nghiệp vụ liền mạch, xe sách, nhân viên, thợ kỹ thuật vào từ lối Tây; phía trước là chỗ của khách, nhìn ra sân trong và sông. Quầy A4 đứng đúng chỗ hai mặt gặp nhau.",
+    why: [["Quy luật hình khối", "Giữ các hộp chữ nhật của bản xếp: khối sự kiện một tầng phía Bắc, thư viện hai tầng hình chữ U ôm sân trong mở ra sông."], ["Khối chính – khối phụ", "Thư viện hai tầng là khối chính; khối sự kiện, cà phê, trưng bày một tầng thấp hơn."], ["Nắng và chói", "Phòng có người lấy sáng Bắc, Nam hoặc cửa mái Bắc; mặt Đông, Tây đặc."], ["Gió và mưa", "Sân trong mở về phía sông đón gió Đông Nam; sân trước Bắc che bởi khối sự kiện."], ["Công năng", "Mặt sau liền mạch cho sách và nhân viên; mặt trước cho khách; quầy A4 là bản lề."]],
+    kc: { he: "Khung bê tông lưới theo cột thang và các dải 8,2–8,5 m; phòng đa năng dầm ứng lực trước nhịp 11,25 m; tầng 2 mái răng cưa thép nhẹ.", nhip: "11,25 m (phòng đa năng), 8,5 m (dải)", cx: "Không (đua tối đa 2 m)" },
+    qa: [["Mặt sau có làm nhân viên đi vòng xa không?", "Không: xử lý C2 sát quầy A4, kho đóng cách xử lý một phòng, lõi sách liền kho; văn phòng và sảnh nhân viên cùng ở góc Tây Nam, ra hành lang thư viện vài bước."], ["Sao đọc yên tĩnh lại ở trên sảnh đón tiếp?", "Thanh Bắc tầng 2 là chỗ xa học nhóm nhất (hơn 19 m); phía dưới là xử lý, quầy, sảnh, không có phòng ồn; sàn làm lớp cách âm."], ["Phòng thiếu nhi có lối riêng không?", "Không: chỉ vào từ hành lang thư viện sau quầy A4; cửa ra sân là cửa có chuông báo."]],
+    cut: "Khối sự kiện foam xám một tầng có dải cửa mái; thư viện trắng hai tầng chữ U ôm sân trong; dải nghiệp vụ chữ L ở lối Tây, mặt Nam bằng giấy xám đậm; lõi sách tím, thang cam nhô khỏi mái.",
+    roleOf: v => v.role || "p", floors: 2,
+    planBrief() {
+      const P6 = G.P6, Dd = typeof D !== "undefined" ? D : null;
+      if (!P6 || !Dd) return null;
+      plan.__R = plan.__R || P6.analyse(plan, Dd);
+      const z = plan.__R.byZone, f = v => Math.round(v || 0).toLocaleString("vi-VN");
+      return { st: "du", plan: 1, short: [], extra: [], ok: true, txt: `Theo mặt bằng chi tiết: A ${f(z.A)} · B ${f(z.B)} · C ${f(z.C)} · D ${f(z.D)} · E ${f(z.E)} m² sử dụng, từng phòng 97–105% đề` };
+    },
+    lab: [[14.3, 56, 12.6, "Lõi sách", 1], [24, 84, 11.4, "Khối chính · Thư viện hai tầng", 1], [18, 22, 6.2, "Khối phụ · Sự kiện một tầng", 2], [30, 57, 1.5, "Sân trong", 2], [3, 62, 6.2, "Mặt sau · lối Tây", 2]],
+    build() {
+      const v = [];
+      const coreTop = 9.45 + 1.6;
+      for (const L of [t1, t2]) for (const z of L.rooms) {
+        const [x, y, w, h] = z.r;
+        if (z.core) { if (L === t1) v.push(B(x, y, w, h, 0.45, coreTop, /l/.test(z.core.st) ? "violet" : "warn", "X", { top: /l/.test(z.core.st) ? "violet" : "warn", lv: 0, fl: 2 })); continue; }
+        const z0 = L === t1 ? 0.45 : 4.95, z1 = L === t1 ? 4.95 : 9.45, pub = L === t1 && PUB.test(z.id);
+        v.push(B(x, y, w, h, z0, z1, pub ? "stone" : "sheet", pub ? "D" : "B", { fl: 1, role: pub ? "p" : "m", top: pub ? "grass" : undefined }));
+      }
+      const st = [];
+      for (const x of [6, XC, XS, XH, 27.95]) for (const y of [Y0, Y1, 59.65, YB, YS, YE]) st.push(col(x, y, 0.45, 9.45));
+      for (const x of [10, 26, 35.5]) for (const y of [16, 27.25]) st.push(col(x, y, 0.45, 4.95));
+      return { v, st };
+    }
+  };
+  G.CHOT = G.CHOT || [];
+  G.CHOT.push(plan);
+})(window.G3);
+
+/* ================= Ý tưởng X.6: Sảnh đọc thông tầng sau quầy A4 (từ bản xếp khối của bạn, 07/11/2026) · khối + mặt bằng đầy đủ ================= */
+(function (G) {
+  // Giữ vết các khối, số tầng của bản xếp; sau quầy A4 là một sảnh đọc cao hai tầng có thang chính hở, tầng 2 là hành lang đọc quanh ô thông tầng.
+  const KT = "Nam · Nữ · KT (người khuyết tật)";
+  const N = "N";
+  const Q = (x, y, w, h) => [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+  const env = L => L.rooms.map(z => Q(...z.r));
+  const Y0 = 38.5, YA = 41.7, YB = 47.5, YC2 = 47, YW = 50.4, YCS = 59, YB3 = 67.5, YB3s = 75.5, YSC = 78.8, YS = 80.4, YE = 88.8;
+  const COURT = Q(16.5, 50.25, 25, 17.25), YARD = Q(6, 28.5, 22.5, 10);
+
+  /* ---------- Tầng 1 ---------- */
+  const t1 = {
+    k: "t1", z: 0.45, title: "Tầng 1 · sàn +0.450",
+    rooms: [
+      // khối sự kiện phía Bắc (giữ chỗ của bản xếp, lùi về x ≥ 6)
+      { id: "D3", c: "D3", n: "Kho bàn ghế sự kiện", r: [6, 16, 4, 5], ctl: "sk", nz: 1, d: [["D1", 1.4, "p"]] },
+      { id: "D2", c: "D2", n: "Bục trình bày", r: [6, 21, 4, 6.25], ctl: "sk", nz: 3, d: [["D1", 2.4, "o"]] },
+      { id: "D1", c: "D1", n: "Phòng đa năng", r: [10, 16, 16, 11.25], ctl: "sk", nz: 3, seat: 120, occ: 120, face: "W", top: N, d: [["N", 1.8, "tn", 0.3], ["N", 1.8, "tn", 0.75], ["CO3", 1.8, "p", 0.5]] },
+      { id: "D4", c: "D4", n: "Phòng sinh hoạt chuyên đề", r: [26, 16, 9.5, 8], ctl: "sk", nz: 2, seat: 24, top: N, d: [["CO3", 1.2, "p", 0.5]] },
+      { id: "WCP", c: "E5", n: "Vệ sinh công cộng (mở ngoài giờ)", r: [35.5, 16, 3.75, 8], ctl: "sk", nz: 1, wc: KT, d: [["CO3", 1.2, "p"]] },
+      { id: "CO3", c: "circ", n: "Sảnh sự kiện", r: [26, 24, 13.25, 4.5], ctl: "sk", nz: 2, occ: 40, d: [["E", 1.6, "tn"], ["A2", 2.4, "o"]] },
+      // nhánh cũ của cà phê: nay là trưng bày, nằm trên đường từ sảnh sang sự kiện
+      { id: "A2", c: "A2", n: "Trưng bày (trên đường sang sự kiện)", r: [28.5, 28.5, 11, 8.15], ctl: "sk", nz: 2, occ: 30, top: N, d: [["SH", 2.4, "o"]] },
+      { id: "SH", c: "circ", n: "Sảnh trưng bày, chia luồng", r: [28.5, 36.65, 11, 1.85], ctl: "sk", nz: 2, d: [["A1", 2.4, "o"], ["A3", 2.4, "o"]] },
+      // dải giữa: nghiệp vụ | quầy A4 + sảnh đọc thông tầng | đón tiếp | cà phê
+      { id: "C2", c: "C2", n: "Xử lý nghiệp vụ (cửa sau quầy A4)", r: [6, Y0, 8, YC2 - Y0], ctl: "nv", nz: 1, d: [["A4", 0.9, "nv"], ["C4", 1.2, "nv"]] },
+      { id: "A4", c: "A4", n: "Gửi đồ, mượn trả, cổng từ (dải quầy dọc kính Bắc)", r: [14, Y0, 9.5, YA - Y0], ctl: "tv", ctrl: 1, nz: 2, d: [["SDT", 3.0, "o", 0.35]] },
+      { id: "SDT", c: "B1", n: "Sảnh đọc thông tầng: báo, sách mới", r: [14, YA, 6.5, YB - YA], ctl: "tv", nz: 1, top: N, d: [["HLT", 2.0, "o"]] },
+      { id: "STH", n: "Thang chính thư viện (thang hở trong sảnh đọc)", r: [20.5, YA, 3, YB - YA], ctl: "tv", nz: 1, core: { st: "u", link: "STH" }, d: [["SDT", 1.4, "thang"]] },
+      { id: "A1", c: "A1", n: "Đón tiếp và thông tin", r: [23.5, Y0, 8.9, YB - Y0], ctl: "sk", nz: 2, seat: 20, occ: 40, d: [["N", 2.4, "chinh", 0.5], ["S", 2.4, "chinh", 0.4], ["A4", 2.0, "k"], ["A3", 2.4, "o", 0.7]] },
+      { id: "A3", c: "A3", n: "Cà phê sách (mở ra vườn và bờ sông)", r: [32.4, Y0, 8.1, YB - Y0], ctl: "sk", nz: 3, seat: 32, top: N, d: [["E", 1.2, "tn", 0.5]] },
+      // cột nghiệp vụ phía Tây (áp lối Tây): tiếp nhận → xử lý → kho đóng → lưu trữ, lõi sách giữa cột
+      { id: "WCL1", c: "E5", n: "Vệ sinh thư viện tầng 1", r: [10, YC2, 4, YW - YC2], ctl: "tv", nz: 1, wc: KT },
+      { id: "C4", c: "C4", n: "Tiếp nhận sách", r: [6, YC2, 4, 7.75], ctl: "nv", nz: 1, d: [["W", 2.8, "cuon", 0.55], ["W", 1.0, "nv", 0.12], ["C1a", 1.2, "nv"]] },
+      { id: "CS", n: "Lõi sách: thang bộ + thang máy + tời sách", r: [10, YW, 4, YCS - YW], ctl: "tv", nz: 1, core: { st: "u+l+b", link: "CS" }, d: [["HLT", 1.4, "thang"], ["C4", 1.0, "nv"], ["C1b", 1.0, "nv"]] },
+      { id: "C1a", c: "C1", n: "Kho đóng (cửa xe sách)", r: [6, YC2 + 7.75, 4, YCS - YC2 - 7.75], ctl: "kho", nz: 1, d: [["C1b", 1.6, "nv"]] },
+      { id: "C1b", c: "C1", n: "Kho đóng", r: [6, YCS, 8, 13], ctl: "kho", nz: 1, d: [["HLT", 1.0, "nv"], ["HLS", 1.0, "nv"]] },
+      { id: "C3", c: "C3", n: "Lưu trữ tài liệu địa phương", r: [6, 72, 8, 5], ctl: "kho", nz: 1, d: [["C1b", 1.0, "nv"], ["HLS", 1.0, "nv"]] },
+      { id: "E6", c: "E6", n: "Dụng cụ vệ sinh, kho chung", r: [6, 77, 5.9, YS - 77], ctl: "nv", nz: 1, d: [["W", 1.0, "nv"], ["C3", 0.9, "nv"]] },
+      { id: "KC", c: "circ", n: "Kho xe sách tầng 1", r: [11.9, 77, 2.1, YS - 77], ctl: "nv", nz: 1, d: [["HLS", 0.9, "nv"], ["C3", 0.9, "nv"]] },
+      // hành lang thư viện: dọc sân (chỗ bản xếp đặt A4), rồi vòng xuống phía Nam
+      { id: "HLT", c: "circ", n: "Hành lang thư viện nhìn sân", r: [14, YB, 2.5, YB3 - YB], ctl: "tv", nz: 1, d: [["WCL1", 1.0, "p"], ["HLS", 2.0, "o"], ["E", 1.2, "tnbd", 0.5]] },
+      { id: "HLS", c: "circ", n: "Hành lang thư viện Nam", r: [14, YB3, 3, YS - YB3], ctl: "tv", nz: 1, d: [["B3", 1.8, "p", 0.4], ["WCB", 1.0, "p"], ["B1s", 1.8, "o"]] },
+      // phòng thiếu nhi (giữ chỗ của bản xếp), vệ sinh trẻ em, kho đồ chơi
+      { id: "B3", c: "B3", n: "Thiếu nhi và gia đình (nhìn vườn trong sân)", r: [17, YB3, 22.5, YB3s - YB3], ctl: "tv", nz: 3, seat: 32, d: [["N", 1.8, "tnbd", 0.6]] },
+      { id: "WCB", c: "E5", n: "Vệ sinh thiếu nhi, thay tã", r: [17, YB3s, 4.1, YSC - YB3s], ctl: "tv", nz: 1, wc: "Trẻ em · thay tã", d: [["B3", 1.0, "p"]] },
+      { id: "KDT", c: "circ", n: "Kho đồ chơi, xe đẩy", r: [21.1, YB3s, 1.4, YSC - YB3s], ctl: "tv", nz: 1, d: [["B3", 0.9, "p"]] },
+      { id: "E4", c: "E4", n: "Kỹ thuật (điện, bơm, máy lạnh)", r: [22.5, YB3s, 17, YSC - YB3s], ctl: "kt", nz: 3, d: [["E", 1.4, "nv"], ["SC", 1.2, "nv"]] },
+      { id: "SC", c: "circ", n: "Hành lang nhân viên Nam", r: [17, YSC, 22.5, YS - YSC], ctl: "nv", nz: 1, d: [["E1", 0.9, "nv", 0.3], ["E2", 0.9, "nv"], ["SEH", 1.2, "o"], ["E", 1.0, "nv"]] },
+      // dải Nam: thang Tây Nam, đọc tầng 1, văn phòng, phòng nhân viên, bảo vệ, thang Đông Nam
+      { id: "STE2", n: "Thang thoát hiểm Tây Nam", r: [6, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE2" }, d: [["S", 1.2, "tnbd"], ["B1s", 1.2, "thang"]] },
+      { id: "B1s", c: "B1", n: "Đọc mở, bàn đọc (nhìn vườn Nam)", r: [9, YS, 9.5, YE - YS], ctl: "tv", nz: 1, d: [["S", 1.2, "tnbd", 0.5]] },
+      { id: "E1", c: "E1", n: "Văn phòng", r: [18.5, YS, 9.5, YE - YS], ctl: "nv", nz: 0, d: [["E2", 0.9, "nv"]] },
+      { id: "E2", c: "E2", n: "Phòng nhân viên", r: [28, YS, 4.75, YE - YS], ctl: "nv", nz: 1 },
+      { id: "SEH", c: "circ", n: "Tủ đồ nhân viên, sảnh vào", r: [32.75, YS, 4.45, 5.03], ctl: "nv", nz: 1, d: [["E3", 0.9, "nv"]] },
+      { id: "E3", c: "E3", n: "Trực bảo vệ (cửa nhân viên)", r: [32.75, YS + 5.03, 4.45, YE - YS - 5.03], ctl: "nv", nz: 1, d: [["S", 1.0, "nv"]] },
+      { id: "STE3", n: "Thang thoát hiểm Đông Nam", r: [37.2, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE3" }, d: [["S", 1.2, "tnbd"]] }
+    ],
+    staff: [
+      { x: 27, y: 42, t: "Lễ tân", sc: ["1", "2", "3", "4"] },
+      { x: 18.5, y: 40, t: "Thủ thư mượn trả, cổng từ", sc: ["1", "3", "4"] },
+      { x: 35, y: 87, t: "Bảo vệ", sc: ["1", "2", "3", "4"] },
+      { x: 37, y: 42, t: "Quầy cà phê", sc: ["1", "2", "3", "4"] },
+      { x: 30, y: 71.5, t: "Thủ thư thiếu nhi", sc: ["1", "3"] },
+      { x: 10, y: 42.5, t: "Nghiệp vụ", sc: ["1", "3", "4"] },
+      { x: 8, y: 51, t: "Nhận sách", sc: ["4"] },
+      { x: 23, y: 84.6, t: "Văn phòng", sc: ["1", "3", "4"] },
+      { x: 32, y: 26, t: "Đón khách sự kiện", sc: ["2", "3"] },
+      { x: 8, y: 24, t: "Điều phối, âm thanh", sc: ["2", "3"] }
+    ]
+  };
+  /* ---------- Tầng 2: hành lang đọc quanh ô thông tầng, giữ các khối tầng 2 của bản xếp ---------- */
+  const t2 = {
+    k: "t2", z: 4.95, title: "Tầng 2 · sàn +4.950",
+    rooms: [
+      // thanh Bắc: ô thông tầng ngay trên sảnh đọc, bàn đọc dọc kính Bắc, thang chính
+      { id: "B5", c: "B5", n: "Tra cứu số", r: [4, Y0, 6, 16.5], ctl: "tv", nz: 1, seat: 16, top: N, d: [["B1n", 1.6, "o"], ["CS", 1.2, "thang"], ["B1w", 1.6, "o"]] },
+      { id: "B1n", c: "B1", n: "Đọc mở và kệ (nhìn xuống thông tầng)", r: [10, Y0, 4, YW - Y0], ctl: "tv", nz: 1, top: N, d: [["B1g", 1.6, "o"], ["G2", 1.6, "o"]] },
+      { id: "B1g", c: "B1", n: "Bàn đọc dọc kính Bắc (trên quầy A4)", r: [14, Y0, 9.5, YA - Y0], ctl: "tv", nz: 1, top: N, d: [["STH", 1.4, "thang"], ["B1e", 1.6, "o"]] },
+      { id: "TT", c: "circ", n: "Thông tầng (nhìn xuống sảnh đọc)", r: [14, YA, 6.5, YB - YA], ctl: "tv", nz: 1, void: 1, nofurn: 1, d: [["B1g", 1.2, "o"]] },
+      { id: "STH", n: "Thang chính thư viện (thang hở trong sảnh đọc)", r: [20.5, YA, 3, YB - YA], ctl: "tv", nz: 1, core: { st: "u", link: "STH" }, d: [["G2", 1.4, "thang"], ["B1e", 1.2, "thang"]] },
+      { id: "B1e", c: "B1", n: "Đọc mở và kệ (trên sảnh đón tiếp)", r: [23.5, Y0, 3.9, YB - Y0], ctl: "tv", nz: 1, top: N },
+      { id: "G2", c: "B1", n: "Bàn đọc dọc lan can thông tầng", r: [14, YB, 9.5, 2.75], ctl: "tv", nz: 1, top: N, d: [["B6", 1.8, "o"]] },
+      // cánh Tây: lõi sách, tra cứu, đọc cá nhân, đọc yên tĩnh
+      { id: "CS", n: "Lõi sách: thang bộ + thang máy + tời sách", r: [10, YW, 4, YCS - YW], ctl: "tv", nz: 1, core: { st: "u+l+b", link: "CS" }, d: [["B6", 1.4, "thang"]] },
+      { id: "B1w", c: "B1", n: "Bàn đọc cá nhân", r: [4, 55, 6, YCS - 55], ctl: "tv", nz: 1, top: N },
+      { id: "B6", c: "B6", n: "Đọc linh hoạt, hỗ trợ tra cứu", r: [14, YB + 2.75, 4, 12.5], ctl: "tv", nz: 1, steps: 4, top: N, d: [["HL2", 1.6, "o"]] },
+      { id: "B2", c: "B2", n: "Đọc yên tĩnh (cuối cánh Tây, xa thông tầng và học nhóm)", r: [4, YCS, 10, YB3s - YCS], ctl: "tv", nz: 0, seat: 40, top: N, d: [["HL2", 1.2, "p", 0.4], ["HB", 1.0, "p"]] },
+      { id: "HL2", c: "circ", n: "Hành lang đọc Tây", r: [14, YB + 2.75 + 12.5, 4, 73.6 - (YB + 2.75 + 12.5)], ctl: "tv", nz: 1, d: [["HB", 2.0, "o"], ["KD", 0.9, "p"]] },
+      // dải trên phòng thiếu nhi: chỉ học nhóm (ồn chồng lên ồn), kho đệm, hành lang
+      { id: "KD", c: "circ", n: "Kho đệm, máy in, xe sách", r: [18, YB3, 4.5, 73.6 - YB3], ctl: "tv", nz: 1 },
+      ...[0, 1, 2, 3].map(i => ({ id: "B4" + "abcd"[i], c: "B4", n: `Học nhóm ${i + 1}`, r: [22.5 + 4.25 * i, YB3, 4.25, 73.6 - YB3], ctl: "tv", nz: 2, top: N, d: [["HB", 0.9, "p"]] })),
+      { id: "HB", c: "circ", n: "Hành lang học nhóm", r: [14, 73.6, 25.5, YB3s - 73.6], ctl: "tv", nz: 2, d: [["LK", 2.0, "o"], ["BRE", 1.4, "o"]] },
+      { id: "LK", c: "circ", n: "Cầu nối Tây", r: [14, YB3s, 4, YS - YB3s], ctl: "tv", nz: 1, d: [["B1m", 1.8, "o"], ["WC2", 1.0, "p"]] },
+      { id: "WC2", c: "E5", n: "Vệ sinh thư viện tầng 2 (trên vệ sinh thiếu nhi)", r: [18, YB3s, 3.1, YS - YB3s], ctl: "tv", nz: 1, wc: KT },
+      { id: "BRE", c: "circ", n: "Cầu nối Đông, tới thang Đông Nam", r: [36.2, YB3s, 3, YS - YB3s], ctl: "tv", nz: 1, d: [["STE3", 1.2, "thang"]] },
+      // thanh Nam: sảnh đọc lớn giữa hai thang
+      { id: "STE2", n: "Thang thoát hiểm Tây Nam", r: [6, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE2" }, d: [["B1m", 1.2, "thang"]] },
+      { id: "B1m", c: "B1", n: "Sảnh đọc lớn phía Nam", r: [9, YS, 28.2, YE - YS], ctl: "tv", nz: 1, top: N, d: [["STE3", 1.2, "thang"]] },
+      { id: "STE3", n: "Thang thoát hiểm Đông Nam", r: [37.2, YS, 3, YE - YS], ctl: "tv", nz: 1, core: { st: "u", link: "STE3" } }
+    ],
+    staff: [{ x: 16, y: 56, t: "Hỗ trợ tra cứu", sc: ["1", "3", "4"] }]
+  };
+  t1.env = env(t1); t2.env = env(t2);
+  const bikes = [];
+  for (const y of [89.5, 93.5, 95.5, 100]) for (let x = 16.2; x + 0.8 <= 41.3; x += 0.8) bikes.push([x, y, 0.8, 2]);
+  const plan = {
+    id: "chotX6", code: "X.6", name: "Sảnh đọc thông tầng sau quầy", from: "bản xếp của bạn",
+    yN: () => -999, yS: () => -999,
+    levels: [t1, t2],
+    grid: { x: [6, 10, 14, 17, 20.5, 23.5, 28.5, 32.4, 40.5], y: [16, 24, 28.5, Y0, YA, YB, YCS, YB3, YB3s, YS, YE] },
+    site: {
+      staff: [{ x: 9, y: 97, t: "Giữ xe", sc: ["1", "2", "3", "4"] }, { x: 30, y: 77, t: "Kỹ thuật, vệ sinh (đi tuần)", sc: ["1", "3", "4"] }],
+      park: { bikes, nBike: bikes.length, cars: [[6, 89.5, 3.5, 5.5, 1], [9.5, 89.5, 3.5, 5.5, 1], [13, 89.5, 2.8, 5.5, 0]], racks: [[10.5, 100.6, 5, 2.4]], nRack: 10, booth: [6.4, 100.6, 3.2, 2.4] },
+      routes: {
+        delivery: [[[3, 112], [3, 104], [3, 51.5], [5.2, 51.5]]],
+        fire: [[[-3, -12], [3, -4], [3, 102]], [[3, -2], [34, 7]]],
+        moto: [[[3, 112], [3, 97], [9, 97], [40, 98.8]]],
+        lib: [[[30, 103], [43, 96], [43, 58], [27, 58], [27, 48]]],
+        event: [[[20, -9], [20, 6], [3, 10], [3, 33], [26, 33], [26, 38.2]]]
+      },
+      routeNames: { lib: "Người đọc: từ bãi xe dọc bờ sông, vào vườn giữa, cửa Nam sảnh đón tiếp", event: "Khách sự kiện: quảng trường Bắc, theo lối Tây vào sân trước, cửa Bắc sảnh đón tiếp" },
+      hatch: [COURT, YARD],
+      labels: [[17, 33, "Sân trước (cửa Bắc)"], [30, 58, "Vườn giữa (cửa Nam)"], [17.3, 44.6, "Thông tầng"]]
+    }
+  };
+  plan.intro = `<p class="lede">X.6 dựng từ bản xếp khối của bạn, lấy một ý chính: <b>ngay sau quầy A4 là một sảnh đọc cao hai tầng</b>. Khách vào sảnh đón tiếp A1, qua dải quầy gửi đồ, mượn trả A4 có cổng từ chạy dọc kính Bắc, rồi bước xuống sảnh đọc thông tầng có thang chính hở. Đứng ở sảnh nhìn lên thấy cả tầng 2: bàn đọc dọc kính Bắc, bàn đọc dọc lan can, các kệ đọc mở bao quanh ô thông tầng. Từ sảnh đi thẳng hành lang dọc sân tới phòng thiếu nhi và đọc tầng 1 phía Nam, hoặc lên thang chính tới mọi phòng đọc tầng 2. Khối sự kiện, cà phê, trưng bày giữ ở nửa Bắc, mở ngoài giờ.</p>`;
+  plan.notes = [
+    "Đã sửa so với bản xếp: (1) các khối tầng 1 lấn lối Tây 6 m (D2, D3, cột kho C, lõi sách, vệ sinh, thang Tây Nam) lùi về x ≥ 6, dời 1,2–1,8 m; tầng 2 vẫn nhô ra lối Tây tới x = 4. (2) Chỗ thang máy CN và nửa Tây khối A1 của bản xếp thành dải quầy A4 dọc kính Bắc, sảnh đọc thông tầng và thang chính; A1 vì thế dời sang Đông khoảng 4,5 m (quá 2 m) để thứ tự đi là A1 → A4 → sảnh đọc, cửa chính vẫn mở ra sân trước và vườn giữa. (3) A4 trong bản xếp đứng riêng giữa sân, không nối với A1: chuyển vào dải giữa; chỗ cũ của A4 thành hành lang thư viện dọc sân. (4) Cà phê A3 đổi chỗ với trưng bày A2: A2 lên nhánh cà phê cũ, nằm đúng trên đường từ sảnh sang khu sự kiện; A3 xuống đầu Đông dải giữa (chỗ A2 cũ), cửa mái Bắc, cửa ra vườn và bờ sông.",
+    "Đã sửa (tiếp): (5) Lõi sách tầng 1 của bản xếp nằm ở đầu Bắc cột kho, còn lõi sách tầng 2 bạn để trên bàn nháp: gộp thành một lõi thẳng hai tầng ở giữa cột kho (dời xuống khoảng 12 m), sát tiếp nhận C4, kho đóng C1 và hành lang thư viện. (6) Cột kho xếp lại theo đường sách: xử lý C2 ở đầu Bắc (có cửa sổ Bắc, cửa nhân viên thẳng sang quầy A4), tiếp nhận C4 ngay dưới (cửa cuốn ra lối Tây), rồi kho đóng C1, lưu trữ C3 (C3 từ dải Nam chuyển về, liền kho đóng). (7) Thang bộ STS tầng 2 của bản xếp không có thang tầng 1 bên dưới: thay bằng thang chính hở đặt thẳng hai tầng trong sảnh đọc, dời sang Đông khoảng 6 m. Thang máy thứ hai giữa nhà bỏ (lõi sách có thang máy, bốn thang bộ đủ thoát nạn dưới 30 m); thêm thang Đông Nam ở chỗ hành lang LC và bảo vệ E3 của bản xếp.",
+    "Đã sửa (tiếp): (8) Tầng 2 trên phòng thiếu nhi: bản xếp đặt đọc mở B1a, B1w ngay trên nguồn ồn; đổi thành bốn phòng học nhóm B4 (ồn chồng lên ồn, lấy từ chồng học nhóm ở cánh Tây của bản xếp), kho đệm và hành lang. (9) Đọc yên tĩnh B2 của bản xếp ở thanh Nam chỉ cách học nhóm 4,9 m: chuyển về cuối cánh Tây tầng 2, trên kho, cách học nhóm 8,5 m, cách ô thông tầng hơn 11 m; thanh Nam thành sảnh đọc lớn B1 giữa hai thang. (10) Phòng thiếu nhi B3 nới sang Tây 3,5 m (vào chỗ thang máy cũ) để đủ 180 m² và có cửa từ hành lang thư viện. (11) Dải Nam đổi chỗ: đầu Tây là đọc tầng 1 B1s (cạnh hành lang thư viện, chỗ văn phòng cũ), giữa là văn phòng E1, phòng nhân viên E2; kỹ thuật E4 chuyển vào dải giữa phòng thiếu nhi và hành lang nhân viên, có cửa riêng ra mặt Đông, không còn chung vách E2. (12) Vệ sinh thiếu nhi 13,5 m² bạn để trong kho nay đặt sát B3; vệ sinh thư viện tầng 2 đặt chồng thẳng lên nó; vệ sinh thư viện tầng 1 lên cạnh sảnh đọc. (13) Thêm cầu nối Tây (thay LK của bản xếp, dời từ x 9,3 sang x 14) và một cầu nối Đông nhỏ 3 × 4,9 m tới thang Đông Nam; dải bàn đọc dọc lan can nhô ra sân thêm khoảng 2,2 m.",
+    "Diện tích: A 273 m² (đề 270, +1%), B 1.115 (đề 1.110, +0,5%), C 260 (đề 260), D 301 (đề 300), E 283 (đề 280, +1%); mỗi phòng 97–105% đề. Diện tích sử dụng 2.233 m², giao thông chung, thang, kho đệm, cầu nối 597 m². Ô thông tầng 37,7 m² ghi riêng, không tính vào sàn. Tổng sàn 2.829 m² (tầng 1: 1.741, tầng 2: 1.126 − 38 thông tầng), dưới 3.000. So với bản xếp (2.476 m²: phòng 2.121, giao thông và lõi 355): phần tăng thêm khoảng 350 m² là các phòng được đưa về đủ diện tích đề (+112 m², bản xếp có nhiều phòng −7 đến −10%: B1, B2, B3, A2, C1, D4, vệ sinh) và hành lang, thang, cầu nối được vẽ đủ (+242 m²). Đề dự trù 780 m² cho giao thông chung, tường và cấu kiện; phương án này dùng khoảng 600 m² cho phần đó.",
+    "Đi qua khối A: cửa chính ở sảnh đón tiếp A1, mở cả ra sân trước phía Bắc (khách sự kiện) và vườn giữa phía Nam (người đọc từ bãi xe theo bờ sông). Từ A1 rẽ sang cà phê, sảnh trưng bày, trưng bày A2, sảnh sự kiện, phòng đa năng, chuyên đề, vệ sinh công cộng. Vào thư viện chỉ có một cửa: A1 → dải quầy gửi đồ, mượn trả A4 có cổng từ → sảnh đọc thông tầng. Phòng thiếu nhi, đọc tầng 1 phía Nam và toàn bộ tầng 2 đều ở sau A4.",
+    "Sảnh đọc thông tầng: 6,5 × 5,8 m, cao hai tầng, lấy sáng mái qua ô thông tầng và kính Nam nhìn vườn giữa; bàn đọc báo, kệ sách mới. Thang chính hở đặt cạnh sảnh, lên tầng 2 ra thẳng hành lang quanh ô thông tầng: phía Bắc là dải bàn đọc dọc kính Bắc (trên quầy A4), phía Nam là dải bàn đọc dọc lan can, phía Tây là kệ đọc mở, phía Đông là đọc mở trên sảnh đón tiếp. Từ đây đi tiếp xuống cánh Tây và thanh Nam.",
+    "Đường sách: xe giao sách theo lối Tây, cửa cuốn vào tiếp nhận C4 → xử lý C2 (liền vách) → kho đóng C1 → lõi sách có tời sách ngay cạnh, lên tầng 2 ra thẳng phòng đọc linh hoạt B6 và tra cứu số B5. Sách trả: quầy A4 → cửa nhân viên ở đầu Tây dải quầy → xử lý C2, vài bước, không qua khu công cộng. Hành lang thư viện có cửa nhân viên vào kho đóng để xếp sách lên kệ.",
+    "Vệ sinh: cụm công cộng ở khối sự kiện (mở ngoài giờ); vệ sinh thư viện tầng 1 cạnh sảnh đọc; vệ sinh thiếu nhi, thay tã mở thẳng từ phòng thiếu nhi; vệ sinh thư viện tầng 2 ở cầu nối Tây, chồng thẳng lên vệ sinh thiếu nhi (đường ống thẳng). Người đọc ở thanh Bắc tầng 2 xuống thang chính là tới vệ sinh tầng 1, dưới 25 m.",
+    "Ánh sáng Bắc – Nam: khối sự kiện, trưng bày, cà phê một tầng lấy sáng cửa mái hướng Bắc; xử lý C2, dải quầy A4, sảnh đón tiếp nhìn ra sân trước phía Bắc (sân sâu khoảng 11 m, khối sự kiện chỉ cao +4,95); sảnh đón tiếp, sảnh đọc, phòng thiếu nhi nhìn ra vườn giữa sâu 20 m; đọc tầng 1, văn phòng, phòng nhân viên, bảo vệ quay ra mặt Nam. Tầng 2 là tầng trên cùng, mọi phòng đọc lấy sáng mái răng cưa kính quay Bắc. Mặt Đông, Tây đặc.",
+    "Tiếng ồn: sự kiện, cà phê ở nửa Bắc và đầu Đông dải giữa, cách khu đọc bằng sảnh đón tiếp; phòng thiếu nhi ở đáy vườn, học nhóm ngay trên, kho đệm và hành lang ngăn với phòng đọc; đọc yên tĩnh B2 ở cuối cánh Tây, xa cả học nhóm lẫn ô thông tầng; văn phòng, phòng nhân viên tách khỏi kỹ thuật bằng hành lang nhân viên, bên trên là phòng đọc.",
+    "Ngoài giờ: khóa một cửa giữa A1 và A4; sảnh, cà phê, sảnh trưng bày, trưng bày, sảnh sự kiện, phòng đa năng, chuyên đề, vệ sinh công cộng vẫn mở và thoát ra sân trước, mặt sông, không đi xuyên khu đọc. Thang chính, lõi sách, hai thang thoát hiểm đều nằm trong khu thư viện, ra ngoài bằng cửa có chuông báo.",
+    "Kết cấu: khung bê tông lưới khoảng 4–8 m theo cột kho, lõi thang; ô thông tầng có dầm viền bốn phía; phòng đa năng 16 × 11,25 m dầm ứng lực trước; phần tầng 2 nhô ra nhiều nhất khoảng 2,75 m (dải bàn đọc dọc lan can) nên không cần cột chống thêm."
+  ];
+  /* ---------- khối 3D: sinh từ chính các phòng ---------- */
+  const { B, col } = G.K;
+  const PUB = /^(D\d|A[123]|WCP|CO3|SH)$/;
+  plan.idea = {
+    id: "chotX6", fam: "chot", code: "X.6", from: "bản xếp của bạn", name: "Sảnh đọc thông tầng sau quầy", rule: "Giữ khối của bản xếp, sau quầy A4 là sảnh đọc cao hai tầng",
+    tag: "Từ bản xếp khối của bạn: qua A1 và quầy A4 là sảnh đọc thông tầng có thang chính hở; tầng 2 đọc quanh ô thông tầng",
+    story: "Bản xếp có một chỗ bản lề: nơi cột kho phía Tây gặp dải đón tiếp và thanh đọc tầng 2. X.6 khoét chỗ đó thành sảnh đọc cao hai tầng. Người đọc qua quầy là thấy ngay cả thư viện, thang chính hở dẫn lên hành lang đọc quanh ô thông tầng.",
+    why: [["Quy luật hình khối", "Giữ các hộp chữ nhật của bản xếp: khối sự kiện một tầng phía Bắc, thư viện hai tầng hình chữ U ôm vườn giữa, ô thông tầng nằm trong thanh Bắc tầng 2."], ["Khối chính – khối phụ", "Thư viện hai tầng là khối chính; khối sự kiện, cà phê, trưng bày một tầng thấp hơn."], ["Nắng và chói", "Sảnh đọc lấy sáng mái qua ô thông tầng và kính Nam; phòng có người lấy sáng Bắc, Nam hoặc cửa mái Bắc; mặt Đông, Tây đặc."], ["Gió và mưa", "Ô thông tầng kéo khí nóng lên mái; vườn giữa mở về phía sông đón gió Đông Nam."], ["Công năng", "Một cửa vào thư viện qua A4; sảnh đọc là nơi chia luồng: thang chính lên tầng 2, hành lang dọc sân xuống thiếu nhi và đọc phía Nam."]],
+    kc: { he: "Khung bê tông lưới khoảng 4–8 m; ô thông tầng 6,5 × 5,8 m có dầm viền; phòng đa năng dầm ứng lực trước nhịp 11,25 m; tầng 2 mái răng cưa thép nhẹ.", nhip: "11,25 m (phòng đa năng)", cx: "Không (đua tối đa khoảng 2,75 m)" },
+    qa: [["Ô thông tầng có làm ồn lên tầng 2 không?", "Sảnh đọc dưới chỉ đọc báo, sách mới, không phải chỗ chơi; phòng thiếu nhi, học nhóm ở cuối hành lang phía Nam. Đọc yên tĩnh B2 ở cuối cánh Tây, cách ô thông tầng hơn 11 m, có lõi sách và đọc cá nhân chắn giữa."], ["Thang chính hở có làm mất kiểm soát sách không?", "Không: thang nằm sau quầy A4, chỉ nối khu đọc tầng 1 với khu đọc tầng 2; các thang thoát hiểm ra ngoài bằng cửa có chuông báo."]],
+    cut: "Khối sự kiện, cà phê, trưng bày foam xám một tầng; thư viện trắng hai tầng; ô thông tầng để trống nhìn xuống sảnh đọc; lõi sách tím, thang cam nhô khỏi mái.",
+    roleOf: v => v.role || "p", floors: 2,
+    planBrief() {
+      const P6 = G.P6, Dd = typeof D !== "undefined" ? D : null;
+      if (!P6 || !Dd) return null;
+      plan.__R = plan.__R || P6.analyse(plan, Dd);
+      const z = plan.__R.byZone, f = v => Math.round(v || 0).toLocaleString("vi-VN");
+      return { st: "du", plan: 1, short: [], extra: [], ok: true, txt: `Theo mặt bằng chi tiết: A ${f(z.A)} · B ${f(z.B)} · C ${f(z.C)} · D ${f(z.D)} · E ${f(z.E)} m² sử dụng, từng phòng 97–105% đề` };
+    },
+    lab: [[12, 55, 12.6, "Lõi sách", 1], [26, 84, 11.4, "Khối chính · Thư viện hai tầng", 1], [18, 22, 6.2, "Khối phụ · Sự kiện một tầng", 2], [17.3, 44.6, 9.6, "Thông tầng", 2]],
+    build() {
+      const v = [];
+      const coreTop = 9.45 + 1.6;
+      for (const L of [t1, t2]) for (const z of L.rooms) {
+        if (z.void) continue;
+        const [x, y, w, h] = z.r;
+        if (z.core) { if (L === t1) v.push(B(x, y, w, h, 0.45, coreTop, /l/.test(z.core.st) ? "violet" : "warn", "X", { top: /l/.test(z.core.st) ? "violet" : "warn", lv: 0, fl: 2 })); continue; }
+        const z0 = L === t1 ? 0.45 : 4.95, z1 = L === t1 ? 4.95 : 9.45, pub = L === t1 && PUB.test(z.id);
+        v.push(B(x, y, w, h, z0, z1, pub ? "stone" : "sheet", pub ? "D" : "B", { fl: 1, role: pub ? "p" : "m", top: pub ? "grass" : undefined }));
+      }
+      const st = [];
+      for (const x of [6, 10, 14, 23.5, 32.4]) for (const y of [Y0, YB, YCS, YB3, YS, YE]) st.push(col(x, y, 0.45, 9.45));
+      for (const x of [10, 26, 35.5]) for (const y of [16, 28.5]) st.push(col(x, y, 0.45, 4.95));
+      return { v, st };
+    }
+  };
+  G.CHOT = G.CHOT || [];
+  G.CHOT.push(plan);
+})(window.G3);
+
 
 /* ================= Gắn hai bộ ý tưởng vào hai tab ================= */
 (function (G) {
@@ -17446,7 +17804,7 @@ ${cfg.intro(rules)}
   const IC = (G.CHOT || []).map(p => p.idea).filter(Boolean);
   if (IC.length) G.mount({
     key: "g9", host: "g9-host", tab: "g9", ideas: IC,
-    groups: [{ k: "xep", t: "Từ bản xếp khối của bạn (X.1 đúng y bản xếp, X.2–X.4 sửa giao thông và logic)" }, { k: "vuong", t: "Xếp khối vuông, chữ nhật 2–3 tầng (thầy xác nhận: không cần cầu kỳ)" }, { k: "moi", t: "Đợt mới · kho sát thư viện, đi lại gọn (A.4–A.6, H.7–H.9)" }, { k: "khe", t: "Khe Hải Vân · sửa đủ góp ý của thầy" }, { k: "hop", t: "Hộp xếp chồng, không hộp bọc ngoài" }, { k: "chot", t: "Phương án đã chốt (A đã nộp mô hình)" }], grpOf: I => /^X\./.test(I.code) ? "xep" : /^S\./.test(I.code) ? "vuong" : /^(A\.[4-9]|H\.[7-9])/.test(I.code) ? "moi" : /^K/.test(I.code) ? "khe" : /^H/.test(I.code) ? "hop" : "chot", code: I => I.code, sub: I => `từ ${I.from}`, subNw: () => true, kind: () => "Phương án chốt",
+    groups: [{ k: "xep", t: "Từ bản xếp khối của bạn (X.1 đúng y bản xếp; X.2–X.4 sửa giao thông và logic; X.5–X.6 sửa thêm, đủ diện tích đề)" }, { k: "vuong", t: "Xếp khối vuông, chữ nhật 2–3 tầng (thầy xác nhận: không cần cầu kỳ)" }, { k: "moi", t: "Đợt mới · kho sát thư viện, đi lại gọn (A.4–A.6, H.7–H.9)" }, { k: "khe", t: "Khe Hải Vân · sửa đủ góp ý của thầy" }, { k: "hop", t: "Hộp xếp chồng, không hộp bọc ngoài" }, { k: "chot", t: "Phương án đã chốt (A đã nộp mô hình)" }], grpOf: I => /^X\./.test(I.code) ? "xep" : /^S\./.test(I.code) ? "vuong" : /^(A\.[4-9]|H\.[7-9])/.test(I.code) ? "moi" : /^K/.test(I.code) ? "khe" : /^H/.test(I.code) ? "hop" : "chot", code: I => I.code, sub: I => `từ ${I.from}`, subNw: () => true, kind: () => "Phương án chốt",
     eyebrow: I => `Phương án chốt ${I.code} · phát triển từ ${I.from}`, cmpTitle: "Phương án chốt",
     intro: () => `<section><p class="eyebrow">Phương án chốt · khối 3D</p><h2>Khối sinh từ chính mặt bằng bên dưới</h2><p class="lede">Đường bao, cao độ sàn, mái dốc và vị trí lõi thang lấy trực tiếp từ dữ liệu mặt bằng, nên khối và mặt bằng luôn khớp. Thang bộ là khối cam, thang bộ có thang máy là khối tím, nhô cao hơn mái 1,6 m.</p></section>`
   });
@@ -19731,10 +20089,13 @@ ${room ? "" : `<label class="k" for="x10-h">Sâu Bắc – Nam</label><input typ
     const P = S.blocks.filter(onSite).filter(isFloor), f = n => P.filter(b => b.f === n).reduce((s, b) => s + b.w * b.h, 0);
     const z = c => P.filter(b => b.kind === "room" && b.c[0] === c).reduce((s, b) => s + area(b), 0), brief = { A: 270, B: 1110, C: 260, D: 300, E: 280 };
     const tot = [1, 2, 3].reduce((t, n) => t + f(n), 0);
+    const rm = P.filter(b => b.kind === "room").reduce((s, b) => s + b.w * b.h, 0), gt = tot - rm;
     box.innerHTML = `<table><tr><th>Nhóm</th><th class="n">Đã đặt</th><th class="n">Đề</th></tr>${Object.keys(brief).map(c => `<tr><td>${c}</td><td class="n">${nf(z(c))}</td><td class="n">${nf(brief[c])}</td></tr>`).join("")}
+<tr><td><b>Cộng các phòng</b></td><td class="n"><b>${nf(rm)}</b></td><td class="n">2.220</td></tr>
+<tr><td>Thang, sảnh, hành lang đã vẽ</td><td class="n">${nf(gt)}</td><td class="n">780</td></tr>
 ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn)</td><td class="n">${nf(f(n))}</td><td></td></tr>`).join("")}
 <tr><td><b>Tổng sàn</b></td><td class="n"><b style="color:${tot > 3000 ? "var(--warn)" : "inherit"}">${nf(tot)}</b></td><td class="n">≤ 3.000</td></tr></table>
-<p class="st">Tổng sàn tính cả thang, sảnh, hành lang đã thêm; còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho giao thông chung và tường.</p>`;
+<p class="st">Đề bài: 2.220 m² cho 24 phòng cộng 780 m² dự trù cho giao thông chung, tường và cấu kiện, tổng tối đa 3.000 m². Tổng sàn ở đây tính các khối đã đặt (phòng, thang, sảnh, hành lang). Còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho hành lang nối các khối, tường, cột chưa vẽ${rm < 2220 * 0.97 ? `; các phòng đang nhỏ hơn đề ${nf(2220 - rm)} m²` : ""}.</p>`;
   }
 
   /* ---------- khối 3D dự phòng bằng SVG (khi trình duyệt không chạy được WebGL) ---------- */
