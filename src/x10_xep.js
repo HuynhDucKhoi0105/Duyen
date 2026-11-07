@@ -53,7 +53,7 @@
   let sel = null, hover = null, mode = "1", seq = 1, ISS = [], BAD = new Set();
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -130,6 +130,16 @@
 .x10 svg.plan g.blk { cursor: grab; }
 .x10 svg.plan.dragging, .x10 svg.plan.dragging g.blk { cursor: grabbing; }
 .x10 svg.plan g.hv > rect.body { stroke: var(--accent); stroke-width: 5px; }
+.x10 .ov .btn.lk { font-size: 12.5px; }
+.x10 .ov .btn.lk[aria-pressed="true"] { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.x10 .cv.navlock .zm { display: none; }
+.x10 .cv.navlock svg.plan { cursor: default; }
+.x10 .dv { position: relative; }
+.x10 .dv .dvl { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 26px; height: 26px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); font-size: 12px; line-height: 1; cursor: pointer; z-index: 2; }
+.x10 .dv .dvl[aria-pressed="true"] { border-color: var(--ink); }
+.x10 .dv.locked { cursor: default; }
+.x10 .dv.locked::before { background: repeating-linear-gradient(var(--line) 0 6px, transparent 6px 10px); }
+.x10 .dv.locked:hover::before { background: repeating-linear-gradient(var(--line) 0 6px, transparent 6px 10px); }
 .x10 .dv { grid-area: dv; align-self: stretch; cursor: col-resize; touch-action: none; display: flex; justify-content: center; min-height: 240px; }
 .x10 .dv::before { content: ""; width: 4px; border-radius: 2px; background: var(--line); }
 .x10 .dv:hover::before, .x10 .dv:focus-visible::before { background: var(--accent); }
@@ -197,8 +207,8 @@
   <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
     <div class="stk" id="x10-stk" aria-label="Chọn tầng đang xếp"></div>
     <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào khu đất, vào 3D, hoặc ra bàn nháp bên phải mặt bằng (bấm đúp một khối để đưa ra bàn nháp)</span></div><div id="x10-kho" class="row"></div></div>
-    <div class="cv"><svg class="plan" id="x10-svg" aria-label="Mặt bằng khu đất và các khối"></svg><div class="ov tl" id="x10-pt"></div><div class="ov tr"><button type="button" class="btn" id="x10-zi" title="Phóng to (hoặc cuộn chuột)">＋</button><button type="button" class="btn" id="x10-zo" title="Thu nhỏ">−</button><button type="button" class="btn" id="x10-zf" title="Vừa khung" style="font-size:12.5px">Vừa khung</button></div></div>
-    <div class="dv" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"></div>
+    <div class="cv"><svg class="plan" id="x10-svg" aria-label="Mặt bằng khu đất và các khối"></svg><div class="ov tl" id="x10-pt"></div><div class="ov tr"><button type="button" class="btn lk" id="x10-nl" aria-pressed="${UI.navLock}" title="Khoá thì cuộn chuột, kéo chỗ trống không làm phóng to, thu nhỏ hay dời hình; mở khoá để phóng thu, kéo hình">${UI.navLock ? "🔒 Đã khoá khung" : "🔓 Đang mở khung"}</button><span class="zm"><button type="button" class="btn" id="x10-zi" title="Phóng to (hoặc cuộn chuột)">＋</button><button type="button" class="btn" id="x10-zo" title="Thu nhỏ">−</button><button type="button" class="btn" id="x10-zf" title="Vừa khung" style="font-size:12.5px">Vừa khung</button></span></div></div>
+    <div class="dv${UI.dvLock ? " locked" : ""}" id="x10-dv" role="separator" aria-label="Kéo để đổi cỡ mặt bằng và 3D" tabindex="0"><button type="button" class="dvl" id="x10-dvl" aria-pressed="${UI.dvLock}" title="${UI.dvLock ? "Vạch chia đang khoá: bấm để mở, rồi kéo đổi cỡ khung" : "Bấm để khoá vạch chia, giữ cỡ khung mặt bằng và 3D"}">${UI.dvLock ? "🔒" : "🔓"}</button></div>
     <div class="td">
       <div id="x10-3d" aria-label="Khối 3D: kéo khối để di chuyển, kéo chỗ trống để xoay"></div><svg class="iso" id="x10-iso" hidden></svg>
       <div class="ov tl"><button type="button" class="btn" data-v="l">⟲</button><button type="button" class="btn" data-v="r">⟳</button><button type="button" class="btn" data-v="top">Nhìn từ trên</button><button type="button" class="btn" data-v="0">Góc mặc định</button><button type="button" class="btn" id="x10-pan" aria-pressed="false" title="Bật: kéo chuột trái hoặc một ngón tay để di chuyển góc nhìn">✥ Di chuyển</button></div>
@@ -255,9 +265,13 @@
     host.querySelector("#x10-zi").addEventListener("click", () => zoomAt(0.8));
     host.querySelector("#x10-zo").addEventListener("click", () => zoomAt(1.25));
     host.querySelector("#x10-zf").addEventListener("click", () => { VB = { ...VB0 }; setVB(); });
-    sv.addEventListener("wheel", e => { e.preventDefault(); svg = sv; const [x, y] = pt(e); zoomAt(e.deltaY < 0 ? 0.88 : 1.14, x, y); }, { passive: false });
+    const cv = sv.closest(".cv"), nl = host.querySelector("#x10-nl");
+    const showLock = () => { cv.classList.toggle("navlock", !!UI.navLock); nl.setAttribute("aria-pressed", String(!!UI.navLock)); nl.textContent = UI.navLock ? "🔒 Đã khoá khung" : "🔓 Đang mở khung"; };
+    showLock();
+    nl.addEventListener("click", () => { UI.navLock = !UI.navLock; saveUI(); showLock(); });
+    sv.addEventListener("wheel", e => { if (UI.navLock) return; e.preventDefault(); svg = sv; const [x, y] = pt(e); zoomAt(e.deltaY < 0 ? 0.88 : 1.14, x, y); }, { passive: false });
     let pan = null;
-    sv.addEventListener("pointerdown", e => { if (e.button > 1 || drag) return; svg = sv; pan = { x: e.clientX, y: e.clientY, vx: VB.x, vy: VB.y, k: VB.w * PX / sv.getBoundingClientRect().width / PX }; sv.setPointerCapture(e.pointerId); sv.classList.add("panning"); if (sel) { sel = null; renderPlan(); sideCard(); hi3d(); } });
+    sv.addEventListener("pointerdown", e => { if (e.button > 1 || drag) return; svg = sv; if (UI.navLock) { if (sel) { sel = null; renderPlan(); sideCard(); hi3d(); } return; } pan = { x: e.clientX, y: e.clientY, vx: VB.x, vy: VB.y, k: VB.w * PX / sv.getBoundingClientRect().width / PX }; sv.setPointerCapture(e.pointerId); sv.classList.add("panning"); if (sel) { sel = null; renderPlan(); sideCard(); hi3d(); } });
     sv.addEventListener("pointermove", e => { if (!pan) return; VB.x = pan.vx - (e.clientX - pan.x) * pan.k; VB.y = pan.vy - (e.clientY - pan.y) * pan.k; setVB(); });
     const end = () => { pan = null; sv.classList.remove("panning"); };
     sv.addEventListener("pointerup", end); sv.addEventListener("pointercancel", end);
@@ -271,11 +285,16 @@
   function divider(dv) {
     let st = null;
     const main = host.querySelector("#x10-main"), set = h => { UI.planH2 = Math.round(Math.max(380, Math.min(1600, h))); main.style.setProperty("--planH", UI.planH2 + "px"); raf("d3", draw3); };
-    dv.addEventListener("pointerdown", e => { st = { x: e.clientX, h: UI.planH2 }; dv.setPointerCapture(e.pointerId); e.preventDefault(); });
+    const lb = dv.querySelector("#x10-dvl");
+    const showLock = () => { dv.classList.toggle("locked", !!UI.dvLock); lb.setAttribute("aria-pressed", String(!!UI.dvLock)); lb.textContent = UI.dvLock ? "🔒" : "🔓"; lb.title = UI.dvLock ? "Vạch chia đang khoá: bấm để mở, rồi kéo đổi cỡ khung" : "Bấm để khoá vạch chia, giữ cỡ khung mặt bằng và 3D"; dv.setAttribute("aria-label", UI.dvLock ? "Vạch chia mặt bằng và 3D (đang khoá)" : "Kéo để đổi cỡ mặt bằng và 3D"); };
+    showLock();
+    lb.addEventListener("pointerdown", e => e.stopPropagation());
+    lb.addEventListener("click", e => { e.stopPropagation(); UI.dvLock = !UI.dvLock; saveUI(); showLock(); });
+    dv.addEventListener("pointerdown", e => { if (UI.dvLock || e.target.closest(".dvl")) return; st = { x: e.clientX, h: UI.planH2 }; dv.setPointerCapture(e.pointerId); e.preventDefault(); });
     dv.addEventListener("pointermove", e => { if (st) set(st.h + (e.clientX - st.x) * VB0.h / VB0.w); });
     const end = () => { if (st) { st = null; saveUI(); } };
     dv.addEventListener("pointerup", end); dv.addEventListener("pointercancel", end);
-    dv.addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); set(UI.planH2 + (e.key === "ArrowRight" ? 60 : -60)); saveUI(); } });
+    dv.addEventListener("keydown", e => { if (UI.dvLock) return; if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); set(UI.planH2 + (e.key === "ArrowRight" ? 60 : -60)); saveUI(); } });
   }
 
   /* ---------- vẽ mặt bằng khu đất ---------- */
