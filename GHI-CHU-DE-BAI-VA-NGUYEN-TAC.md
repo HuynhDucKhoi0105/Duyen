@@ -342,15 +342,15 @@ Rút từ mục 4, 5.2, 6 và Hình 1–2 của đề, cộng góp ý của th�
 
 **Nhóm E**
 
-- **E1 · Văn phòng** (80 m², chỗ làm việc cho ban quản lý; ngoài giờ: đóng)
-  - Nhiệm vụ: Quản lý thư viện và trung tâm.
+- **E1 · Văn phòng** (80 m²; ngoài giờ: đóng). Thầy nói E1 gồm phòng họp và chỗ làm việc của nhân sự.
+  - Nhiệm vụ: Quản lý thư viện và trung tâm. Đề xuất chia (09/11/2026, mình tìm hiểu, chưa phải lời thầy): phòng giám đốc 12–15 m²; 4–5 chỗ làm việc chung 32–38 m² (Nghị định 152/2017: tối đa 10 m²/chuyên viên); phòng họp 10–12 người 20–24 m²; lưu hồ sơ, máy in 4–6 m². Nhân viên trực quầy (lễ tân, mượn trả, thiếu nhi, tra cứu, nghiệp vụ, bảo vệ, giữ xe, cà phê) làm việc tại quầy của họ, không ngồi ở E1.
   - Nằm ở: Khu nội bộ, gần C2 và quầy A4; tầng 1 hoặc tầng 2 đều được.
   - Cần: Yên tĩnh, sáng Bắc hoặc Nam, cửa thẻ từ.
   - Nối với: E2, C2, A4 (qua lối nhân viên).
   - Tránh: D1, E4 (ồn).
 
-- **E2 · Phòng nhân viên** (40 m², nghỉ, ăn, tủ đồ; ngoài giờ: đóng)
-  - Nhiệm vụ: Nghỉ ca, ăn nhẹ, tủ đồ cá nhân.
+- **E2 · Phòng nhân viên** (40 m², phòng nghỉ, không phải chỗ làm việc; ngoài giờ: đóng)
+  - Nhiệm vụ: Nghỉ ca, nghỉ trưa, ăn nhẹ, tủ đồ cá nhân cho 12 người. Đề xuất: bếp nhỏ 8–10 m², bàn ăn 6–8 chỗ 12–15 m², góc ngả lưng 6–8 m², tủ đồ 12 ngăn và chỗ thay đồ 4–6 m².
   - Nằm ở: Cạnh E1, trong khu nội bộ.
   - Cần: Sáng Bắc hoặc Nam, chậu rửa.
   - Nối với: E1, lối nhân viên.
@@ -762,6 +762,31 @@ Bạn hỏi vì sao bản xếp chỉ khoảng 2.500 m², còn 500 m² "biến �
   - Mặt bằng chi tiết dựng y như khung "Mặt bằng chi tiết" lúc xếp: lấy X.7, đặt từng phòng đúng theo khối; cửa, nội thất theo X.7; không vá cửa hay hành lang. Kết quả: tổng sàn 2.544 m², các phòng 2.131 m², giao thông 412 m², 89 lỗi kiểm tra (phần lớn do cửa của X.7 không còn cạnh chung vì khối đã dời, và hành lang tầng 2 còn trên bàn nháp).
 - **Kích thước tổng** (tab Tự xếp khối, cả mặt bằng và 3D; tab Final 1): đường kích thước tổng Đông – Tây (phía Bắc) và tổng Bắc – Nam (phía Tây) của tầng đang xếp, hoặc cả nhà khi xem cả các tầng. Mỗi cụm khối liền nhau (chạm nhau dọc một cạnh ≥ 0,5 m, từ 2 khối trở lên) có thêm kích thước riêng ở phía Nam, phía Đông. Dòng trên góc mặt bằng ghi tổng và số cụm rời. Tắt bằng ô "Kích thước tổng" ở hàng Hiển thị.
   - Bản Final 1: tầng 1 tổng 33,27 × 72,45 m, 3 cụm rời; tầng 2 tổng 33,28 × 50,03 m, 4 cụm rời.
+
+### 3.22 Tự xếp khối: chọn nhiều khối, bắt góc, vùng xây dựng, máy tính, dán hành lang (09/11/2026)
+
+- **Chọn nhiều khối:**
+  - Kéo chuột trên chỗ trống để bôi đen. Kéo sang phải chỉ lấy khối nằm trọn trong khung, kéo sang trái lấy cả khối chạm khung (như AutoCAD).
+  - Hoặc giữ Shift rồi bấm từng khối để thêm, bớt.
+  - Kéo một khối trong nhóm thì cả nhóm dời theo. Phím mũi tên dời 0,5 m (Shift 4 m), Esc bỏ chọn.
+  - Thẻ nhóm có nút canh thẳng mép Tây, Đông, Bắc, Nam.
+  - Khi khung đang mở (🔓), kéo chỗ trống là dời hình; muốn bôi đen thì giữ Shift.
+- **Bắt góc:** khi kéo, góc khối tự hút vào góc khối cùng tầng hoặc tầng ngay dưới (tầng 2 khớp góc tầng 1), có ô vuông đánh dấu và chữ "Góc …". Không có góc gần thì hút cạnh như trước; khối tầng ngay dưới được ưu tiên hơn tầng trên.
+- **Vùng xây dựng:** khối tầng 1 không kéo ra được lối xe cứu hỏa (Tây), quảng trường (Bắc), bãi xe (Nam), bờ sông. Kéo hẳn sang bờ sông thì vẫn đưa ra bàn nháp, kho được. Kéo mép, thanh tỉ lệ, ô nhập cũng dừng ở mép vùng xây dựng và báo "Chạm mép vùng xây dựng".
+- **Mượt hơn:** kéo mép, thanh tỉ lệ, ô nhập chỉ vẽ lại khối đang sửa (khoảng 5 ms mỗi lần nhích). Kiểm tra, bảng, 3D dựng lại khi tay dừng khoảng 0,2 giây.
+- **Dòng "Đang xếp tầng …"** chuyển ra ngoài khung mặt bằng, nằm ngay trên khung.
+- **Máy tính:** nút 🧮 Máy tính mở một máy tính nổi, kéo thanh tiêu đề để dời.
+  - Phép tính: cộng, trừ, nhân, chia, mũ (^), căn (√), phần trăm (%), ngoặc, Ans; nhận dấu phẩy thập phân.
+  - Chèn nhanh rộng, sâu, diện tích của khối đang chọn và diện tích đề.
+  - Nhớ 8 phép gần nhất.
+- **Viền đỏ:** trước đây gợi ý mềm cũng tô đỏ khối (phòng có thể bí, cửa sổ bị che quá 45°, các khoảng cách nên có). Giờ viền đỏ chỉ cho lỗi thật: khối chồng nhau, lấn vùng xây dựng quá 0,15 m, đua quá 4 m. Gợi ý hiện dấu "?" màu cam trong danh sách Kiểm tra nhanh; bấm dòng đó thì các khối liên quan được tô viền cam trong 3,5 giây.
+- **Hành lang nhiều hình (chữ L, T, U…):**
+  - Vẫn thêm từng khối chữ nhật. Khi các khối hành lang chạm nhau, bấm "Dán … khối hành lang chạm nhau thành 1", hoặc bôi đen rồi bấm "Dán thành 1 hành lang".
+  - Hành lang dán xoá nét ở chỗ nối, ghi một nhãn với tổng diện tích. Bấm vào là chọn cả hình, kéo là dời cả hình; kéo mép từng phần để đổi cỡ phần đó. Có nút tách ra.
+  - Mặt bằng chi tiết coi các phần là thông nhau (lối mở).
+  - Ý tưởng khác để làm sau: vẽ hành lang bằng nét có bề rộng (bấm từng điểm như vẽ đường); hoặc tự lấp khe giữa các phòng thành hành lang.
+- **Gộp khối tách:** trước đây khối lấy từ phương án có sẵn (vd B1 chia nhiều phần) không gộp được vì khác mã gốc. Giờ "Gộp lại" gộp mọi phần cùng mã, cùng tầng; hoặc bôi đen vài phần rồi bấm "Gộp … phần … thành 1 khối". Các phần ghép khít (lệch ≤ 3% diện tích) thành đúng một hình chữ nhật thì lấy đúng khung bao; khối gộp luôn nằm trong vùng xây dựng.
+- **Tab Yêu cầu của thầy:** thêm mục 7 về văn phòng E1 và phòng nhân viên E2, kèm nguồn.
 
 ## 4. Những gì đã có trên trang phương án
 

@@ -444,7 +444,7 @@
       const L0 = src && src.levels[li], zz = L0 ? L0.z : 0.45 + 4.5 * li;
       levels.push({ ...(L0 || { k: "t" + (li + 1), title: `Tầng ${li + 1} · sàn +${zz.toFixed(3)}` }), z: zz, rooms: [], env: [], staff: L0 ? L0.staff : [] });
     }
-    const ids = new Set();
+    const ids = new Set(), linked = {};
     for (const b of blocks) {
       if (b.kind === "court") continue;
       const li = Math.max(0, (b.f || 1) - 1), rid = String(b.id).split("·")[0], s = srcRoom.get(rid), box = [b.x, b.y, b.w, b.h];
@@ -471,6 +471,12 @@
       }
       while (ids.has(z.id)) z.id += "'";
       ids.add(z.id); levels[li].rooms.push(z);
+      if (b.link) { (linked[b.link + "|" + li] = linked[b.link + "|" + li] || []).push({ z, box }); }
+    }
+    // hành lang dán nhiều khối: các phần chạm nhau thông nhau bằng lối mở
+    for (const L of Object.values(linked)) for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) {
+      const a = L[i].box, c = L[j].box, ox = Math.min(a[0] + a[2], c[0] + c[2]) - Math.max(a[0], c[0]), oy = Math.min(a[1] + a[3], c[1] + c[3]) - Math.max(a[1], c[1]);
+      if ((ox >= -0.03 && oy >= 0.5) || (oy >= -0.03 && ox >= 0.5)) { const z = L[i].z; z.d = (z.d || []).slice(); if (!z.d.some(d => d[0] === L[j].z.id)) z.d.push([L[j].z.id, 99, "o"]); }
     }
     // vỏ: giữ vỏ cũ trừ khung của phòng đã dời hay bỏ đi
     if (src) src.levels.forEach((L, li) => {

@@ -120,14 +120,14 @@
       tranh: "B2." },
 
     // ---------- E · Quản trị và hỗ trợ ----------
-    { c: "E1", n: "Văn phòng", m2: 80, cho: "chỗ làm việc cho ban quản lý", ng: "đóng",
-      lam: "Quản lý thư viện và trung tâm.",
+    { c: "E1", n: "Văn phòng", m2: 80, cho: "phòng giám đốc, 4–5 chỗ làm việc chung, phòng họp 10–12 người, lưu hồ sơ", ng: "đóng",
+      lam: "Quản lý thư viện và trung tâm: giám đốc, hành chính, kế toán, điều phối sự kiện, thư viện số làm việc; giao ban, họp với khách (theo thầy: gồm phòng họp và chỗ làm việc của nhân sự).",
       o: "Khu nội bộ, gần C2 và quầy A4; tầng 1 hoặc tầng 2 đều được.",
       can: "Yên tĩnh, sáng Bắc hoặc Nam, cửa thẻ từ.",
       noi: "E2, C2, A4 (qua lối nhân viên).",
       tranh: "D1, E4 (ồn)." },
-    { c: "E2", n: "Phòng nhân viên", m2: 40, cho: "nghỉ, ăn, tủ đồ", ng: "đóng",
-      lam: "Nghỉ ca, ăn nhẹ, tủ đồ cá nhân.",
+    { c: "E2", n: "Phòng nhân viên", m2: 40, cho: "phòng nghỉ: bếp nhỏ, bàn ăn 6–8 chỗ, góc ngả lưng, tủ đồ 12 ngăn", ng: "đóng",
+      lam: "Phòng nghỉ cho cả 12 nhân viên: nghỉ ca, nghỉ trưa, ăn nhẹ, cất đồ cá nhân. Không phải chỗ làm việc.",
       o: "Cạnh E1, trong khu nội bộ.",
       can: "Sáng Bắc hoặc Nam, chậu rửa.",
       noi: "E1, lối nhân viên.",
