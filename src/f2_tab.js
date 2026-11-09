@@ -72,7 +72,7 @@
 <section style="display:grid;gap:10px">
   <p class="eyebrow">Final 2 · bản xếp khối ngày 09/11/2026</p>
   <h2>Bản xếp của bạn: mặt bằng chi tiết, đi lại, xe, nắng và 5 cách sửa nhẹ</h2>
-  <p class="lede">F.2 giữ đúng 100% vị trí, kích thước các khối trong file bạn gửi. F.2a–F.2e giữ bố cục đó, chỉ dời hoặc thêm vài khối nhỏ. Mặt bằng chi tiết có cửa, nội thất (văn phòng E1 tách chỗ làm việc và phòng họp, phòng nhân viên E2 có bếp, bàn ăn, tủ đồ), người trực, 7 tình huống đi lại, tổng mặt bằng có bãi xe, gầm để xe, tuyến xe.</p>
+  <p class="lede">F.2 giữ đúng 100% vị trí, kích thước các khối trong file bạn gửi. File chưa có cửa nên cửa do mình tự đoán ở chỗ hợp lý (chỗ các khối chạm nhau; A1 mở cả hai phía); chỉ báo lỗi khi các khối không chạm nhau. F.2a–F.2e giữ bố cục đó, chỉ dời hoặc thêm vài khối nhỏ. Mặt bằng chi tiết có cửa, nội thất (văn phòng E1 tách chỗ làm việc và phòng họp, phòng nhân viên E2 có bếp, bàn ăn, tủ đồ), người trực, 7 tình huống đi lại, tổng mặt bằng có bãi xe, gầm để xe, tuyến xe.</p>
 </section>
 <section style="display:grid;gap:10px">
   <h3>Bạn thấy ổn chưa? Nhận xét bản F.2</h3>
@@ -127,7 +127,7 @@
   function cases(S) {
     const s0 = S[0], s5 = S[5], m = (a, b) => `${nf(a)} m${b != null && Math.round(b) !== Math.round(a) ? ` (${nf(b)} m)` : ""}`;
     const C = [
-      ["Người đọc đi xe máy", "Tổng mặt bằng; tình huống 1, 5", `Vào cổng xe ở góc Tây Nam (từ Trần Phú), gửi ở bãi Nam hoặc gầm dưới tầng 2. F.2: đi dọc lối Tây vào sân trước sảnh, cửa Bắc A1: ${m(s0.lib, s5.lib)}; F.2a, F.2e đi hiên có mái dọc bờ sông vào cửa Nam A1. Qua A1 → lối vào quầy → quầy A4 (cổng từ, gửi đồ) → đọc.`],
+      ["Người đọc đi xe máy", "Tổng mặt bằng; tình huống 1, 5", `Vào cổng xe ở góc Tây Nam (từ Trần Phú), gửi ở bãi Nam hoặc gầm dưới tầng 2. Đi dọc bờ sông, qua sân giữa vào cửa Nam A1: ${m(s0.lib, s5.lib)} (F.2 ngoài trời; F.2a, F.2e có hiên mái che suốt). Qua A1 → lối vào quầy → quầy A4 (cổng từ, gửi đồ) → đọc.`],
       ["Người đọc đi bộ từ quảng trường", "Tình huống 1", `Từ quảng trường Bắc đi vòng lối Tây vào sân trước sảnh: ${m(s0.ev)}. Sân trước sảnh bị cụm sự kiện và FOYA chắn nên không đi thẳng từ quảng trường được.`],
       ["Khách sự kiện ngoài giờ", "Tình huống 2", "Vào cửa Bắc A1, qua trưng bày A2 → sảnh FOYA → hành lang sự kiện tới phòng đa năng D1, chuyên đề D4, cà phê A3, vệ sinh sự kiện. Cửa từ A1 vào lối vào quầy khóa (đỏ); thư viện, kho đóng. Thoát nạn D1 ra quảng trường (2 cửa), hành lang sự kiện ra bờ sông."],
       ["Cùng hoạt động (ngày có sự kiện)", "Tình huống 3", "Người đọc rẽ trái ở A1 vào lối vào quầy, khách sự kiện rẽ phải sang A2; hai luồng chỉ chung sảnh A1. Phòng đa năng ở đầu Bắc, cách đọc yên tĩnh B2 (tầng 3, đầu Nam) hơn 40 m."],

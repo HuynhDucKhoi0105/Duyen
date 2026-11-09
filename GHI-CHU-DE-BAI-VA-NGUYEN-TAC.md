@@ -811,6 +811,8 @@ Bạn gửi file xep-khoi-arc329.json (09/11), thấy chỗ giữ xe xa A1 quá 
   - Bãi xe máy phụ khoảng 40 xe ở sân Tây cạnh A1 (14 m).
 - Ý 1, Ý 2 có đủ tầng 2–3 và tải được file mở trong Tự xếp khối. Kiểm tra trên khối (diện tích, vùng xây dựng, đua, thang, ánh sáng, tiếng ồn, quãng đi bộ) hiện ngay trên tab. Chưa dựng mặt bằng chi tiết (cửa, nội thất): khi bạn chọn hướng thì dựng như các phương án X.
 
+- **Cửa (bạn dặn 09/11/2026):** file xếp khối chưa có cửa, việc đặt cửa làm sau. Khi xem bản xếp, mình tự đặt cửa ở chỗ hợp lý (chỗ các khối chạm nhau; A1 mở các phía dùng được). Chỉ báo lỗi khi các khối không chạm nhau, không tính chuyện thiếu cửa.
+
 ### 3.24 Tab Final 2: bản xếp 09/11, mặt bằng chi tiết, đi lại, xe, nắng, 5 cách sửa nhẹ (09/11/2026)
 
 Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn chưa. Bạn muốn có:
@@ -832,15 +834,17 @@ Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn c
     - Dải nghiệp vụ C4 → C2 → C3 → C1 → lõi sách liền nhau.
     - E1 tách chỗ làm việc và phòng họp, có cửa sổ Nam.
   - Chưa ổn:
-    - Cửa A1 trong sân kín, từ bãi xe đi khoảng 110 m dọc lối xe cứu hỏa.
-    - Đọc mở B1w tầng 2 không có lối vào (hở 1,8 m).
+    - Đường tới A1 còn dài. Cửa do mình tự đặt, A1 mở cả hai phía:
+      - từ bãi xe, gầm xe đi dọc bờ sông ngoài trời khoảng 75 m vào cửa Nam;
+      - từ quảng trường vòng qua lối Tây khoảng 55 m vào cửa Bắc.
+    - Đọc mở B1w tầng 2 không chạm hành lang (khe 1,8 m giữa hai khối, không phải thiếu cửa).
     - Tầng 3 không có vệ sinh; B2 cách thang khoảng 55 m.
     - Người đọc không có thang máy.
     - A3, A4, C2, B5 không có cửa sổ Bắc/Nam.
     - B5 sát vách học nhóm.
     - E3 cách A1 khoảng 50 m.
 - **5 biến thể:**
-  - **F.2a:** A1 thêm cửa Nam; E3 dời ra cửa Nam (cách 7 m); hiên có mái dọc bờ sông từ gầm xe (khoảng 75 m, có mái).
+  - **F.2a:** E3 dời ra cửa Nam A1 (cách 7 m); hiên có mái dọc bờ sông từ gầm xe (vẫn khoảng 75 m nhưng có mái suốt).
   - **F.2b:** E3 ở mép Bắc sân trước sảnh (cách A1 15 m); bãi xe máy phụ khoảng 25 xe ở sân Tây.
   - **F.2c:**
     - Nối B1w bằng đoạn hành lang 1,8 × 3 m.

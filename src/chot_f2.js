@@ -15,7 +15,7 @@
     { id: "CO3", c: "circ", n: "Hành lang sự kiện", r: [25.34, 19.11, 13.25, 5.207], ctl: "sk", nz: 2, occ: 30, d: [["D1", 2.4, "p", 0.5], ["D4", 1.8, "p"], ["WCP", 1.2, "p"], ["A3", 2.0, "o"], ["E", 1.6, "tn"]] },
     { id: "FOYA", c: "circ", n: "Sảnh sự kiện, cà phê", r: [28.59, 24.309, 2.868, 9.949], ctl: "sk", nz: 2, occ: 20, d: [["CO3", 2.4, "o"], ["A2", 2.4, "o"]] },
     { id: "A3", c: "A3", n: "Cà phê sách", r: [31.55, 24.32, 7.037, 9.947], ctl: "sk", nz: 3, seat: 32, d: [["E", 1.2, "tn", 0.5]] },
-    { id: "A1", c: "A1", n: "Đón tiếp và thông tin", r: [18.59, 34.25, 10, 8.2], ctl: "sk", nz: 2, seat: 20, occ: 40, d: [["N", 2.4, "chinh", 0.45], ["A2", 2.4, "o"], ["HL2", 1.6, "k"]] },
+    { id: "A1", c: "A1", n: "Đón tiếp và thông tin", r: [18.59, 34.25, 10, 8.2], ctl: "sk", nz: 2, seat: 20, occ: 40, d: [["N", 2.4, "chinh", 0.45], ["S", 2.0, "chinh", 0.2], ["A2", 2.4, "o"], ["HL2", 1.6, "k"]] },
     { id: "A2", c: "A2", n: "Trưng bày", r: [28.59, 34.27, 10, 8.2], ctl: "sk", nz: 2, occ: 30 },
     { id: "CS", n: "Lõi sách: thang bộ + thang máy + tời sách", r: [6.09, 34.29, 8.5, 4], ctl: "kho", nz: 1, core: { st: "u+l+b", link: "CS" } },
     { id: "STN", n: "Thang bộ Bắc (lên đọc tầng 2, 3)", r: [14.59, 34.29, 4, 6], ctl: "tv", nz: 1, core: { st: "u", link: "STN" }, d: [["N", 1.2, "tnbd"]] },
@@ -107,11 +107,11 @@
         delivery: [[[2.2, 112], [2.2, 104], [2.2, 66.5], [6.1, 66.5]]],
         fire: [[[-3, -12], [2.2, -4], [2.2, 102]], [[2.2, -2], [34, 7]]],
         moto: [[[3, 112], [3, 97], [9, 97], [40, 98.8]], [[20, 95], [22, 86]]],
-        lib: [[[23, 96], [3.5, 96], [3.5, 29], [20, 29], [21.5, 34.3]]],
+        lib: [[[24, 86], [40, 86], [40, 46], [23, 46], [21.8, 42.5]]],
         event: [[[15, 6], [3.5, 10], [3.5, 29], [20, 29], [21.5, 34.3]]]
       },
       extra: V.extra || [[[[13, 92], [12.3, 89]], "rStaff", "Nhân viên: gửi xe ở gầm, vào sảnh nhân viên Tây Nam"]],
-      routeNames: V.routeNames || { lib: "Người đọc: từ bãi xe đi dọc lối Tây, vào sân trước sảnh, cửa chính A1 (khoảng 110 m)", event: "Khách sự kiện: từ quảng trường đi vòng lối Tây vào sân trước sảnh (khoảng 55 m)" },
+      routeNames: V.routeNames || { lib: "Người đọc: từ bãi xe, gầm xe đi dọc bờ sông (ngoài trời), qua sân giữa vào cửa Nam A1 (khoảng 75 m)", event: "Khách sự kiện: từ quảng trường đi vòng lối Tây vào sân trước sảnh (khoảng 55 m)" },
       hatch: V.hatch || [box([6.09, 24.31, 22.5, 9.98]), box([21.6, 42.47, 17, 25])],
       labels: V.labels || [[15, 29.3, "Sân trước sảnh"], [30, 55, "Sân giữa"], [23.5, 85, "Gầm để xe dưới tầng 2"], [2.4, 52, "Lối Tây 6 m"]]
     };
@@ -136,8 +136,8 @@
   }
   /* ---------- năm biến thể ---------- */
   const BASE_ISSUES = [
-    "Cửa chính A1 mở vào sân trước sảnh, nhưng sân bị cụm sự kiện (Bắc), sảnh FOYA (Đông), lõi sách và thang (Nam) bao kín, chỉ hở ra lối Tây (lối xe cứu hỏa). Người đọc từ bãi xe đi khoảng 110 m dọc lối xe cứu hỏa; khách từ quảng trường đi vòng khoảng 55 m.",
-    "Đọc mở B1w tầng 2 (168 m²) không có lối vào: hành lang tầng 2 dừng ở x 16,8, còn B1w bắt đầu ở x 18,6, hở 1,8 m.",
+    "Đường tới cửa A1 còn dài: A1 có hai cửa (mình tự đặt). Cửa Bắc mở vào sân trước sảnh; sân này bị cụm sự kiện, sảnh FOYA, lõi sách bao ba phía, chỉ hở ra lối Tây, nên khách từ quảng trường đi vòng khoảng 55 m. Cửa Nam mở ra sân giữa; người đọc từ bãi xe, gầm xe đi dọc bờ sông ngoài trời khoảng 75 m.",
+    "Đọc mở B1w tầng 2 (168 m²) chưa chạm hành lang nào: hành lang tầng 2 dừng ở x 16,8, B1w bắt đầu ở x 18,6, giữa là khoảng trống 1,8 m. Đây là khe giữa hai khối chứ không phải thiếu cửa, nên tự đặt cửa cũng không vào được.",
     "Tầng 3 không có vệ sinh. Chỗ xa nhất của đọc yên tĩnh B2 cách thang gần nhất (thang Bắc) khoảng 55 m, quá mốc thoát nạn 30 m; tầng 3 chỉ có thang ở đầu Bắc.",
     "Người đọc không có thang máy: thang Bắc chỉ là thang bộ, thang máy duy nhất là lõi sách (cửa vào từ kho đóng, chỉ nhân viên).",
     "Tầng 3: bàn đọc Tây Bắc B1n cách dải bàn đọc B1f 0,12 m nên không mở cửa thẳng được, phải đi vòng qua lõi sách.",
@@ -154,11 +154,11 @@
   ];
   const VARS = [
     { sfx: "", code: "F.2", name: "Bản của bạn (09/11), giữ 100%", tag: "Đúng từng khối trong file; thêm cửa, người trực, gầm để xe, tuyến xe",
-      intro: `<p class="lede">F.2 là đúng file <b>xep-khoi-arc329.json</b> bạn gửi ngày 09/11: mọi khối giữ nguyên vị trí, kích thước, tầng. Mình chỉ thêm cửa, người trực, gầm để xe dưới dải văn phòng tầng 2 và tuyến xe trên tổng mặt bằng. Những chỗ chưa ổn được liệt kê, không sửa ở đây (xem F.2a–F.2e).</p>`,
+      intro: `<p class="lede">F.2 là đúng file <b>xep-khoi-arc329.json</b> bạn gửi ngày 09/11: mọi khối giữ nguyên vị trí, kích thước, tầng. Mình chỉ thêm cửa, người trực, gầm để xe dưới dải văn phòng tầng 2 và tuyến xe trên tổng mặt bằng. File xếp khối chưa có cửa, nên cửa do mình tự đặt ở chỗ hợp lý: chỗ hai khối chạm nhau thì mở cửa theo đường đi thường gặp; A1 mở cả hai phía Bắc, Nam. Lỗi chỉ tính khi các khối không chạm nhau, không tính chuyện thiếu cửa. Những chỗ chưa ổn được liệt kê, không sửa ở đây (xem F.2a–F.2e).</p>`,
       notes: BASE_OK, issues: BASE_ISSUES },
-    { sfx: "a", code: "F.2a", name: "Hai cửa A1, bảo vệ ở cửa Nam, hiên từ gầm xe", tag: "Dời E3 ra cửa Nam A1; thêm cửa Nam cho A1 và hiên có mái dọc bờ sông",
-      fix: ["A1 thêm cửa chính thứ hai ở mặt Nam (đang hở 7 m) ra sân giữa.", "Bảo vệ E3 dời từ góc Tây Nam ra sân giữa, sát cửa Nam A1 (cách khoảng 3 m), nhìn sân giữa và hiên từ gầm xe. Góc Tây Nam còn camera.", "Hiên có mái 2,9 m dọc bờ sông từ gầm xe tới sân giữa: người đọc gửi xe trong gầm đi khoảng 75 m có mái che tới cửa Nam A1 (bản gốc khoảng 110 m ngoài trời)."],
-      mod(c) { const a1 = c.get(c.r1, "A1"); a1.d.push(["S", 2.0, "chinh", 0.2]); const e3 = c.get(c.r1, "E3"); e3.r = [25.09, 42.47, 3.5, 4.3]; e3.n = "Trực bảo vệ (cửa Nam A1)"; e3.ctl = "sk"; e3.d = [["A1", 0.9, "nv"]];
+    { sfx: "a", code: "F.2a", name: "Bảo vệ ở cửa Nam A1, hiên có mái từ gầm xe", tag: "Dời E3 ra cửa Nam A1; thêm hiên có mái dọc bờ sông",
+      fix: ["Bảo vệ E3 dời từ góc Tây Nam ra sân giữa, sát cửa Nam A1 (cách khoảng 3 m), nhìn sân giữa và hiên từ gầm xe. Góc Tây Nam còn camera.", "Hiên có mái 2,9 m dọc bờ sông từ gầm xe tới sân giữa: vẫn khoảng 75 m tới cửa Nam A1 nhưng có mái che suốt đường (bản gốc đi ngoài trời)."],
+      mod(c) { const a1 = c.get(c.r1, "A1"); const e3 = c.get(c.r1, "E3"); e3.r = [25.09, 42.47, 3.5, 4.3]; e3.n = "Trực bảo vệ (cửa Nam A1)"; e3.ctl = "sk"; e3.d = [["A1", 0.9, "nv"]];
         const h9 = c.get(c.r1, "H9"); h9.d = h9.d.filter(d => d[0] !== "E3"); c.s1.find(s => /Bảo vệ/.test(s.t)).x = 26.8; c.s1.find(s => /Bảo vệ/.test(s.t)).y = 44.6; c.s1.find(s => /Bảo vệ/.test(s.t)).t = "Bảo vệ"; },
       routes: { delivery: [[[2.2, 112], [2.2, 104], [2.2, 66.5], [6.1, 66.5]]], fire: [[[-3, -12], [2.2, -4], [2.2, 102]], [[2.2, -2], [34, 7]]], moto: [[[3, 112], [3, 97], [9, 97], [40, 98.8]], [[20, 95], [22, 86]]], lib: [[[24, 86], [40, 86], [40, 46], [23, 46], [21.8, 42.5]]], event: [[[15, 6], [3.5, 10], [3.5, 29], [20, 29], [21.5, 34.3]]] },
       routeNames: { lib: "Người đọc: gửi xe trong gầm, đi hiên có mái dọc bờ sông, vào cửa Nam A1 (khoảng 75 m)", event: "Khách sự kiện: từ quảng trường vào sân trước sảnh, cửa Bắc A1" },
@@ -188,7 +188,7 @@
         c.get(c.r2, "WCL2").r = [6.09, 49.21, 6.5, 3.031];
         [["B4b", 52.241], ["B4c", 56.051], ["B4a", 59.861], ["B4d", 63.671]].forEach(([id, y]) => { c.get(c.r2, id).r[1] = y; }); }
     },
-    { sfx: "e", code: "F.2e", name: "Gộp F.2a + F.2c + F.2d: bản sửa ít đầy đủ", tag: "Hai cửa A1, bảo vệ cửa Nam, hiên từ gầm xe, thông tầng 2–3, thang máy người đọc",
+    { sfx: "e", code: "F.2e", name: "Gộp F.2a + F.2c + F.2d: bản sửa ít đầy đủ", tag: "Bảo vệ cửa Nam, hiên từ gầm xe, thông tầng 2–3, thang máy người đọc",
       fix: ["Gộp các chỗ sửa của F.2a, F.2c, F.2d. Bố cục, kích thước mọi phòng giữ như bản của bạn; chỉ dời E3, WCL2, dãy học nhóm, B1n và thêm hành lang 15 m², thang Đông Nam, vệ sinh tầng 3."] }
   ];
   VARS[5].mod = c => { VARS[1].mod(c); VARS[3].mod(c); VARS[4].mod(c); };
