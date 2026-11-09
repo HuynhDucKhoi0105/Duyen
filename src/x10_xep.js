@@ -41,9 +41,9 @@
     return out;
   }
   const HELP = {
-    stair: { n: "Thang bộ", w: 3, h: 6, col: "var(--x10Stair)" },
-    lift: { n: "Thang bộ + thang máy", w: 5, h: 7, col: "var(--x10Lift)" },
-    book: { n: "Lõi sách: thang + máy + tời sách", w: 5, h: 7, col: "var(--x10Lift)" },
+    stair: { n: "Thang bộ", w: 3, h: 6.2, col: "var(--x10Stair)" },
+    lift: { n: "Thang bộ + thang máy", w: 5.5, h: 6.2, col: "var(--x10Lift)" },
+    book: { n: "Lõi sách: thang + máy + tời sách", w: 6, h: 6.2, col: "var(--x10Lift)" },
     circ: { n: "Sảnh, hành lang", w: 2.4, h: 12, col: "var(--zCirc)" },
     court: { n: "Sân trong (ngoài trời)", w: 10, h: 10, col: "var(--zOut)" },
     park: { n: "Bãi đỗ xe", w: 12, h: 9, col: "var(--x10Park)" }

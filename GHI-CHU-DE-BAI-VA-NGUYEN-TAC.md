@@ -873,6 +873,38 @@ Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn c
   - Tab có bảng từng phòng: lấy sáng bằng gì, nắng vào lúc nào, có lộ mặt Đông/Tây không, bị che bao nhiêu độ.
 - Tab có 12 thẻ tình huống: người đọc đi xe, đi bộ; sự kiện ngoài giờ; cùng hoạt động; trẻ em; người khuyết tật; nhân viên; sách; bảo vệ; xe cứu hỏa; xe khách; rác, kỹ thuật.
 
+### 3.25 Bề rộng hành lang, cửa, thang (đọc lại đề và QCVN 06, 09/11/2026)
+
+- **Đề bài không cho con số bề rộng.** Mục 5.3, 5.4 chỉ yêu cầu thể hiện bề rộng, cửa, thang và đối chiếu QCVN 06:2022/BXD (sửa đổi 1:2023, văn bản hợp nhất 92/2026) và QCVN 10:2024/BXD. Khoản 780 m² dự trù gồm giao thông chung, tường và cấu kiện.
+- **QCVN 06:2022 (đã đọc văn bản hợp nhất):**
+  - 3.3.6, đoạn nằm ngang của đường thoát nạn: cao thông thủy ≥ 2 m. Rộng thông thủy ≥ 1,2 m với hành lang chung thoát cho hơn 50 người (nhóm không phải F1); 1,0 m các trường hợp khác; 0,7 m lối tới chỗ làm việc đơn lẻ. Phải đủ rộng để khiêng cáng.
+  - Cửa phòng mở ra hành lang: trừ nửa phần cánh nhô ra (cửa một bên) hoặc cả phần nhô ra (cửa hai bên).
+  - 3.2.9, cửa ra thoát nạn: cao ≥ 1,9 m; rộng ≥ 1,2 m từ phòng có hơn 50 người, ≥ 0,8 m các trường hợp khác.
+  - 3.4.1, bản thang: ≥ 1,2 m nếu có tầng (trừ tầng 1) hơn 200 người, còn lại ≥ 0,9 m.
+  - 3.4.2, thang thoát nạn: dốc ≤ 45°, mặt bậc ≥ 25 cm, cao bậc ≤ 22 cm.
+  - Thư viện thuộc nhóm cơ sở văn hóa F2.1, F2.2; nhà thư viện không cao quá 28 m.
+- **QCVN 10:2024:** chưa đọc được văn bản gốc. Theo tóm tắt: cửa ≥ 900 mm, đường dốc rộng ≥ 1.200 mm, độ dốc ≤ 1/12, chỗ quay xe lăn 1.400 × 1.400 mm. Cần tra lại bản gốc.
+- **Đề xuất cho đồ án này:**
+
+| Loại hành lang | Bề rộng thông thủy | Ghi chú |
+|---|---|---|
+| Hành lang chính khu đọc, sảnh thư viện sau cổng từ | 2,4–3,0 m | hai xe lăn tránh nhau, xe sách, kệ trưng bày, ghế chờ |
+| Hành lang, sảnh sự kiện | ≥ 3,0 m | 120 người ra cùng lúc, chỗ chờ |
+| Hành lang học nhóm, hành lang tầng trên | 1,8–2,4 m | |
+| Hành lang nhân viên, nghiệp vụ | 1,5–1,8 m | người đi tránh xe đẩy sách |
+| Lối giữa kệ sách | 0,9–1,2 m | lối chính trong phòng đọc 1,5 m |
+
+  - Cửa phòng hơn 50 người (D1, D4, B3, đọc mở) rộng ≥ 1,2 m; các cửa khác ≥ 0,9 m (cho xe lăn).
+  - Bản thang 1,2–1,5 m, bậc cao khoảng 17 cm, mặt bậc 28 cm.
+- **Lõi thang (sửa lại số ngày 09/11, sau khi tra hãng thang máy):**
+  - QCVN 06, mục 3.4.3: chiếu thang rộng không nhỏ hơn bản thang. Chiếu trước thang máy cửa bản lề phải rộng bằng bản thang cộng nửa cánh cửa, tối thiểu 1,6 m.
+  - Thang bộ hai vế, tầng cao 4,5 m: 26 bậc cao 17,3 cm, mỗi vế 13 bậc, mặt bậc 28 cm, dài 3,4 m.
+    - Bản thang 1,2 m: lòng thang khoảng 2,6 × 5,8 m, tính cả tường khoảng 3,0 × 6,2 m.
+    - Bản thang 1,8 m (lõi rộng 4 m): dài tới khoảng 7 m, vì chiếu nghỉ phải sâu bằng bản thang.
+  - Thang máy 13 người, 1.000 kg (bảng TK Elevator EOX): cabin 1.600 × 1.400 mm, giếng rộng 2.100, sâu khoảng 1.700–1.800 mm; hoặc cabin 1.400 × 1.600 mm, giếng khoảng 1.900 × 1.900–2.000 mm. Tính cả tường khoảng 2,5 × 2,2 m. Cửa 900–1.000 mm.
+  - Lõi thang bộ + thang máy đặt cạnh nhau: khoảng 5,5 × 6,2 m (34 m²).
+  - Cỡ mặc định trong Tự xếp khối: thang bộ 3 × 6,2 m; thang bộ + thang máy 5,5 × 6,2 m; lõi sách 6 × 6,2 m.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).
