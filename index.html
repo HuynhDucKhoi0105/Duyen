@@ -458,7 +458,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="t1g" hidden><div id="t1g-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261109-201828"</script>
+<script>window.ARC_BUILD="20261109-202537"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -11198,10 +11198,10 @@ ${cfg.intro(rules)}
       extra: [[[[9, 26], [17, 32], [21, 34.3]], "rLib", "Xe máy phụ → cửa A1"]],
       labels: [[9.8, 30, "Bãi xe máy phụ ~25 xe"], [30, 55, "Sân giữa"], [23.5, 85, "Gầm để xe nhân viên"]] },
     { sfx: "c", code: "F.2c", name: "Thông tầng 2–3, thêm thang Đông Nam, vệ sinh tầng 3", tag: "Nối B1w, thêm thang thoát hiểm Đông Nam 3 tầng, vệ sinh tầng 3",
-      fix: ["Tầng 2: hành lang đọc nới thêm 1,8 m ở đoạn trên thiếu nhi (x 16,8–18,6, y 67,5–76) để vào được đọc mở B1w.", "Thang thoát hiểm Đông Nam 3 tầng (3,6 × 4,3 m) ở khe giữa thiếu nhi B3 và kỹ thuật E4: tầng 3 có 2 thang, B2 cách thang khoảng 10 m.", "Tầng 3 thêm vệ sinh 2,6 × 4 m sát thang mới; bàn đọc B1n dời 0,12 m cho khít dải B1f (giữ diện tích).", "Bỏ vệ sinh nhân viên riêng ở tầng 2 (nhân viên dùng vệ sinh thư viện tầng 2) để tổng vệ sinh vẫn trong +10% đề khi thêm vệ sinh tầng 3.", "Bù diện tích để tổng sàn không quá 3.000 m²: lối vào quầy HL2 tầng 1 chỉ dài tới quầy A4 (bỏ đoạn 11,4 m phía Nam, sân giữa rộng thêm); sảnh thang Tây Nam tầng 2 thu còn 4,4 × 2,6 m."],
+      fix: ["Tầng 2: hành lang đọc nới thêm 1,8 m ở đoạn trên thiếu nhi (x 16,8–18,6, y 67,5–76) để vào được đọc mở B1w.", "Thang thoát hiểm Đông Nam 3 tầng (3,6 × 4,3 m) ở khe giữa thiếu nhi B3 và kỹ thuật E4: tầng 3 có 2 thang, B2 cách thang khoảng 10 m. Đây là thang thoát hiểm, không phải thang đi lại hằng ngày: cửa tầng 2, 3 là cửa chống cháy tự đóng; cửa tầng 1 chỉ đẩy ra ngoài, có chuông báo, phía ngoài không có tay nắm. Khách không vào khu đọc bằng thang này được; ai mang sách ra lối này thì chuông kêu.", "Tầng 3 thêm vệ sinh 2,6 × 4 m sát thang mới; bàn đọc B1n dời 0,12 m cho khít dải B1f (giữ diện tích).", "Bỏ vệ sinh nhân viên riêng ở tầng 2 (nhân viên dùng vệ sinh thư viện tầng 2) để tổng vệ sinh vẫn trong +10% đề khi thêm vệ sinh tầng 3.", "Bù diện tích để tổng sàn không quá 3.000 m²: lối vào quầy HL2 tầng 1 chỉ dài tới quầy A4 (bỏ đoạn 11,4 m phía Nam, sân giữa rộng thêm); sảnh thang Tây Nam tầng 2 thu còn 4,4 × 2,6 m."],
       mod(c) { c.get(c.r1, "HL2").r = [18.584, 42.445, 3, 13.615]; c.get(c.r2, "HQt").r = [10.18, 83, 4.413, 2.6];
         c.r2.push({ id: "HZ2", c: "circ", n: "Hành lang tới đọc mở B1w", r: [16.8, 67.48, 1.79, 3], ctl: "tv", nz: 1, d: [["HZ", 1.6, "o"], ["B1w", 1.6, "o"]] });
-        c.r1.push({ id: "STE", n: "Thang thoát hiểm Đông Nam", r: [34.5, 75.98, 3.6, 4.28], ctl: "tv", nz: 1, core: { st: "u", link: "STE" }, d: [["W", 1.2, "tnbd"]] });
+        c.r1.push({ id: "STE", n: "Thang thoát hiểm Đông Nam (chỉ khi khẩn cấp)", r: [34.5, 75.98, 3.6, 4.28], ctl: "tv", nz: 1, core: { st: "u", link: "STE" }, d: [["W", 1.2, "tnbd"]] });
         c.r2.push({ id: "STE2", n: "Thang thoát hiểm Đông Nam", r: [34.5, 75.98, 3.6, 4.28], ctl: "tv", nz: 1, core: { st: "u", link: "STE" }, d: [["B1w", 1.2, "thang"]] });
         c.r3.push({ id: "STE3b", n: "Thang thoát hiểm Đông Nam", r: [34.5, 75.88, 3.6, 4.28], ctl: "tv", nz: 1, core: { st: "u", link: "STE" }, d: [["B2", 1.2, "thang"], ["WC3", 0.9, "p"]] });
         c.r3.push({ id: "WC3", c: "E5", n: "Vệ sinh tầng 3", r: [31.9, 75.88, 2.6, 4], ctl: "tv", nz: 1, wc: KT, d: [["B2", 0.9, "p"]] });
