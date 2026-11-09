@@ -124,8 +124,30 @@
       case "C2": { const n = Math.max(1, Math.floor((Lg - 0.8) / 4.0)), m = Sh >= 6 ? 2 : 1; for (let k = 0; k < n; k++) for (let j = 0; j < m; j++) RR(0.8 + k * 4.0, 0.8 + j * 2.6, 2.8, 1.2); T(`${n * m} bàn phân loại`); break; }
       case "C3": RR(0.3, 0.3, Lg - 0.6, 0.5, "s"); RR(0.3, Sh - 0.8, Lg - 0.6, 0.5, "s"); RR(Lg / 2 - 1.2, Sh / 2 - 0.5, 2.4, 1.0); T("Kệ địa chí có khóa"); break;
       case "C4": RR(0.5, 0.6, 3.2, 1.1); RR(4.2, 0.6, 1.6, 1.6, "zC"); T("Bàn nhập · xe sách"); break;
-      case "E1": { let n = 0; for (let v = 0.8; v + 1.4 <= Sh - 1.8; v += 2.1) for (let u = 0.6; u + 1.7 <= Lg - 0.3; u += 2.4) { RR(u, v, 1.7, 0.8); const [a, b] = P(u + 0.85, v + 1.05); seat(a, b); n++; } RR(Lg / 2 - 1.6, Sh - 1.6, 3.2, 1.0); T(`${n} bàn làm việc · bàn họp`); break; }
-      case "E2": RR(0.3, 0.3, Math.min(3, Lg - 0.6), 0.6); RR(Lg / 2 - 1.4, Sh / 2 - 0.4, 2.8, 1.0); T("Bàn ăn · bếp nhỏ"); break;
+      case "E1": {
+        // văn phòng: z.e1 = "hop" (phòng họp), "lam" (chỗ làm việc), mặc định có cả hai (góc họp ở đầu dài)
+        const mode = z.e1 || (Lg * Sh >= 60 ? "ca" : "lam");
+        const meet = (u0, uL) => { // bàn họp dài 1,2 m, ghế hai bên và hai đầu; màn hình trên vách đầu
+          const tl = Math.max(1.8, Math.min(uL - 2.0, 4.8)), u = u0 + (uL - tl) / 2, v = Sh / 2 - 0.6; RR(u, v, tl, 1.2);
+          let n = 0; for (let t = u + 0.45; t <= u + tl - 0.3; t += 0.75) { SE(t, v - 0.4); SE(t, v + 1.6); n += 2; }
+          if (uL - tl >= 2.2) { SE(u - 0.45, Sh / 2); SE(u + tl + 0.45, Sh / 2); n += 2; }
+          { const [a, b] = P(u0 + 0.15, Sh / 2 - 0.9), [c, d] = P(u0 + 0.15, Sh / 2 + 0.9); Ln(a, b, c, d, "w"); }
+          T(`Họp ${n} chỗ · màn hình`); return n; };
+        const desks = (u0, uL) => { // bàn làm việc 1,4 × 0,7 quay mặt ra cửa sổ, tủ hồ sơ dọc vách
+          let n = 0; for (let v = 0.9; v + 0.7 <= Sh - 1.6; v += 2.0) for (let u = u0 + 0.5; u + 1.4 <= u0 + uL - 0.3; u += 2.0) { RR(u, v, 1.4, 0.7); SE(u + 0.7, v + 0.95); n++; }
+          RR(u0 + 0.3, Sh - 0.75, Math.min(uL - 0.6, 3.6), 0.45, "s"); T(`${n} chỗ làm việc · tủ hồ sơ`); return n; };
+        if (mode === "hop") meet(0, Lg);
+        else if (mode === "gd") { RR(0.8, 1.0, 1.8, 0.8); SE(1.7, 2.3); SE(1.3, 0.6); SE(2.1, 0.6); RR(Lg - 2.6, Sh - 1.6, 2.0, 0.9); SE(Lg - 3.0, Sh - 1.15); SE(Lg - 1.6, Sh - 2.1); RR(0.3, Sh - 0.6, Math.min(2.4, Lg - 0.6), 0.4, "s"); T("Giám đốc · tiếp khách"); }
+        else if (mode === "ca") { const um = Math.min(6, Lg * 0.42); meet(Lg - um, um); { const [a, b] = P(Lg - um, 0.2), [c, d] = P(Lg - um, Sh - 0.2); Ln(a, b, c, d, "w"); } desks(0, Lg - um - 0.2); }
+        else desks(0, Lg);
+        break; }
+      case "E2": {
+        // phòng nghỉ nhân viên: bếp nhỏ dọc vách, bàn ăn, góc ngả lưng, tủ đồ 12 ngăn
+        RR(0.3, 0.2, Math.min(3.2, Lg - 0.6), 0.6, "zC"); { const [a, b] = P(0.3 + Math.min(3.2, Lg - 0.6) + 0.15, 0.2); hz ? R(a, b, 0.7, 0.7, "sheet") : R(a, b, 0.7, 0.7, "sheet"); }
+        const tl = Math.min(2.4, Lg - 2.4); RR(0.9, Sh / 2 - 0.5, tl, 1.0); let n = 0; for (let t = 1.25; t <= 0.9 + tl - 0.2; t += 0.7) { SE(t, Sh / 2 - 0.9); SE(t, Sh / 2 + 0.9); n += 2; }
+        RR(Lg - 1.2, 1.2, 0.9, Math.min(2.2, Sh - 2.4)); // sofa
+        RR(0.3, Sh - 0.65, Math.min(3.0, Lg - 0.6), 0.45, "s"); // tủ đồ
+        T(`Bếp nhỏ · bàn ăn ${n} chỗ · ghế ngả lưng · tủ đồ 12 ngăn`); break; }
       case "E3": RR(0.4, 0.4, Math.min(2.6, Lg - 0.8), 0.7); { const [a, b] = P(1.6, 1.6); seat(a, b); } T("Màn hình camera"); break;
       case "E4": { const n = Math.max(1, Math.floor((Lg - 0.5) / 2.9)); for (let k = 0; k < n; k++) RR(0.5 + k * 2.9, 0.5, 2.4, Math.min(1.6, Sh - 1)); T("Tủ điện, bơm, máy lạnh"); break; }
       case "E5": { const n = 3; for (let i = 1; i < n; i++) { const [a, b] = P(i * Lg / n, 0), [c, d] = P(i * Lg / n, Sh); Ln(a, b, c, d, "w"); } for (let i = 0; i < n; i++) RR(i * Lg / n + 0.3, 0.2, Math.min(0.9, Lg / n - 0.6), Math.min(1.2, Sh - 0.4), "sheet"); T(z.wc || "Nam · Nữ · Người khuyết tật"); break; }

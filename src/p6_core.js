@@ -446,7 +446,7 @@
     }
     const ids = new Set(), linked = {};
     for (const b of blocks) {
-      if (b.kind === "court") continue;
+      if (b.kind === "court" || b.kind === "park") continue;
       const li = Math.max(0, (b.f || 1) - 1), rid = String(b.id).split("·")[0], s = srcRoom.get(rid), box = [b.x, b.y, b.w, b.h];
       let z;
       if (s && !used.has(rid)) {

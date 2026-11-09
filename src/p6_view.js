@@ -1,8 +1,9 @@
 /* ================= Tab: phương án chốt · mặt bằng đầy đủ ================= */
 (function (G) {
   if (!G || !G.P6 || !G.CHOT || !G.CHOT.length) return;
-  const host = document.getElementById("g9p-host");
-  if (!host) return;
+  // bộ xem mặt bằng đầy đủ: host là khung, PLf trả danh sách phương án, PF là tiền tố id (mỗi khung một bộ mẫu tô, mũi tên riêng)
+  function Viewer(host, PLf, PF, opt = {}) {
+  const PL = () => PLf() || [];
   const P6 = G.P6, NS = "http://www.w3.org/2000/svg";
   const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
   const tx = (p, s, x, y, a = {}) => { const e = el("text", { x, y, "text-anchor": "middle", "dominant-baseline": "middle", "font-family": "var(--body)", "font-size": 10, fill: "var(--ink)", ...a }, p); e.textContent = s; return e; };
@@ -19,9 +20,9 @@
 .p6-tw table { min-width: 1100px; font-size: 12.5px; }
 .p6-tw td { vertical-align: top; }
 
-.p6 { display: grid; gap: 28px; --dChinh: #0b5394; --dTudong: #3d9be9; --dP: #4c5753; --dO: #9aa5a1; --dK: #d0342c; --dNv: #7b4fb0; --dTn: #12a150; --dTnbd: #0e7490; --dCuon: #c98a00; --dThang: #e06c00; --cStair: #f4b183; --cLift: #c9b5ef; --rLib: #1f6f5c; --rEv: #b4441f; --rBook: #c98a00; --rStaff: #7b4fb0; --rEsc: #12a150; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .p6 { --dChinh: #6aa9e9; --dTudong: #8cc6f5; --dP: #a9b4b0; --dO: #6c7773; --dK: #ff7a6e; --dNv: #c3a6f2; --dTn: #4fd18b; --dTnbd: #5fd0e6; --dCuon: #f0c04c; --dThang: #ffa45c; --cStair: #8a5a33; --cLift: #5b4a85; --rLib: #6cc7ac; --rEv: #f08a63; --rBook: #f0c04c; --rStaff: #c3a6f2; --rEsc: #4fd18b; } }
-:root[data-theme="dark"] .p6 { --dChinh: #6aa9e9; --dTudong: #8cc6f5; --dP: #a9b4b0; --dO: #6c7773; --dK: #ff7a6e; --dNv: #c3a6f2; --dTn: #4fd18b; --dTnbd: #5fd0e6; --dCuon: #f0c04c; --dThang: #ffa45c; --cStair: #8a5a33; --cLift: #5b4a85; --rLib: #6cc7ac; --rEv: #f08a63; --rBook: #f0c04c; --rStaff: #c3a6f2; --rEsc: #4fd18b; }
+.p6 { display: grid; gap: 28px; --dChinh: #0b5394; --dTudong: #3d9be9; --dP: #4c5753; --dO: #9aa5a1; --dK: #d0342c; --dNv: #7b4fb0; --dTn: #12a150; --dTnbd: #0e7490; --dCuon: #c98a00; --dThang: #e06c00; --cStair: #f4b183; --cLift: #c9b5ef; --rLib: #1f6f5c; --rEv: #b4441f; --rBook: #c98a00; --rStaff: #7b4fb0; --rEsc: #12a150; --rGuard: #d6338a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .p6 { --dChinh: #6aa9e9; --dTudong: #8cc6f5; --dP: #a9b4b0; --dO: #6c7773; --dK: #ff7a6e; --dNv: #c3a6f2; --dTn: #4fd18b; --dTnbd: #5fd0e6; --dCuon: #f0c04c; --dThang: #ffa45c; --cStair: #8a5a33; --cLift: #5b4a85; --rLib: #6cc7ac; --rEv: #f08a63; --rBook: #f0c04c; --rStaff: #c3a6f2; --rEsc: #4fd18b; --rGuard: #f48fb1; } }
+:root[data-theme="dark"] .p6 { --dChinh: #6aa9e9; --dTudong: #8cc6f5; --dP: #a9b4b0; --dO: #6c7773; --dK: #ff7a6e; --dNv: #c3a6f2; --dTn: #4fd18b; --dTnbd: #5fd0e6; --dCuon: #f0c04c; --dThang: #ffa45c; --cStair: #8a5a33; --cLift: #5b4a85; --rLib: #6cc7ac; --rEv: #f08a63; --rBook: #f0c04c; --rStaff: #c3a6f2; --rEsc: #4fd18b; --rGuard: #f48fb1; }
 .p6 .bar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 .p6 .bar .k { font: 600 12px var(--mono); color: var(--ink-2); }
 .p6 .pick { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
@@ -63,12 +64,15 @@
     ["2", "2 · Sự kiện ngoài giờ", "238 người: 120 đa năng + 24 chuyên đề + 32 cà phê + 30 trưng bày + 20 sảnh + 12 nhân viên. Cả cánh Nam (thư viện, kho, nhân viên) và tầng 2 cánh Bắc khóa. Khách vào sảnh sự kiện, dùng vệ sinh cánh Bắc, ra về qua sảnh hoặc cửa thoát nạn, không đi qua khu đóng."],
     ["3", "3 · Cùng hoạt động", "438 người. Hai cánh tách nhau bằng khe, chỉ nối ở tầng 2 qua thang Bắc (cửa khóa ngoài giờ mở). Người đọc và khách sự kiện không giao nhau ở tầng 1; tiếng ồn sự kiện không sát vách khu đọc."],
     ["5", "5 · Bảo mật sách", "Theo góp ý của thầy: người đọc vào khu đọc bắt buộc qua quầy thủ thư có cổng từ (viền xanh đậm), mang sách ra cũng phải qua đó. Thang của khu đọc chỉ nối các phòng bên trong khu đã kiểm soát; cửa thoát nạn của khu đọc là cửa có chuông báo, chỉ mở khi khẩn cấp (chấm chữ !)."],
+    ["6", "6 · Nhân viên", "Nhân viên vào bằng lối nhân viên (thẻ từ), cất đồ ở phòng nhân viên E2 rồi tới chỗ làm: văn phòng E1, xử lý C2, quầy mượn trả A4, kho. Sách trả đi từ quầy A4 về xử lý C2 qua cửa nhân viên, không qua khu công cộng. Nét tím: đường nhân viên."],
+    ["7", "7 · Bảo vệ", "Bảo vệ E3 trực cửa, mở và khóa cửa đầu giờ, cuối giờ, đi tuần qua cửa chính A1, cửa khóa ngoài giờ (đỏ), lối nhân viên, cửa cuốn giao nhận C4 và các cửa thoát nạn có chuông. Nét hồng: vòng tuần tra từ chỗ trực. Xe cộ, bãi xe, gầm xe xem ở Tổng mặt bằng."],
     ["4", "4 · Giao nhận sách", "Xe tải vào lối Tây, dỡ sách ở cửa cuốn phòng tiếp nhận, qua hành lang nghiệp vụ tới xử lý, vào kho đóng; sách lên kệ tầng 2 bằng tời sách trong thang Nam. Sách trả từ quầy mượn trả về xử lý qua sảnh thang Nam (đoạn dùng chung duy nhất, chỉ nhân viên có thẻ)."]
   ];
   // mở sẵn ý tưởng khe Hải Vân mới nhất (sửa theo góp ý của thầy), nếu có
-  const pick = re => (G.CHOT || []).findIndex(p => re.test(p.code));
-  const PGRP = [["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
-  let ci = [pick(/^X\./), pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
+  const pick = re => PL().findIndex(p => re.test(p.code));
+  const PGRP = [["Bản xếp 09/11 (F.2)", /^F\.2/], ["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
+  const PG = opt.groups || PGRP;
+  let ci = opt.ci != null ? opt.ci : [pick(/^X\./), pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
   const st = { furn: true, dim: true, staff: true, route: true, lab: true, light: true, orient: window.matchMedia && window.matchMedia("(min-width: 900px)").matches ? "h" : "v" };
 
   function closedIn(z, s) {
@@ -79,6 +83,28 @@
   // các tuyến cho tình huống: [màu, nhãn, từ, tới, điều kiện cửa]
   function routesFor(plan, s) {
     const R = plan.__R, Gr = R.G, all = [...Gr.nodes.keys()], byC = c => all.filter(n => Gr.nodes.get(n).z.c === c);
+    if (s === "6" || s === "7") {
+      const out = [], add = (col, t, from, to) => { if (!from || !to || from === to) return; const r = P6.route(Gr, from, to, () => true, () => true); if (r) out.push({ col, t, from, r }); };
+      const staffIn = all.filter(n => (Gr.nodes.get(n).z.d || []).some(d => d[0].length === 1 && d[2] === "nv"));
+      const ent = staffIn.find(n => /^nv/.test(Gr.nodes.get(n).z.ctl || "")) || staffIn[0];
+      if (s === "6") {
+        const E2 = byC("E2")[0], E1 = byC("E1"), C2 = byC("C2")[0], A4 = all.find(n => Gr.nodes.get(n).z.ctrl), C1 = byC("C1")[0];
+        if (ent && E2) { const r = P6.route(Gr, "ext", E2, () => true, () => true); if (r) out.push({ col: "rStaff", t: "Nhân viên vào làm", from: "ext", r }); }
+        if (E2) for (const e of E1.slice(0, 1)) add("rStaff", "Phòng nhân viên → văn phòng", E2, e);
+        if (E1[0]) { add("rStaff", "Văn phòng → xử lý", E1[0], C2); add("rStaff", "Văn phòng → quầy A4", E1[0], A4); }
+        if (A4) add("rStaff", "Sách trả: quầy → xử lý", A4, C2);
+        if (C2) add("rStaff", "Xử lý → kho đóng", C2, C1);
+      } else {
+        const E3 = byC("E3")[0]; if (!E3) return out;
+        const A1 = byC("A1")[0], C4 = byC("C4")[0];
+        add("rGuard", "Bảo vệ → cửa chính A1", E3, A1);
+        add("rGuard", "Bảo vệ → cửa cuốn C4", E3, C4);
+        for (const e of Gr.edges.filter(e => e.d.k === "k")) add("rGuard", "Bảo vệ → cửa khóa ngoài giờ", E3, e.a);
+        const tn = Gr.edges.filter(e => e.b === "ext" && e.d.k === "tnbd").map(e => e.a);
+        for (const n of [...new Set(tn)].slice(0, 4)) add("rGuard", "Bảo vệ → cửa thoát nạn có chuông", E3, n);
+      }
+      return out;
+    }
     const id = n => all.find(k => k.endsWith(":" + n));
     const out = [];
     const pub = d => d.k !== "nv" && d.k !== "cuon";
@@ -123,10 +149,10 @@
     const line = (a, b, at, par = svg) => { const [x1, y1] = pj(a[0], a[1]), [x2, y2] = pj(b[0], b[1]); return el("line", { x1, y1, x2, y2, ...at }, par); };
     const T = (s, x, y, a = {}, par = svg) => { const [px, py] = pj(x, y); return tx(par, s, px, py, a); };
     const defs = el("defs", {}, svg);
-    const hat = el("pattern", { id: "p6hat" + lvl, width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
+    const hat = el("pattern", { id: PF + "hat" + lvl, width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
     el("line", { x1: 0, y1: 0, x2: 0, y2: 6, stroke: "var(--ink-2)", "stroke-width": 1.4, opacity: 0.45 }, hat);
     const arr = (id, col) => { const m = el("marker", { id, viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto-start-reverse" }, defs); el("path", { d: "M0 0 L10 5 L0 10 z", fill: `var(--${col})` }, m); };
-    ["rLib", "rEv", "rBook", "rStaff", "rEsc"].forEach(c => arr("p6a" + c + lvl, c));
+    ["rLib", "rEv", "rBook", "rStaff", "rEsc", "rGuard"].forEach(c => arr(PF + "a" + c + lvl, c));
     if (site) return drawSite(svg, plan, { pj, poly, line, T, PX, lvl });
     // khung khu đất mờ
     el("rect", { x: 0, y: 0, width: W, height: H, fill: "var(--paper)" }, svg);
@@ -135,7 +161,7 @@
     const gR = el("g", {}, svg), gF = el("g", {}, svg), gW = el("g", {}, svg), gD = el("g", {}, svg), gL = el("g", {}, svg);
     for (const z of L.rooms) {
       poly(z.p, { fill: GRP(z), stroke: "none", opacity: z.c === "circ" ? 0.55 : 0.9 }, gR);
-      if (sc !== "0" && closedIn(z, sc)) poly(z.p, { fill: `url(#p6hat${lvl})`, stroke: "none" }, gR);
+      if (sc !== "0" && closedIn(z, sc)) poly(z.p, { fill: `url(#${PF}hat${lvl})`, stroke: "none" }, gR);
       if (st.furn && z.furn) for (const s of z.furn.S) {
         const fill = s.k === "s" ? "var(--ink-2)" : s.k === "zD" ? "var(--zD)" : s.k === "zC" ? "var(--zC)" : s.k === "ink" ? "var(--ink)" : s.k === "sheet" ? "var(--sheet)" : "var(--furn)";
         if (s.t === "r") { const p = [[s.x, s.y], [s.x + s.w, s.y], [s.x + s.w, s.y + s.h], [s.x, s.y + s.h]]; poly(p, { fill, stroke: "var(--ink)", "stroke-width": 0.5, opacity: s.k === "s" ? 0.55 : 1 }, gF); }
@@ -167,7 +193,7 @@
         }
       }
       if (d.k === "tnbd") { const [mx, my] = pj(d.m[0] + d.n[0] * 0.9, d.m[1] + d.n[1] * 0.9); el("circle", { cx: mx, cy: my, r: 5, fill: col }, gD); tx(gD, "!", mx, my + 0.5, { "font-size": 8, fill: "#fff", "font-weight": 800 }); }
-      if (d.to === "ext" && /chinh|tudong/.test(d.k)) { const o = [d.n[0] * 2.4, d.n[1] * 2.4]; line([d.m[0] + o[0], d.m[1] + o[1]], [d.m[0] + d.n[0] * 0.5, d.m[1] + d.n[1] * 0.5], { stroke: col, "stroke-width": 2, "marker-end": `url(#p6arLib${lvl})` }, gD); }
+      if (d.to === "ext" && /chinh|tudong/.test(d.k)) { const o = [d.n[0] * 2.4, d.n[1] * 2.4]; line([d.m[0] + o[0], d.m[1] + o[1]], [d.m[0] + d.n[0] * 0.5, d.m[1] + d.n[1] * 0.5], { stroke: col, "stroke-width": 2, "marker-end": `url(#${PF}arLib${lvl})` }, gD); }
     }
     // ánh sáng: cửa sổ hướng Bắc/Nam của phòng có người (xanh), điểm tối (đỏ); phòng kiểm soát viền xanh đậm
     if (st.light && plan.__R.light) for (const Lt of plan.__R.light.filter(q => q.li === lvl)) {
@@ -204,11 +230,12 @@
       const t1 = tx(g, small ? (z.c && z.c !== "circ" ? z.c : name.split(" ")[0]) : name, px, py - 6, { "font-size": small ? 8.5 : 10.5, "font-weight": 700 });
       const t2 = tx(g, small ? `${nf(z.a, 0)} m²` : sub, px, py + 6, { "font-size": 8.5, fill: "var(--ink-2)" });
       if (sc !== "0" && closedIn(z, sc)) tx(g, "ĐÓNG", px, py + 17, { "font-size": 8.5, "font-weight": 800, fill: "var(--warn)" });
+      else if (!small && st.furn && z.furn && z.furn.tags && z.furn.tags.length && /^E[123]$/.test(z.c || "")) tx(g, z.furn.tags[0], px, py + 17, { "font-size": 8, "font-weight": 700, fill: "var(--rStaff)" });
       try { const b1 = t1.getBBox(), b2 = t2.getBBox(), bx = Math.min(b1.x, b2.x) - 2, by = b1.y - 1, bw = Math.max(b1.width, b2.width) + 4, bh = b2.y + b2.height - b1.y + 2; g.insertBefore(el("rect", { x: bx, y: by, width: bw, height: bh, rx: 2, fill: "var(--sheet)", opacity: 0.85 }), g.firstChild); } catch (e) { /* chưa gắn vào trang */ }
       place(g);
     }
     // người trực
-    if (st.staff) for (const s of (L.staff || []).filter(s => sc === "0" || s.sc.includes(sc))) {
+    if (st.staff) for (const s of (L.staff || []).filter(s => sc === "0" || sc === "6" || sc === "7" || s.sc.includes(sc))) {
       const [px, py] = pj(s.x, s.y), g = el("g", {}, svg);
       el("circle", { cx: px, cy: py, r: 6, fill: "var(--rStaff)", stroke: "var(--sheet)", "stroke-width": 1.5 }, g);
       tx(g, "NV", px, py + 0.5, { "font-size": 6.5, fill: "#fff", "font-weight": 800 });
@@ -230,7 +257,7 @@
           if (node && node.li === lvl && c.n !== "ext") cur.push(node.z.cn); else if (c.n === "ext") { cur.push([c.e.d.m[0] + c.e.d.n[0] * 3, c.e.d.m[1] + c.e.d.n[1] * 3]); }
         }
         flush();
-        for (const p of ptsL) el("polyline", { points: p.map(q => pj(q[0], q[1]).map(v => v.toFixed(1)).join(",")).join(" "), fill: "none", stroke: `var(--${R.col})`, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-dasharray": R.col === "rStaff" ? "6 4" : null, "marker-end": `url(#p6a${R.col}${lvl})`, opacity: 0.9 }, svg);
+        for (const p of ptsL) el("polyline", { points: p.map(q => pj(q[0], q[1]).map(v => v.toFixed(1)).join(",")).join(" "), fill: "none", stroke: `var(--${R.col})`, "stroke-width": 2.6, "stroke-linejoin": "round", "stroke-dasharray": R.col === "rStaff" ? "6 4" : null, "marker-end": `url(#${PF}a${R.col}${lvl})`, opacity: 0.9 }, svg);
       }
     }
     northArrow(svg, pj, W, H, hz);
@@ -260,7 +287,7 @@
     R4(30, 14, 11.5, 75, { fill: "var(--pave)" }); T("Sân ven sông · hiên cà phê", 36, 40, { "font-size": 9, "font-weight": 700 });
     // khối nhà (đường bao tầng 1) và khe
     for (const e of plan.levels[0].env) poly(e, { fill: "var(--sheet)", stroke: "var(--ink)", "stroke-width": 2.4 });
-    for (const hp of S.hatch || []) poly(hp, { fill: `url(#p6hat${lvl})`, stroke: "var(--ink-2)", "stroke-width": 0.8 });
+    for (const hp of S.hatch || []) poly(hp, { fill: `url(#${PF}hat${lvl})`, stroke: "var(--ink-2)", "stroke-width": 0.8 });
     for (const [x, y, t, c] of S.labels || []) T(t, x, y, { "font-size": 9.5, "font-weight": 700, fill: c ? `var(--${c})` : "var(--ink)" });
     // bãi xe
     const P = S.park;
@@ -268,13 +295,15 @@
     for (const s of P.bikes) R4(s[0], s[1], s[2], s[3], { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 0.4 });
     for (const s of P.cars) { R4(s[0], s[1], s[2], s[3], { fill: s[4] ? "var(--dTudong)" : "var(--sheet)", stroke: "var(--ink)", "stroke-width": 0.8, opacity: s[4] ? 0.35 : 1 }); T(s[4] ? "KT" : "Ô tô", s[0] + s[2] / 2, s[1] + s[3] / 2, { "font-size": 8, "font-weight": 700 }); }
     for (const s of P.racks) R4(s[0], s[1], s[2], s[3], { fill: "var(--zCirc)", stroke: "var(--ink-2)", "stroke-width": 0.5 });
+    for (const g of P.gam || []) { R4(g[0], g[1], g[2], g[3], { fill: "var(--zCirc)", stroke: "var(--ink)", "stroke-width": 1, "stroke-dasharray": "5 3", opacity: 0.9 }); for (let gx = g[0] + 4; gx < g[0] + g[2] - 1; gx += 8) for (let gy = g[1] + 4; gy < g[1] + g[3] - 1; gy += 8) R4(gx - 0.25, gy - 0.25, 0.5, 0.5, { fill: "var(--ink)" }); T(`Gầm để xe dưới tầng 2 · ~${g[4] || 0} xe máy`, g[0] + g[2] / 2, g[1] + g[3] / 2, { "font-size": 8.5, "font-weight": 700 }); }
     R4(P.booth[0], P.booth[1], P.booth[2], P.booth[3], { fill: "var(--rStaff)", opacity: 0.8 });
     T(`Bãi xe · ${P.nBike} xe máy · ${P.cars.length} ô tô (${P.cars.filter(c => c[4]).length} người khuyết tật) · ${P.nRack} xe đạp`, 24, 92.2, { "font-size": 9, "font-weight": 700 });
     T("Bốt giữ xe", P.booth[0] + 4.5, P.booth[1] + 1.2, { "font-size": 8, "font-weight": 700, fill: "var(--rStaff)" });
     T("Cổng xe", 3, 105.5, { "font-size": 8.5, "font-weight": 700 });
     // tuyến
     const RT = [[S.routes.delivery, "rBook", "Xe giao sách → cửa cuốn tiếp nhận"], [S.routes.fire, "rEsc", "Xe cứu hỏa"], [S.routes.moto, "rStaff", "Xe máy khách → bãi xe"], [S.routes.lib, "rLib", (S.routeNames && S.routeNames.lib) || "Người đọc: từ bãi xe, bờ sông vào khe"], [S.routes.event, "rEv", (S.routeNames && S.routeNames.event) || "Khách sự kiện: phố Bắc, quảng trường"]];
-    for (const [ps, col, t] of RT) for (const p of ps) el("polyline", { points: p.map(q => pj(q[0], q[1]).map(v => v.toFixed(1)).join(",")).join(" "), fill: "none", stroke: `var(--${col})`, "stroke-width": 2.6, "stroke-dasharray": col === "rEsc" ? "8 4" : null, "marker-end": `url(#p6a${col}${lvl})`, opacity: 0.85 }, svg);
+    for (const [p, col, t] of S.extra || []) RT.push([[p], col, t]);
+    for (const [ps, col, t] of RT) for (const p of ps || []) el("polyline", { points: p.map(q => pj(q[0], q[1]).map(v => v.toFixed(1)).join(",")).join(" "), fill: "none", stroke: `var(--${col})`, "stroke-width": 2.6, "stroke-dasharray": col === "rEsc" ? "8 4" : null, "marker-end": `url(#${PF}a${col}${lvl})`, opacity: 0.85 }, svg);
     for (const s of S.staff) { const [px, py] = pj(s.x, s.y); el("circle", { cx: px, cy: py, r: 6, fill: "var(--rStaff)", stroke: "var(--sheet)", "stroke-width": 1.5 }, svg); tx(svg, "NV", px, py + 0.5, { "font-size": 6.5, fill: "#fff", "font-weight": 800 }); tx(svg, s.t, px, py - 11, { "font-size": 8.5, "font-weight": 700, fill: "var(--rStaff)" }); }
     const W = +svg.getAttribute("viewBox").split(" ")[2], H = +svg.getAttribute("viewBox").split(" ")[3];
     northArrow(svg, pj, W, H, st.orient === "h");
@@ -325,9 +354,9 @@
     if (!document.getElementById("p6-style")) { const s = document.createElement("style"); s.id = "p6-style"; s.textContent = CSS; document.head.appendChild(s); }
     host.classList.add("p6");
     // tab khối 3D có thể đã phân tích sớm (trước khi bộ nội thất p5 nạp xong, số chỗ = 0): phân tích lại một lần ở đây
-    for (const p of G.CHOT) if (!p.__R || !p.__Rv) { p.__R = P6.analyse(p, DT); p.__Rv = 1; }
-    const plan = G.CHOT[ci];
-    const KH = G.KHOI || [];
+    for (const p of PL()) if (!p.__R || !p.__Rv) { p.__R = P6.analyse(p, DT); p.__Rv = 1; }
+    const plan = PL()[ci];
+    const KH = opt.noKhoi ? [] : (G.KHOI || []);
     host.innerHTML = `
 ${KH.length ? `<details class="p6-khoi"><summary><b>Tìm hiểu 20 khối A1–E6 theo đề</b> · nhiệm vụ, nằm ở đâu, cần gì, nối với khối nào, tránh khối nào</summary>
   <div class="p6-rel">${(G.KHOI_REL || []).map(([h, t]) => `<div><b>${esc(h)}</b><p>${esc(t)}</p></div>`).join("")}</div>
@@ -335,7 +364,7 @@ ${KH.length ? `<details class="p6-khoi"><summary><b>Tìm hiểu 20 khối A1–E
 </details>` : ""}
 <section style="display:grid;gap:10px">
   <p class="eyebrow">Phương án ${plan.code} · phát triển từ ${plan.from} · mặt bằng đầy đủ</p>
-  ${G.CHOT.length > 1 ? `<div class="pick" role="group" aria-label="Chọn phương án để xem mặt bằng"><p class="pk-h">Chọn phương án để xem mặt bằng <span>(đang xem ${esc(plan.code)})</span></p>${PGRP.map(([t, re]) => { const L = G.CHOT.map((p, i) => [p, i]).filter(([p]) => re.test(p.code)); return L.length ? `<div class="pg"><span class="k">${t}</span><div class="pb">${L.map(([p, i]) => `<button type="button" data-pa="${i}" aria-pressed="${i === ci}"><b>${esc(p.code)}</b> ${esc(p.name)}</button>`).join("")}</div></div>` : ""; }).join("")}</div>` : ""}
+  ${PL().length > 1 ? `<div class="pick" role="group" aria-label="Chọn phương án để xem mặt bằng"><p class="pk-h">Chọn phương án để xem mặt bằng <span>(đang xem ${esc(plan.code)})</span></p>${PG.map(([t, re]) => { const L = PL().map((p, i) => [p, i]).filter(([p]) => re.test(p.code)); return L.length ? `<div class="pg"><span class="k">${t}</span><div class="pb">${L.map(([p, i]) => `<button type="button" data-pa="${i}" aria-pressed="${i === ci}"><b>${esc(p.code)}</b> ${esc(p.name)}</button>`).join("")}</div></div>` : ""; }).join("")}</div>` : ""}
   <h2>${esc(plan.code)} · ${esc(plan.name)}: mặt bằng, cửa, giao thông, người trực</h2>
   ${plan.intro || ""}
 </section>
@@ -357,7 +386,7 @@ ${KH.length ? `<details class="p6-khoi"><summary><b>Tìm hiểu 20 khối A1–E
 </section>
 ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố trí</h3><ul class="chk">${plan.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul></section>` : ""}`;
     host.querySelector("#p6-chk").innerHTML = checks(plan).map(([ok, t]) => `<li><span class="${ok ? "ok" : "bad"}">${ok ? "Đạt" : "Chưa đạt"}</span> · ${esc(t)}</li>`).join("");
-    host.querySelectorAll("[data-pa]").forEach(b => b.addEventListener("click", () => { ci = +b.dataset.pa; li = Math.min(li, G.CHOT[ci].levels.length - 1); build(); }));
+    host.querySelectorAll("[data-pa]").forEach(b => b.addEventListener("click", () => { ci = +b.dataset.pa; li = Math.min(li, PL()[ci].levels.length - 1); build(); }));
     host.querySelectorAll("[data-lv]").forEach(b => b.addEventListener("click", () => { li = +b.dataset.lv; host.querySelectorAll("[data-lv]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); draw(); }));
     host.querySelectorAll("[data-or]").forEach(b => b.addEventListener("click", () => { st.orient = b.dataset.or; host.querySelectorAll("[data-or]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); draw(); }));
     host.querySelectorAll("[data-sc]").forEach(b => b.addEventListener("click", () => { sc = b.dataset.sc; host.querySelectorAll("[data-sc]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); draw(); }));
@@ -365,34 +394,41 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
     draw();
   }
   function draw() {
-    const plan = G.CHOT[ci], svg = host.querySelector("#p6-svg");
+    const plan = PL()[ci], svg = host.querySelector("#p6-svg");
     drawLevel(svg, plan, li >= 0 ? plan.levels[li] : null, li);
     host.querySelector("#p6-scn").textContent = SCN.find(s => s[0] === sc)[2];
     host.querySelector("#p6-leg").innerHTML = legend(sc);
   }
   function legend(sc) {
     const dk = Object.entries(P6.DOORK).map(([k, v]) => `<span><i style="border-color:var(--${v.c});${k === "o" ? "border-top-style:dashed" : ""}"></i>${v.t}</span>`).join("");
-    const rt = sc === "0" ? "" : [["rLib", "Người đọc, khách cà phê"], ["rEv", "Khách sự kiện"], ["rBook", "Đường sách"], ["rStaff", "Nhân viên mang sách trả"]].map(([c, t]) => `<span><i style="border-color:var(--${c})"></i>${t}</span>`).join("");
+    const rt = sc === "0" ? "" : [["rLib", "Người đọc, khách cà phê"], ["rEv", "Khách sự kiện"], ["rBook", "Đường sách"], ["rStaff", "Nhân viên"], ["rGuard", "Bảo vệ đi tuần"]].map(([c, t]) => `<span><i style="border-color:var(--${c})"></i>${t}</span>`).join("");
     const fills = `<span><i style="border-color:var(--dTudong);border-top-width:6px"></i>Cửa sổ hướng Bắc/Nam</span><span><i style="border-color:var(--dTudong);border-top-style:dashed"></i>Cửa mái hướng Bắc (răng cưa)</span><span><i class="f" style="background:var(--warn);border-radius:50%;width:8px;height:8px"></i>Chỗ cách cửa sổ quá 8 m</span><span><i class="f" style="border:3px solid var(--dTnbd);background:transparent"></i>Quầy kiểm soát, cổng từ</span><span><i class="f" style="background:var(--cStair)"></i>Thang bộ</span><span><i class="f" style="background:var(--cLift)"></i>Thang bộ + thang máy</span>` + ["A", "B", "C", "D", "E"].map(z => `<span><i class="f" style="background:var(--z${z})"></i>${{ A: "A Đón tiếp", B: "B Đọc", C: "C Kho, nghiệp vụ", D: "D Văn hóa", E: "E Hỗ trợ" }[z]}</span>`).join("") + `<span><i class="f" style="background:var(--zCirc)"></i>Giao thông</span>${sc === "2" ? `<span><i class="f" style="background:repeating-linear-gradient(45deg,var(--ink-2) 0 2px,transparent 2px 5px)"></i>Khu đóng</span>` : ""}<span><i class="f" style="background:var(--rStaff);border-radius:50%"></i>Người trực</span>`;
     return dk + rt + fills;
   }
-  // cho tab Tự xếp khối vẽ mặt bằng chi tiết của bản đang sửa (dùng chung bộ vẽ, không đụng trạng thái tab này)
-  G.P6V = {
+  const p6v = {
     SCN, legend, checks: p => { if (!p.__R) p.__R = P6.analyse(p, DT); return checks(p); }, roomTable: p => { if (!p.__R) p.__R = P6.analyse(p, DT); return roomTable(p); },
     css() { if (!document.getElementById("p6-style")) { const s = document.createElement("style"); s.id = "p6-style"; s.textContent = CSS; document.head.appendChild(s); } },
-    draw(svg, plan, lvl, opt = {}) {
+    draw(svg, plan, lvl, o = {}) {
       const k = { ...st }, s0 = sc;
-      Object.assign(st, { orient: "v" }, opt); if (opt.sc != null) sc = opt.sc;
+      Object.assign(st, { orient: "v" }, o); if (o.sc != null) sc = o.sc;
       try { if (!plan.__R) plan.__R = P6.analyse(plan, DT); drawLevel(svg, plan, plan.levels[lvl], lvl); }
       finally { Object.assign(st, k); sc = s0; }
       return plan.__R;
     }
   };
+  return { build, draw, p6v, get ci() { return ci; }, set ci(v) { ci = v; }, onPick: null };
+  }
+  G.P6VIEWER = Viewer;
+  const host = document.getElementById("g9p-host");
+  const main = Viewer(host || document.createElement("div"), () => G.CHOT, "p6");
+  // cho tab Tự xếp khối vẽ mặt bằng chi tiết của bản đang sửa (dùng chung bộ vẽ, không đụng trạng thái tab này)
+  G.P6V = main.p6v;
+  if (!host) return;
   let started = false;
-  const start = () => { if (started) return; started = true; build(); };
+  const start = () => { if (started) return; started = true; main.build(); };
   const tabBtn = document.querySelector('.tabs [data-tab="g9"]');
   if (tabBtn) tabBtn.addEventListener("click", () => setTimeout(start, 50));
   const panel = document.querySelector('[data-panel="g9"]');
   if (panel && !panel.hidden) start();
-  window.addEventListener("arc-north", () => { if (started) draw(); });
+  window.addEventListener("arc-north", () => { if (started) main.draw(); });
 })(window.G3);

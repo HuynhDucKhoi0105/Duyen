@@ -21,13 +21,13 @@
     const F = [...new Set(B.map(b => b.f))].sort().filter(f => !idea.onlyF || f <= idea.onlyF);
     const sum = {}; for (const b of B.filter(b => b.kind === "room")) sum[b.c] = (sum[b.c] || 0) + b.w * b.h;
     const off = Object.keys(BRIEF).filter(c => Math.abs((sum[c] || 0) / BRIEF[c] - 1) > 0.1005);
-    const tot = B.filter(b => b.kind !== "court").reduce((t, b) => t + b.w * b.h, 0), rooms = Object.values(sum).reduce((t, v) => t + v, 0);
+    const tot = B.filter(b => !/^(court|park)$/.test(b.kind)).reduce((t, b) => t + b.w * b.h, 0), rooms = Object.values(sum).reduce((t, v) => t + v, 0);
     add(!off.length, off.length ? `Diện tích lệch quá ±10% đề: ${off.map(c => `${c} ${nf(sum[c] || 0)}/${BRIEF[c]}`).join(", ")}` : "Đủ 24 loại phòng, mỗi loại trong ±10% đề", true);
     add(tot <= 3000, `Tổng sàn ${nf(tot)} m² (phòng ${nf(rooms)} + thang, sảnh, hành lang ${nf(tot - rooms)}) ${tot <= 3000 ? "≤" : ">"} 3.000 m²`, true);
-    const T1 = B.filter(b => b.f === 1 && b.kind !== "court");
+    const T1 = B.filter(b => b.f === 1 && !/^(court|park)$/.test(b.kind));
     const outZ = T1.filter(b => b.x < ZONE.x0 - 0.05 || b.y < ZONE.y0 - 0.05 || b.x + b.w > ZONE.x1 + 0.05 || b.y + b.h > ZONE.y1 + 0.05);
     add(!outZ.length, outZ.length ? `Tầng 1 lấn ra ngoài vùng xây dựng: ${outZ.map(b => b.c).join(", ")}` : "Tầng 1 nằm trọn trong vùng xây dựng (không lấn lối xe cứu hỏa, quảng trường, bãi xe)", true);
-    const ovs = []; for (const f of F) { const L = B.filter(b => b.f === f && b.kind !== "court"); for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) if (ov(L[i], L[j]) > 0.3) ovs.push(`T${f} ${L[i].c}–${L[j].c}`); }
+    const ovs = []; for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park)$/.test(b.kind)); for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) if (ov(L[i], L[j]) > 0.3) ovs.push(`T${f} ${L[i].c}–${L[j].c}`); }
     add(!ovs.length, ovs.length ? `Khối chồng nhau: ${ovs.slice(0, 5).join(", ")}` : "Không có khối chồng nhau", true);
     // đua: điểm của khối tầng trên cách khối tầng dưới quá 4 m
     const hang = [];
@@ -42,7 +42,7 @@
     { const b3 = B.find(b => b.c === "B3"); add(b3 && b3.f === 1, "Thiếu nhi B3 ở tầng 1"); }
     // ánh sáng
     const dark = [];
-    for (const f of F) { const L = B.filter(b => b.f === f && b.kind !== "court"), topF = Math.max(...F); for (const b of L.filter(b => b.kind === "room" && OCC.test(b.c))) {
+    for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park)$/.test(b.kind)), topF = Math.max(...F); for (const b of L.filter(b => b.kind === "room" && OCC.test(b.c))) {
       const fr = freeNS(b, L), roof = b.top && !B.some(o => o.f > f && ov(o, b) > 2);
       const ok = roof || (b.h <= 8.6 && (fr.N >= 1.2 || fr.S >= 1.2)) || (b.h <= 16.6 && fr.N >= 1.2 && fr.S >= 1.2);
       if (!ok) dark.push(`T${f} ${b.c}${b.n && /\(/.test(b.n) ? "" : ""}`); } }

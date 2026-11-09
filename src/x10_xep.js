@@ -45,8 +45,12 @@
     lift: { n: "Thang bộ + thang máy", w: 5, h: 7, col: "var(--x10Lift)" },
     book: { n: "Lõi sách: thang + máy + tời sách", w: 5, h: 7, col: "var(--x10Lift)" },
     circ: { n: "Sảnh, hành lang", w: 2.4, h: 12, col: "var(--zCirc)" },
-    court: { n: "Sân trong (ngoài trời)", w: 10, h: 10, col: "var(--zOut)" }
+    court: { n: "Sân trong (ngoài trời)", w: 10, h: 10, col: "var(--zOut)" },
+    park: { n: "Bãi đỗ xe", w: 12, h: 9, col: "var(--x10Park)" }
   };
+  // bãi đỗ xe: không tính sàn; xe máy 3 m²/xe (gồm lối đi), ô tô 25 m²/xe, xe đạp 1,5 m²/xe; ở tầng 1 dưới tầng trên thì có cột đỡ
+  const PK = { moto: ["xe máy", 3], car: ["ô tô", 25], bike: ["xe đạp", 1.5] };
+  const pkN = b => Math.floor(b.w * b.h / PK[b.pk || "moto"][1]);
 
   /* ---------- trạng thái ---------- */
   let S = load() || { blocks: defaults(), note: "" };
@@ -78,7 +82,9 @@
   function undoBtns() { const u = host.querySelector("#x10-undo"), r = host.querySelector("#x10-redo"); if (u) { u.disabled = !UNDO.length; u.textContent = `↶ Hoàn tác${UNDO.length ? " (" + UNDO.length + ")" : ""}`; } if (r) r.disabled = !REDO.length; }
   const area = b => b.kind === "room" ? b.a : b.w * b.h;
   const onSite = b => b.x < STAGE_X - 2;
-  const isFloor = b => b.kind !== "court";
+  const outdoor = b => b.kind === "court" || b.kind === "park";
+  const isFloor = b => !outdoor(b);
+  const holds = b => b.kind !== "court"; // đỡ được tầng trên (bãi xe ở gầm có cột)
   const col = b => b.kind === "room" ? `var(--z${b.c[0]})` : HELP[b.kind].col;
   const ovl = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
   const gap = (a, b) => Math.hypot(Math.max(0, Math.max(a.x, b.x) - Math.min(a.x + a.w, b.x + b.w)), Math.max(0, Math.max(a.y, b.y) - Math.min(a.y + a.h, b.y + b.h)));
@@ -87,7 +93,7 @@
   const label = b => b.kind === "zone" ? "mép vùng xây dựng" : b.kind === "room" ? b.c : HELP[b.kind].n.split(":")[0];
   // vùng xây dựng: khối tầng 1 không ra lối xe cứu hỏa (Tây), quảng trường (Bắc), bãi xe (Nam), bờ sông (Đông)
   const ZW = [[-200, -200, 200 + 6, 500], [41.5, -200, 200, 500], [-200, -200, 500, 200 + 12], [-200, 89, 500, 200]].map(([x, y, w, h]) => ({ x, y, w, h, kind: "zone", c: "", f: 1, id: "__zone" }));
-  const zoned = (b, f = b.f) => f === 1 && b.kind !== "court";
+  const zoned = (b, f = b.f) => f === 1 && !outdoor(b);
   const inZone = b => b.x >= SITE.x0 - 0.01 && b.y >= SITE.y0 - 0.01 && b.x + b.w <= SITE.x1 + 0.01 && b.y + b.h <= SITE.y1 + 0.01;
   const zClamp = b => { if (b.w <= SITE.x1 - SITE.x0) b.x = Math.max(SITE.x0, Math.min(SITE.x1 - b.w, b.x)); if (b.h <= SITE.y1 - SITE.y0) b.y = Math.max(SITE.y0, Math.min(SITE.y1 - b.h, b.y)); };
   // diện tích theo đề: mỗi phòng được chỉnh ±10% (đề mục 4), tổng sàn không quá 3.000 m²
@@ -103,9 +109,9 @@
   const CSS = `
 #x10-host { width: min(1560px, calc(100vw - 40px)); margin-left: calc((100% - min(1560px, calc(100vw - 40px))) / 2); justify-self: start; }
 .x10 [hidden] { display: none !important; }
-.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; --xdimC: #0e7490; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .x10 { --xdimC: #5fd0e6; } }
-:root[data-theme="dark"] .x10 { --xdimC: #5fd0e6; }
+.x10 { display: grid; gap: 12px; --x10Stair: #e08a3c; --x10Lift: #8a6cc7; --x10Guide: #d6338a; --x10Red: #c2412a; --x10Green: #3f8f4f; --xdimC: #0e7490; --x10Park: #c9d3d8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .x10 { --xdimC: #5fd0e6; --x10Park: #4a5559; } }
+:root[data-theme="dark"] .x10 { --xdimC: #5fd0e6; --x10Park: #4a5559; }
 .x10 .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .x10 .btn:disabled { opacity: .45; cursor: default; }
 .x10 .seg { display: inline-flex; flex-wrap: wrap; gap: 0; }
@@ -433,7 +439,7 @@
       }
     }
     const cur = f ? P.filter(b => b.f === f) : [...P].sort((a, b) => a.f - b.f);
-    for (const b of cur.sort((a, b) => (a.kind === "court") - (b.kind === "court") || a.f - b.f)) drawBlock(b);
+    for (const b of cur.sort((a, b) => outdoor(b) - outdoor(a) || a.f - b.f)) drawBlock(b);
     seams(cur);
     // khối tầng trên: viền chấm
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
@@ -492,14 +498,15 @@
   function drawBlock(b) {
     const g = el("g", { "data-id": b.id, class: "blk" + (hover === b.id ? " hv" : "") }, svg);
     const x = b.x * PX, y = b.y * PX, w = b.w * PX, h = b.h * PX, bad = BAD.has(b.id);
-    el("rect", { class: "body", x, y, width: w, height: h, fill: col(b), opacity: b.kind === "court" ? 0.7 : 0.96, stroke: isSel(b) ? "var(--accent)" : bad ? "var(--warn)" : "var(--ink)", "stroke-width": isSel(b) ? 5 : bad ? 3 : 1.3, "stroke-dasharray": b.kind === "court" ? "6 4" : null }, g);
+    el("rect", { class: "body", x, y, width: w, height: h, fill: col(b), opacity: outdoor(b) ? 0.7 : 0.96, stroke: isSel(b) ? "var(--accent)" : bad ? "var(--warn)" : "var(--ink)", "stroke-width": isSel(b) ? 5 : bad ? 3 : 1.3, "stroke-dasharray": outdoor(b) ? "6 4" : null }, g);
+    if (b.kind === "park") { const pg = el("g", { "pointer-events": "none", opacity: 0.55 }, g), sw = b.pk === "car" ? 2.5 : 0.8; for (let xx = b.x + sw; xx < b.x + b.w - 0.1; xx += sw) el("line", { x1: xx * PX, y1: (b.y + 0.3) * PX, x2: xx * PX, y2: (b.y + Math.min(b.h, b.pk === "car" ? 5 : 2) - 0.1) * PX, stroke: "var(--ink)", "stroke-width": 1 }, pg); if (b.f === 1 && S.blocks.some(o => onSite(o) && o.f === 2 && isFloor(o) && ovl(o, b) > 1)) for (let xx = b.x + 4; xx < b.x + b.w - 1; xx += 8) for (let yy = b.y + 4; yy < b.y + b.h - 1; yy += 8) el("rect", { x: xx * PX - 3, y: yy * PX - 3, width: 6, height: 6, fill: "var(--ink)" }, pg); }
     if (msel.has(b.id)) el("rect", { x, y, width: w, height: h, fill: "var(--accent)", opacity: 0.16, "pointer-events": "none" }, g);
     if (FLASH.has(b.id)) el("rect", { x: x + 2, y: y + 2, width: Math.max(0, w - 4), height: Math.max(0, h - 4), fill: "none", stroke: "#c98a00", "stroke-width": 5, "stroke-dasharray": "10 6", "pointer-events": "none" }, g);
     if (mode === "all" && b.f >= 2) el("rect", { x, y, width: w, height: h, fill: "url(#x10h)", "pointer-events": "none" }, g);
     if (onSite(b) && b.kind === "room" && LIT.test(b.c)) { const lt = litOf(b); for (const [side, ok] of [["N", lt.N], ["S", lt.S]]) if (ok >= 1.2) el("line", { x1: x + 3, y1: side === "N" ? y + 2 : y + h - 2, x2: x + w - 3, y2: side === "N" ? y + 2 : y + h - 2, stroke: "#2f8fd6", "stroke-width": 4, opacity: 0.8, "pointer-events": "none" }, g); }
     // phần đua quá 4 m so với tầng ngay dưới (đề xuất 1)
     if (onSite(b) && b.f >= 2 && isFloor(b)) {
-      const low = S.blocks.filter(o => onSite(o) && o.f === b.f - 1 && isFloor(o));
+      const low = S.blocks.filter(o => onSite(o) && o.f === b.f - 1 && holds(o));
       const rs = runs(b, (px, py) => !low.some(o => inside(o, px, py)) && (low.length ? Math.min(...low.map(o => dpt(o, px, py))) : 99) > OH);
       if (rs.length) {
         const og = el("g", { class: "ovh", "pointer-events": "none" }, g);
@@ -512,6 +519,7 @@
     if (b.w * b.h >= 6) {
       const big = b.w >= 6 && b.h >= 4, t1 = el("text", { x: x + w / 2, y: y + h / 2 - (big ? 9 : 0), "text-anchor": "middle", "dominant-baseline": "middle", "font-size": big ? 24 : 15, "font-weight": 800, fill: "var(--ink)", "pointer-events": "none" }, g);
       t1.textContent = label(b) + (b.f >= 2 && mode === "all" ? " · T" + b.f : "") + (b.top ? " ☀" : "");
+      if (b.kind === "park") t1.textContent = `Bãi ${PK[b.pk || "moto"][0]} · ~${pkN(b)} chỗ`;
       if (b.link) { const L = linkOf(b); if (L.length > 1) { const big = L.reduce((p, q) => q.w * q.h > p.w * p.h ? q : p); if (big !== b) t1.remove(); else t1.textContent = `Hành lang · ${nf(L.reduce((t, o) => t + o.w * o.h, 0), 0)} m²`; } }
       if (big) { const t2 = el("text", { x: x + w / 2, y: y + h / 2 + 13, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 14, fill: "var(--ink-2)", "pointer-events": "none" }, g); t2.textContent = `${nf(area(b), 0)} m² · ${nf(b.w, 1)} × ${nf(b.h, 1)}`; }
     }
@@ -801,7 +809,7 @@
     }
     if (!sel) return;
     const b = S.blocks.find(q => q.id === sel); if (!b) return;
-    if ((e.key === "PageUp" || e.key === "PageDown") && onSite(b) && b.kind !== "court") {
+    if ((e.key === "PageUp" || e.key === "PageDown") && onSite(b) && !outdoor(b)) {
       e.preventDefault(); const nfl = Math.max(1, Math.min(NF, b.f + (e.key === "PageUp" ? 1 : -1))); if (nfl === b.f) return;
       b.f = nfl; keep(); if (mode !== "all") { mode = String(nfl); host.querySelectorAll("[data-m]").forEach(q => q.setAttribute("aria-pressed", String(q.dataset.m === mode))); } render(); return;
     }
@@ -978,7 +986,7 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
   function dimTargets(b) {
     const out = [];
     for (const o of S.blocks) {
-      if (o === b || o.kind === "court" || !(onSite(o) || (b.draft && o.draft))) continue;
+      if (o === b || outdoor(o) || !(onSite(o) || (b.draft && o.draft))) continue;
       if (!b.draft && Math.abs(o.f - b.f) > 1) continue;
       const pr = (o.f === b.f && gap(o, b) < 3 ? 0 : o.f === b.f ? 0.002 : 0.004);
       out.push({ ax: "w", v: o.w, o, pr }, { ax: "h", v: o.h, o, pr });
@@ -1011,7 +1019,7 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
     const svgM = host.querySelector("#x10-mb"); if (!svgM || !svgM.closest(".td").offsetParent) return;
     G.P6V.css();
     const src = (G.CHOT || []).find(p => p.code === S.from) || null;
-    const bl = S.blocks.filter(b => onSite(b) && !b.draft && b.kind !== "court");
+    const bl = S.blocks.filter(b => onSite(b) && !b.draft && !outdoor(b));
     let plan, R;
     try { plan = G.P6.fromBlocks(src, bl); const lv = Math.min(plan.levels.length - 1, (curF() || 1) - 1); R = G.P6V.draw(svgM, plan, lv, { route: false, staff: false, dim: false }); svgM.style.minWidth = "0";
       const errs = R.err || [], t = host.querySelector("#x10-mbt");
@@ -1080,7 +1088,7 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
   function unjoin(b) { const L = linkOf(b); for (const o of L) delete o.link; clearSel(); sel = b.id; keep(); render(); }
   function addHelper(k) {
     const h = HELP[k], id = k + "·" + Date.now().toString(36).slice(-4) + (seq++);
-    S.blocks.push({ id, c: k === "court" ? "SAN" : k === "circ" ? "circ" : "core", n: h.n, kind: k, w: h.w, h: h.h, x: 8, y: 14, f: mode === "all" ? 1 : +mode, a: null });
+    S.blocks.push({ id, c: k === "court" ? "SAN" : k === "park" ? "XE" : k === "circ" ? "circ" : "core", n: h.n, kind: k, w: h.w, h: h.h, x: 8, y: 14, f: k === "park" || mode === "all" ? 1 : +mode, a: null, ...(k === "park" ? { pk: "moto" } : {}) });
     sel = id; keep(); render();
   }
   // thanh trượt thang log: t 0–1000
@@ -1110,7 +1118,7 @@ ${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc ho�
     if (msel.size > 1) { groupCard(box); return; }
     if (!b) { box.innerHTML = `<h4>Chọn một khối</h4><p>Bấm vào khối trên mặt bằng hoặc trên 3D để xem và chỉnh. Phím mũi tên dịch 0,5 m (giữ Shift: 4 m), R xoay, PageUp/PageDown lên, xuống tầng.</p><p>Chọn nhiều khối: bôi đen bằng cách kéo chuột trên chỗ trống (kéo sang phải: chỉ lấy khối nằm trọn trong khung; kéo sang trái: lấy cả khối chạm khung), hoặc giữ Shift rồi bấm từng khối. Kéo một khối trong nhóm để dời cả nhóm.</p>`; return; }
     const k = (G.KHOI || []).find(q => q.c === b.c), room = b.kind === "room", hasA = room && briefA(b.c);
-    const near = S.blocks.filter(o => o !== b && o.kind !== "court" && (onSite(o) || (b.draft && o.draft)) && o.f === b.f && gap(o, b) < 3).sort((p, q) => gap(p, b) - gap(q, b)).slice(0, 4);
+    const near = S.blocks.filter(o => o !== b && !outdoor(o) && (onSite(o) || (b.draft && o.draft)) && o.f === b.f && gap(o, b) < 3).sort((p, q) => gap(p, b) - gap(q, b)).slice(0, 4);
     const [wl, wh] = wRange(b), [hl, hh0] = hRange(b), chips = [];
     for (const o of near) { if (o.w >= wl - 0.01 && o.w <= wh + 0.01 && Math.abs(o.w - b.w) > 0.01) chips.push(`<button type="button" class="btn sm" data-sw="${o.w}">Rộng = ${esc(label(o))} (${nf(o.w, 2)})</button>`); if (o.h >= hl - 0.01 && o.h <= hh0 + 0.01 && Math.abs(o.h - b.h) > 0.01) chips.push(`<button type="button" class="btn sm" data-sh="${o.h}">Sâu = ${esc(label(o))} (${nf(o.h, 2)})</button>`); }
     box.innerHTML = `<h4>${esc(label(b))} · ${esc(b.n)}</h4>
@@ -1132,7 +1140,8 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
 <div class="bar" style="margin-top:6px">
   <button type="button" class="btn" id="x10-rot">Xoay 90°</button>
   ${room ? `<button type="button" class="btn" id="x10-d8">Sâu 8 m</button>` : ""}
-  ${b.kind !== "court" ? `<span class="seg">${[1, 2, 3].map(f => `<button type="button" data-f="${f}" aria-pressed="${b.f === f}">Tầng ${f}</button>`).join("")}</span>` : ""}
+  ${b.kind === "park" ? `<span class="seg" aria-label="Loại xe">${Object.entries(PK).map(([k, [t, m]]) => `<button type="button" data-pk="${k}" aria-pressed="${(b.pk || "moto") === k}" title="${m} m² mỗi chỗ, gồm lối đi">${t}</button>`).join("")}</span><span class="k">~${pkN(b)} chỗ · ${nf(b.w * b.h)} m² (không tính vào tổng sàn)</span>` : ""}
+  ${!outdoor(b) ? `<span class="seg">${[1, 2, 3].map(f => `<button type="button" data-f="${f}" aria-pressed="${b.f === f}">Tầng ${f}</button>`).join("")}</span>` : ""}
   ${room && b.a >= 30 ? `<button type="button" class="btn" id="x10-split">Tách đôi</button>` : ""}
   ${room && parts(b).length > 1 ? `<button type="button" class="btn" id="x10-merge" title="Gộp mọi phần ${esc(b.c)} cùng tầng thành một khối">Gộp lại (${parts(b).length} phần ${esc(b.c)})</button>` : ""}
   ${b.kind === "circ" && !b.link && circChain(b).length > 1 ? `<button type="button" class="btn" id="x10-join" title="Dán các khối hành lang đang chạm nhau thành một hình">Dán ${circChain(b).length} khối hành lang chạm nhau thành 1</button>` : ""}
@@ -1160,6 +1169,7 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
     box.querySelector("#x10-rot").addEventListener("click", () => rotate(b));
     const d8 = box.querySelector("#x10-d8"); if (d8) d8.addEventListener("click", () => { const r = setH(b, 8); done(); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = cutTxt(r); });
     box.querySelectorAll("[data-f]").forEach(q => q.addEventListener("click", () => { b.f = +q.dataset.f; keep(); if (mode !== "all" && onSite(b)) { mode = String(b.f); host.querySelectorAll("[data-m]").forEach(p => p.setAttribute("aria-pressed", String(p.dataset.m === mode))); } render(); }));
+    box.querySelectorAll("[data-pk]").forEach(q => q.addEventListener("click", () => { b.pk = q.dataset.pk; keep(); render(); }));
     const tp = box.querySelector("#x10-top"); if (tp) tp.addEventListener("click", () => { b.top = !b.top; keep(); render(); });
     const mg = box.querySelector("#x10-merge"); if (mg) mg.addEventListener("click", () => merge(b));
     const jn = box.querySelector("#x10-join"); if (jn) jn.addEventListener("click", () => joinCirc(circChain(b)));
@@ -1183,11 +1193,11 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
     for (let i = 0; i < fl.length; i++) for (let j = i + 1; j < fl.length; j++) if (fl[i].f === fl[j].f && ovl(fl[i], fl[j]) > 0.3) ov.push([fl[i], fl[j]]);
     add(!ov.length, ov.length ? `Khối chồng lên nhau: ${ov.slice(0, 4).map(([a, b]) => `${label(a)} – ${label(b)}`).join(", ")}` : "Không có khối chồng lên nhau", ov.flat().map(b => b.id), true);
     // lấn dưới 0,15 m (sai số khi xếp) không tính là lỗi
-    const outB = P.filter(b => b.kind !== "court" && (b.x < SITE.x0 - 0.15 || b.y < SITE.y0 - 0.15 || b.x + b.w > SITE.x1 + 0.15 || b.y + b.h > SITE.y1 + 0.15));
+    const outB = P.filter(b => !outdoor(b) && (b.x < SITE.x0 - 0.15 || b.y < SITE.y0 - 0.15 || b.x + b.w > SITE.x1 + 0.15 || b.y + b.h > SITE.y1 + 0.15));
     add(!outB.length, outB.length ? `Khối lấn ra lối Tây, quảng trường, bãi xe hoặc bờ sông: ${outB.map(b => label(b) + " T" + b.f).join(", ")}` : "Mọi khối nằm trong vùng xây dựng", outB.map(b => b.id), true);
     // tầng trên phải có chỗ đỡ: phần cách mép khối tầng dưới quá 4 m là đua cần cột
     for (const b of fl.filter(b => b.f >= 2)) {
-      const low = fl.filter(o => o.f === b.f - 1), rs = runs(b, (x, y) => !low.some(o => inside(o, x, y)) && (low.length ? Math.min(...low.map(o => dpt(o, x, y))) : 99) > OH), bad = rs.reduce((t, r) => t + r[2] * r[3], 0);
+      const low = P.filter(o => o.f === b.f - 1 && holds(o)), rs = runs(b, (x, y) => !low.some(o => inside(o, x, y)) && (low.length ? Math.min(...low.map(o => dpt(o, x, y))) : 99) > OH), bad = rs.reduce((t, r) => t + r[2] * r[3], 0);
       const hang = b.w * b.h - low.reduce((s, o) => s + ovl(b, o), 0);
       if (hang > 0.5) add(bad < 0.5, bad < 0.5 ? `${label(b)} tầng ${b.f} đua ra ngoài tầng ${b.f - 1} không quá 4 m` : `${label(b)} tầng ${b.f} có ${nf(bad)} m² đua quá 4 m: cần cột chống (sọc đỏ)`, bad >= 0.5 ? [b.id] : [], true);
     }
@@ -1248,7 +1258,8 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
 <tr><td><b>Cộng các phòng</b></td><td class="n"><b>${nf(rm)}</b></td><td class="n">2.220</td></tr>
 <tr><td>Thang, sảnh, hành lang đã vẽ</td><td class="n">${nf(gt)}</td><td class="n">780</td></tr>
 ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn)</td><td class="n">${nf(f(n))}</td><td></td></tr>`).join("")}
-<tr><td><b>Tổng sàn</b></td><td class="n"><b style="color:${tot > 3000 ? "var(--warn)" : "inherit"}">${nf(tot)}</b></td><td class="n">≤ 3.000</td></tr></table>
+<tr><td><b>Tổng sàn</b></td><td class="n"><b style="color:${tot > 3000 ? "var(--warn)" : "inherit"}">${nf(tot)}</b></td><td class="n">≤ 3.000</td></tr>
+${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); return pk.length ? Object.keys(PK).filter(k => pk.some(b => (b.pk || "moto") === k)).map(k => `<tr><td>Bãi ${PK[k][0]} (không tính sàn)</td><td class="n">~${pk.filter(b => (b.pk || "moto") === k).reduce((t, b) => t + pkN(b), 0)} chỗ</td><td></td></tr>`).join("") : ""; })()}</table>
 <p class="st">Đề bài: 2.220 m² cho 24 phòng cộng 780 m² dự trù cho giao thông chung, tường và cấu kiện, tổng tối đa 3.000 m². Tổng sàn ở đây tính các khối đã đặt (phòng, thang, sảnh, hành lang). Còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho hành lang nối các khối, tường, cột chưa vẽ${rm < 2220 * 0.97 ? `; các phòng đang nhỏ hơn đề ${nf(2220 - rm)} m²` : ""}.</p>`;
   }
 
@@ -1266,7 +1277,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     const quad = (x0, y0, x1, y1, z) => [pj(x0, y0, z), pj(x1, y0, z), pj(x1, y1, z), pj(x0, y1, z)];
     poly(quad(0, 0, 41.5, 104, 0), { fill: "var(--sheet)", stroke: "var(--line)" });
     const vols = [];
-    for (const b of S.blocks.filter(onSite)) { if (b.kind === "court") continue; const off = (b.f - 1) * UI.explode, z0 = TOP[b.f - 1] + off, z1 = TOP[b.f] + off; vols.push({ b, z0, z1, d: depth(b.x + b.w / 2, b.y + b.h / 2, (z0 + z1) / 2) }); }
+    for (const b of S.blocks.filter(onSite)) { if (outdoor(b)) continue; const off = (b.f - 1) * UI.explode, z0 = TOP[b.f - 1] + off, z1 = TOP[b.f] + off; vols.push({ b, z0, z1, d: depth(b.x + b.w / 2, b.y + b.h / 2, (z0 + z1) / 2) }); }
     vols.sort((p, q) => p.d - q.d);
     for (const { b, z0, z1 } of vols) {
       const x = b.x, y = b.y, X = b.x + b.w, Y = b.y + b.h, c = col(b);
@@ -1310,7 +1321,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
       const id = e.button === 0 && !e.shiftKey ? hit(e) : null, b = id && S.blocks.find(q => q.id === id);
       if (b) {
         sel = b.id; let rebuilt = false;
-        if (mode !== "all" && String(b.f) !== mode && b.kind !== "court") { mode = String(b.f); host.querySelectorAll("[data-m]").forEach(q => q.setAttribute("aria-pressed", String(q.dataset.m === mode))); render(); rebuilt = true; }
+        if (mode !== "all" && String(b.f) !== mode && !outdoor(b)) { mode = String(b.f); host.querySelectorAll("[data-m]").forEach(q => q.setAttribute("aria-pressed", String(q.dataset.m === mode))); render(); rebuilt = true; }
         if (!rebuilt) { renderPlan(); renderStack(); sideCard(); hi3d(); }
         const h = TOP[b.f - 1] + (b.f - 1) * UI.explode, p = onPlane(e, h);
         st = { k: "blk", b, h, ox: p ? p.x - b.x : b.w / 2, oz: p ? p.z - b.y : b.h / 2, sx: e.clientX, sy: e.clientY, moved: false, bx: b.x, by: b.y };
@@ -1403,7 +1414,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
     const f = curF();
     for (const b of S.blocks.filter(onSite)) {
       const c = C(col(b));
-      if (b.kind === "court") {
+      if (outdoor(b)) {
         const grp = new THREE.Group(); grp.position.set(b.x, 0, b.y); g.add(grp);
         const geo = new THREE.BoxGeometry(b.w, 0.25, b.h), m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: c, transparent: true, opacity: 0.85 }));
         m.position.set(b.w / 2, 0.08, b.h / 2); m.receiveShadow = true; m.userData.id = b.id; grp.add(m); T3.pick.push(m);
@@ -1473,7 +1484,7 @@ ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn
   }
 
   /* ---------- lưu cho Claude, tải và mở file ---------- */
-  const payload = () => ({ kind: "arc329-xep-khoi", v: 1, savedAt: new Date().toISOString(), note: S.note || "", from: S.from || null, blocks: S.blocks.map(b => ({ id: b.id, c: b.c, n: b.n, kind: b.kind, a: b.a, x: b.x, y: b.y, w: b.w, h: b.h, f: b.f, top: !!b.top, onSite: onSite(b), draft: !!b.draft || undefined, link: b.link || undefined })) });
+  const payload = () => ({ kind: "arc329-xep-khoi", v: 1, savedAt: new Date().toISOString(), note: S.note || "", from: S.from || null, blocks: S.blocks.map(b => ({ id: b.id, c: b.c, n: b.n, kind: b.kind, a: b.a, x: b.x, y: b.y, w: b.w, h: b.h, f: b.f, top: !!b.top, onSite: onSite(b), draft: !!b.draft || undefined, link: b.link || undefined, pk: b.pk || undefined })) });
   const say = t => { const e = host.querySelector("#x10-st"); if (e) e.textContent = t; };
   async function saveForClaude() {
     const db = window.claude && window.claude.use ? await window.claude.use("db") : null;

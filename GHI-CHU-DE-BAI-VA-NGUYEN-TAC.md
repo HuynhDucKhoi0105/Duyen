@@ -811,6 +811,64 @@ Bạn gửi file xep-khoi-arc329.json (09/11), thấy chỗ giữ xe xa A1 quá 
   - Bãi xe máy phụ khoảng 40 xe ở sân Tây cạnh A1 (14 m).
 - Ý 1, Ý 2 có đủ tầng 2–3 và tải được file mở trong Tự xếp khối. Kiểm tra trên khối (diện tích, vùng xây dựng, đua, thang, ánh sáng, tiếng ồn, quãng đi bộ) hiện ngay trên tab. Chưa dựng mặt bằng chi tiết (cửa, nội thất): khi bạn chọn hướng thì dựng như các phương án X.
 
+### 3.24 Tab Final 2: bản xếp 09/11, mặt bằng chi tiết, đi lại, xe, nắng, 5 cách sửa nhẹ (09/11/2026)
+
+Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn chưa. Bạn muốn có:
+- đủ các tình huống đi lại của khách, nhân viên, bảo vệ, xe và bãi xe;
+- chức năng bãi đỗ xe, vì có đoạn tầng 1 để trống làm chỗ để xe;
+- nắng và ánh sáng của từng phòng;
+- mặt bằng kỹ hơn: E1 có chỗ họp, chỗ làm việc, có nội thất;
+- khoảng 5 ý tưởng giữ bố cục nhưng xê dịch nhẹ.
+
+- **Khối "Bãi đỗ xe" trong Tự xếp khối:**
+  - Thêm bằng nút "+ Bãi đỗ xe". Chọn loại xe máy (3 m²/chỗ), ô tô (25 m²/chỗ) hoặc xe đạp (1,5 m²/chỗ); diện tích đã gồm lối đi.
+  - Hiện số chỗ trên khối và trong bảng Diện tích. Không tính vào tổng sàn.
+  - Đặt dưới tầng trên thì coi là gầm có cột: không báo "đua quá 4 m", có vẽ chấm cột.
+  - Khối tầng 1 khác vẫn không ra khỏi vùng xây dựng; bãi xe thì đặt được ở dải bãi xe phía Nam.
+- **F.2 (giữ 100%):**
+  - Đang ổn:
+    - Gầm để xe dưới dải văn phòng tầng 2, khoảng 42 xe máy, cạnh bảo vệ E3, lối nhân viên, thang Tây Nam.
+    - Cụm sự kiện liền một khối.
+    - Dải nghiệp vụ C4 → C2 → C3 → C1 → lõi sách liền nhau.
+    - E1 tách chỗ làm việc và phòng họp, có cửa sổ Nam.
+  - Chưa ổn:
+    - Cửa A1 trong sân kín, từ bãi xe đi khoảng 110 m dọc lối xe cứu hỏa.
+    - Đọc mở B1w tầng 2 không có lối vào (hở 1,8 m).
+    - Tầng 3 không có vệ sinh; B2 cách thang khoảng 55 m.
+    - Người đọc không có thang máy.
+    - A3, A4, C2, B5 không có cửa sổ Bắc/Nam.
+    - B5 sát vách học nhóm.
+    - E3 cách A1 khoảng 50 m.
+- **5 biến thể:**
+  - **F.2a:** A1 thêm cửa Nam; E3 dời ra cửa Nam (cách 7 m); hiên có mái dọc bờ sông từ gầm xe (khoảng 75 m, có mái).
+  - **F.2b:** E3 ở mép Bắc sân trước sảnh (cách A1 15 m); bãi xe máy phụ khoảng 25 xe ở sân Tây.
+  - **F.2c:**
+    - Nối B1w bằng đoạn hành lang 1,8 × 3 m.
+    - Thêm thang thoát hiểm Đông Nam 3 tầng và vệ sinh tầng 3.
+    - B1n khít B1f; bỏ vệ sinh nhân viên tầng 2 cho tổng vệ sinh trong đề.
+    - Rút lối vào quầy HL2 tới A4 cho tổng sàn ≤ 3.000.
+    - Thoát nạn xa nhất 22 · 39 · 27 m.
+  - **F.2d:** thang Bắc thành thang bộ + thang máy; cửa mái cho A3; vệ sinh tầng 2 làm vùng đệm giữa B5 và học nhóm.
+  - **F.2e:** gộp F.2a, F.2c, F.2d; 15 lỗi kiểm tra (F.2: 23), tổng sàn 2.972 m².
+- **Nội thất mới:**
+  - E1 vẽ theo kiểu phòng: chỗ làm việc (bàn 1,4 × 0,7, tủ hồ sơ), phòng họp (bàn dài, 10–12 ghế, màn hình), giám đốc, hoặc cả hai.
+  - E2: bếp nhỏ, tủ lạnh, bàn ăn 6 chỗ, ghế ngả lưng, tủ đồ 12 ngăn.
+  - Tên kiểu nội thất hiện dưới tên phòng E1, E2, E3.
+- **Mặt bằng chi tiết thêm tình huống 6 · Nhân viên và 7 · Bảo vệ** (vòng tuần tra tới cửa chính, cửa khóa ngoài giờ, cửa cuốn, cửa thoát nạn có chuông).
+  - Tổng mặt bằng vẽ gầm để xe và tuyến nhân viên.
+  - Bộ xem mặt bằng giờ dựng được nhiều khung; tab Phương án chốt có thêm nhóm F.2.
+- **Nắng (Đà Nẵng 16° Bắc, mặt nhà lệch 20°):**
+
+| Mặt | Nắng chiếu thẳng |
+|---|---|
+| Bắc (340°) | Chỉ chiều Hè 14h–18h |
+| Đông (70°) | Sáng quanh năm |
+| Nam (160°) | Đông chí 7h–15h; xuân, thu phân buổi sáng; Hè không |
+| Tây (250°) | Chiều quanh năm 13h–18h |
+
+  - Tab có bảng từng phòng: lấy sáng bằng gì, nắng vào lúc nào, có lộ mặt Đông/Tây không, bị che bao nhiêu độ.
+- Tab có 12 thẻ tình huống: người đọc đi xe, đi bộ; sự kiện ngoài giờ; cùng hoạt động; trẻ em; người khuyết tật; nhân viên; sách; bảo vệ; xe cứu hỏa; xe khách; rác, kỹ thuật.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).

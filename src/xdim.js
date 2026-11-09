@@ -5,7 +5,7 @@
   const G = window.G3 = window.G3 || {};
   const NS = "http://www.w3.org/2000/svg";
   const nf = (v, d = 2) => (+v).toLocaleString("vi-VN", { minimumFractionDigits: d, maximumFractionDigits: d });
-  const solid = b => b && b.kind !== "court";
+  const solid = b => b && b.kind !== "court" && b.kind !== "park";
   const box = L => L.length ? { x0: Math.min(...L.map(b => b.x)), y0: Math.min(...L.map(b => b.y)), x1: Math.max(...L.map(b => b.x + b.w)), y1: Math.max(...L.map(b => b.y + b.h)) } : null;
   // cụm liền: hai khối chạm hoặc chồng nhau dọc một cạnh chung ≥ 0,5 m (chạm góc không tính)
   function clusters(blocks, tol = 0.1) {
