@@ -788,6 +788,29 @@ Bạn hỏi vì sao bản xếp chỉ khoảng 2.500 m², còn 500 m² "biến �
 - **Gộp khối tách:** trước đây khối lấy từ phương án có sẵn (vd B1 chia nhiều phần) không gộp được vì khác mã gốc. Giờ "Gộp lại" gộp mọi phần cùng mã, cùng tầng; hoặc bôi đen vài phần rồi bấm "Gộp … phần … thành 1 khối". Các phần ghép khít (lệch ≤ 3% diện tích) thành đúng một hình chữ nhật thì lấy đúng khung bao; khối gộp luôn nằm trong vùng xây dựng.
 - **Tab Yêu cầu của thầy:** thêm mục 7 về văn phòng E1 và phòng nhân viên E2, kèm nguồn.
 
+### 3.23 Tab Gợi ý tầng 1: bãi xe xa A1, bảo vệ E3 (09/11/2026)
+
+Bạn gửi file xep-khoi-arc329.json (09/11), thấy chỗ giữ xe xa A1 quá và nghĩ E3 nên trực ở mặt trước. Mình không sửa file; thêm tab "Gợi ý tầng 1".
+- **Tầng 1 hiện tại:**
+  - Ổn: cụm sự kiện liền nhau ở đầu Bắc; dải nghiệp vụ C4 → C2 → C3 → C1 → lõi sách dọc lối Tây; A4 ngay sau A1; nằm trong vùng xây dựng.
+  - Chưa ổn: cửa A1 nằm trong sân bị bao ba phía, chỉ hở ra lối Tây. Từ bãi xe đi khoảng 105 m dọc lối xe cứu hỏa, không mái; từ quảng trường khoảng 59 m.
+  - E3 cách cửa A1 khoảng 48 m.
+  - Dải Nam rời rạc; E1 tầng 2 nằm trên E4.
+  - A3, A4, C2 không có cửa sổ Bắc/Nam.
+  - Hành lang tầng 1 khoảng 345 m².
+- **Về E3:** bạn đúng, E3 nên ở ngay cửa chính. Ghi chú cũ ("giữa lối vào chính và lối giao nhận") nghĩa là khi hai cửa gần nhau thì một bảo vệ trông cả hai. Không gần được thì ưu tiên cửa chính, cửa giao nhận trông bằng camera.
+- **Ý 1 · Sảnh Nam: đón khách ngay bãi xe.** A1, E3, lối nhân viên, tiếp nhận C4 dồn về góc Tây Nam, cửa A1 dưới mái đua 3 m của tầng 2. Sự kiện ở giữa; thư viện, vườn thiếu nhi khoảng 30 m quay ra quảng trường; B2 tầng 3.
+  - Bãi xe → A1: 7 m. E3 → A1: 7 m. E3 → C4: 3,8 m. Tổng sàn 2.923 m².
+  - Đánh đổi: quảng trường → A1 khoảng 124 m; A2, D1, A4 tầng 1 thiếu cửa sổ.
+- **Ý 2 · Cửa A1 mở vào gầm để xe.** Biến thể Ý 1, dời lên Bắc 18 m; dải 10 m dưới tầng 2 làm gầm để xe có mái (cột, thông thủy 4,5 m).
+  - Gầm → A1: 5 m. Tổng sàn 2.984 m².
+  - Đánh đổi: quảng trường → A1 khoảng 110 m, vườn còn 14 m.
+- **Ý 3 · Giữ bản của bạn, sửa ít.** Không đổi chỗ phòng nào.
+  - A1 thêm cửa Nam ra sân giữa. E3 dời ra cửa Nam (cách 4 m).
+  - Hiên có mái dọc bờ sông từ bãi xe (66 m nhưng có mái suốt).
+  - Bãi xe máy phụ khoảng 40 xe ở sân Tây cạnh A1 (14 m).
+- Ý 1, Ý 2 có đủ tầng 2–3 và tải được file mở trong Tự xếp khối. Kiểm tra trên khối (diện tích, vùng xây dựng, đua, thang, ánh sáng, tiếng ồn, quãng đi bộ) hiện ngay trên tab. Chưa dựng mặt bằng chi tiết (cửa, nội thất): khi bạn chọn hướng thì dựng như các phương án X.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).

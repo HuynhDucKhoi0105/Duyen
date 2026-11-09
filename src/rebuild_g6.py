@@ -3,7 +3,7 @@ SP=os.path.dirname(os.path.abspath(__file__))+'/'
 F='/Users/khoihuynh/Documents/Duyên/so-do-phuong-an-mat-tien.html'
 import subprocess, sys
 six=sorted(f for f in os.listdir(SP) if re.match(r'^g[678]_.*\.js$', f) and f!='g6_kit.js' and (len(sys.argv)<2 or f in sys.argv[1:]))
-files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','xdim.js','x10_xep.js','x11_capnhat.js','f1_data.js','f1_final.js']
+files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','xdim.js','x10_xep.js','x11_capnhat.js','f1_data.js','f1_final.js','t1_chk.js','t1_data.js','t1_goiy.js']
 js='\n'.join(open(SP+f).read() for f in files)
 s=open(F).read()
 tag='<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>\n<script>'
@@ -56,9 +56,15 @@ s=re.sub(r'Phương án chốt · mặt bằng<small>[^<]*</small>','Phương á
 if 'role="tab" data-tab="f1"' not in s:
     a=s.index('role="tab" data-tab="g10"'); a=s.index('</button>',a)+len('</button>')
     s=s[:a]+'\n    <button type="button" role="tab" data-tab="f1" aria-selected="false">Final 1<small>bản xếp khối của bạn, giữ nguyên 100%, có mặt bằng</small></button>'+s[a:]
+if 'role="tab" data-tab="t1g"' not in s:
+    a=s.index('role="tab" data-tab="f1"'); a=s.index('</button>',a)+len('</button>')
+    s=s[:a]+'\n    <button type="button" role="tab" data-tab="t1g" aria-selected="false">Gợi ý tầng 1<small>bãi xe xa A1, bảo vệ E3, 3 hướng sửa</small></button>'+s[a:]
 if 'data-panel="f1" hidden' not in s:
     b='<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'+s[i2:]
+if 'data-panel="t1g" hidden' not in s:
+    b='<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'
+    i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="t1g" hidden><div id="t1g-host"></div></div>'+s[i2:]
 # tab "Yêu cầu của thầy": nội dung tĩnh từ yc_thay.html, thay lại mỗi lần dựng
 if 'role="tab" data-tab="yc"' not in s:
     a=s.index('<button type="button" role="tab" data-tab="g9"')
@@ -83,7 +89,7 @@ if os.environ.get('TEST'):
 import shutil, glob
 REPO='/Users/khoihuynh/Documents/Duyên/arc329-thu-vien/src/'
 if os.path.isdir(REPO):
-    for f in files+['rebuild_g6.py','check_p6.js','check_g6.js','syncheck.py','yc_thay.html']:
+    for f in files+['t1_gen.js','t1_i1.js','t1_i2.js','t1_i3.js','t1_text.js','t1_emit.js','t1_run.js','rebuild_g6.py','check_p6.js','check_g6.js','syncheck.py','yc_thay.html']:
         if os.path.exists(SP+f): shutil.copy(SP+f, REPO+f)
     for f in glob.glob(REPO+'chot_*.js'):
         if not os.path.exists(SP+os.path.basename(f)): os.remove(f)
