@@ -3,7 +3,7 @@ SP=os.path.dirname(os.path.abspath(__file__))+'/'
 F='/Users/khoihuynh/Documents/Duyên/so-do-phuong-an-mat-tien.html'
 import subprocess, sys
 six=sorted(f for f in os.listdir(SP) if re.match(r'^g[678]_.*\.js$', f) and f!='g6_kit.js' and (len(sys.argv)<2 or f in sys.argv[1:]))
-files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','xdim.js','x10_xep.js','x11_capnhat.js','f1_data.js','f1_final.js','t1_chk.js','t1_data.js','t1_goiy.js','f2_tab.js']
+files=['g3_ideas.js','g3_roles.js','g3_ideas2.js','g4a.js','g4b.js','g6_kit.js',*six,'g3_prep.js','g3_store.js','g3_edit.js','g3_viewer.js','p6_core.js',*sorted((f for f in os.listdir(SP) if re.match(r'^chot_.*\.js$', f)), key=lambda f: [int(t) if t.isdigit() else t for t in re.split(r'(\d+)', f)]),'g3_mount.js','p5_core.js','p5_lang3.js','p5_khe3.js','p5_cau4.js','p5_view.js','p6_khoi.js','p6_view.js','xdim.js','x10_xep.js','x11_capnhat.js','f1_data.js','f1_final.js','t1_chk.js','t1_data.js','t1_goiy.js','f2_tab.js','p6_auto.js','f3_data.js','f3_ideas.js','f3_tab.js']
 js='\n'.join(open(SP+f).read() for f in files)
 s=open(F).read()
 tag='<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>\n<script>'
@@ -62,12 +62,18 @@ if 'role="tab" data-tab="t1g"' not in s:
 if 'role="tab" data-tab="f2"' not in s:
     a=s.index('role="tab" data-tab="f1"'); a=s.index('</button>',a)+len('</button>')
     s=s[:a]+'\n    <button type="button" role="tab" data-tab="f2" aria-selected="false">Final 2<small>bản 09/11: mặt bằng chi tiết, đi lại, xe, nắng, 5 cách sửa nhẹ</small></button>'+s[a:]
+if 'role="tab" data-tab="f3"' not in s:
+    a=s.index('role="tab" data-tab="f2"'); a=s.index('</button>',a)+len('</button>')
+    s=s[:a]+'\n    <button type="button" role="tab" data-tab="f3" aria-selected="false">Final 3<small>bản 10/11: bớt hành lang, nối tầng 3, 5 ý tưởng khối</small></button>'+s[a:]
 if 'data-panel="f1" hidden' not in s:
     b='<div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'+s[i2:]
 if 'data-panel="f2" hidden' not in s:
     b='<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="f2" hidden><div id="f2-host"></div></div>'+s[i2:]
+if 'data-panel="f3" hidden' not in s and 'data-panel="f2" hidden' in s:
+    b='<div class="tab" data-panel="f2" hidden><div id="f2-host"></div></div>'
+    i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="f3" hidden><div id="f3-host"></div></div>'+s[i2:]
 if 'data-panel="t1g" hidden' not in s:
     b='<div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>'
     i2=s.index(b)+len(b); s=s[:i2]+'\n<div class="tab" data-panel="t1g" hidden><div id="t1g-host"></div></div>'+s[i2:]

@@ -70,7 +70,7 @@
   ];
   // mở sẵn ý tưởng khe Hải Vân mới nhất (sửa theo góp ý của thầy), nếu có
   const pick = re => PL().findIndex(p => re.test(p.code));
-  const PGRP = [["Bản xếp 09/11 (F.2)", /^F\.2/], ["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
+  const PGRP = [["Bản xếp 10/11 (F.3)", /^F\.3/], ["Bản xếp 09/11 (F.2)", /^F\.2/], ["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
   const PG = opt.groups || PGRP;
   let ci = opt.ci != null ? opt.ci : [pick(/^X\./), pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
   const st = { furn: true, dim: true, staff: true, route: true, lab: true, light: true, orient: window.matchMedia && window.matchMedia("(min-width: 900px)").matches ? "h" : "v" };

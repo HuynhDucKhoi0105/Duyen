@@ -142,6 +142,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <button type="button" role="tab" data-tab="g10" aria-selected="false">Tự xếp khối<small>20 khối A1–E6 theo diện tích đề, kéo thả, gửi Claude</small></button>
     <button type="button" role="tab" data-tab="f1" aria-selected="false">Final 1<small>bản xếp khối của bạn, giữ nguyên 100%, có mặt bằng</small></button>
     <button type="button" role="tab" data-tab="f2" aria-selected="false">Final 2<small>bản 09/11: mặt bằng chi tiết, đi lại, xe, nắng, 5 cách sửa nhẹ</small></button>
+    <button type="button" role="tab" data-tab="f3" aria-selected="false">Final 3<small>bản 10/11: bớt hành lang, nối tầng 3, 5 ý tưởng khối</small></button>
     <button type="button" role="tab" data-tab="t1g" aria-selected="false">Gợi ý tầng 1<small>bãi xe xa A1, bảo vệ E3, 3 hướng sửa</small></button>
   </div>
 </div>
@@ -455,10 +456,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="g10" hidden><div id="x10-host"></div></div>
 <div class="tab" data-panel="f1" hidden><div id="f1-host"></div></div>
 <div class="tab" data-panel="f2" hidden><div id="f2-host"></div></div>
+<div class="tab" data-panel="f3" hidden><div id="f3-host"></div></div>
 <div class="tab" data-panel="t1g" hidden><div id="t1g-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261110-201615"</script>
+<script>window.ARC_BUILD="20261110-205444"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -20096,7 +20098,7 @@ ${cfg.intro(rules)}
   ];
   // mở sẵn ý tưởng khe Hải Vân mới nhất (sửa theo góp ý của thầy), nếu có
   const pick = re => PL().findIndex(p => re.test(p.code));
-  const PGRP = [["Bản xếp 09/11 (F.2)", /^F\.2/], ["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
+  const PGRP = [["Bản xếp 10/11 (F.3)", /^F\.3/], ["Bản xếp 09/11 (F.2)", /^F\.2/], ["Từ bản xếp của bạn", /^X\./], ["Khối vuông 2–3 tầng", /^S\./], ["Đợt mới (A.4–A.6, H.7–H.9)", /^(A\.[4-9]|H\.[7-9])/], ["Khe Hải Vân", /^K/], ["Hộp xếp chồng", /^H\.[1-6]$/], ["Đã chốt trước", /^(A|B)$/]];
   const PG = opt.groups || PGRP;
   let ci = opt.ci != null ? opt.ci : [pick(/^X\./), pick(/^S\./), pick(/^A\.[4-9]/), pick(/^K/), 0].find(i => i >= 0), li = 1, sc = "0";
   const st = { furn: true, dim: true, staff: true, route: true, lab: true, light: true, orient: window.matchMedia && window.matchMedia("(min-width: 900px)").matches ? "h" : "v" };
@@ -22361,13 +22363,13 @@ ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); retu
     const F = [...new Set(B.map(b => b.f))].sort().filter(f => !idea.onlyF || f <= idea.onlyF);
     const sum = {}; for (const b of B.filter(b => b.kind === "room")) sum[b.c] = (sum[b.c] || 0) + b.w * b.h;
     const off = Object.keys(BRIEF).filter(c => Math.abs((sum[c] || 0) / BRIEF[c] - 1) > 0.1005);
-    const tot = B.filter(b => !/^(court|park)$/.test(b.kind)).reduce((t, b) => t + b.w * b.h, 0), rooms = Object.values(sum).reduce((t, v) => t + v, 0);
+    const tot = B.filter(b => !/^(court|park|frame)$/.test(b.kind)).reduce((t, b) => t + b.w * b.h, 0), rooms = Object.values(sum).reduce((t, v) => t + v, 0);
     add(!off.length, off.length ? `Diện tích lệch quá ±10% đề: ${off.map(c => `${c} ${nf(sum[c] || 0)}/${BRIEF[c]}`).join(", ")}` : "Đủ 24 loại phòng, mỗi loại trong ±10% đề", true);
     add(tot <= 3000, `Tổng sàn ${nf(tot)} m² (phòng ${nf(rooms)} + thang, sảnh, hành lang ${nf(tot - rooms)}) ${tot <= 3000 ? "≤" : ">"} 3.000 m²`, true);
-    const T1 = B.filter(b => b.f === 1 && !/^(court|park)$/.test(b.kind));
+    const T1 = B.filter(b => b.f === 1 && !/^(court|park|frame)$/.test(b.kind));
     const outZ = T1.filter(b => b.x < ZONE.x0 - 0.05 || b.y < ZONE.y0 - 0.05 || b.x + b.w > ZONE.x1 + 0.05 || b.y + b.h > ZONE.y1 + 0.05);
     add(!outZ.length, outZ.length ? `Tầng 1 lấn ra ngoài vùng xây dựng: ${outZ.map(b => b.c).join(", ")}` : "Tầng 1 nằm trọn trong vùng xây dựng (không lấn lối xe cứu hỏa, quảng trường, bãi xe)", true);
-    const ovs = []; for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park)$/.test(b.kind)); for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) if (ov(L[i], L[j]) > 0.3) ovs.push(`T${f} ${L[i].c}–${L[j].c}`); }
+    const ovs = []; for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park|frame)$/.test(b.kind)); for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) if (ov(L[i], L[j]) > 0.3) ovs.push(`T${f} ${L[i].c}–${L[j].c}`); }
     add(!ovs.length, ovs.length ? `Khối chồng nhau: ${ovs.slice(0, 5).join(", ")}` : "Không có khối chồng nhau", true);
     // đua: điểm của khối tầng trên cách khối tầng dưới quá 4 m
     const hang = [];
@@ -22382,7 +22384,7 @@ ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); retu
     { const b3 = B.find(b => b.c === "B3"); add(b3 && b3.f === 1, "Thiếu nhi B3 ở tầng 1"); }
     // ánh sáng
     const dark = [];
-    for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park)$/.test(b.kind)), topF = Math.max(...F); for (const b of L.filter(b => b.kind === "room" && OCC.test(b.c))) {
+    for (const f of F) { const L = B.filter(b => b.f === f && !/^(court|park|frame)$/.test(b.kind)), topF = Math.max(...F); for (const b of L.filter(b => b.kind === "room" && OCC.test(b.c))) {
       const fr = freeNS(b, L), roof = b.top && !B.some(o => o.f > f && ov(o, b) > 2);
       const ok = roof || (b.h <= 8.6 && (fr.N >= 1.2 || fr.S >= 1.2)) || (b.h <= 16.6 && fr.N >= 1.2 && fr.S >= 1.2);
       if (!ok) dark.push(`T${f} ${b.c}${b.n && /\(/.test(b.n) ? "" : ""}`); } }
@@ -22734,5 +22736,466 @@ ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); retu
   const panel = document.querySelector('[data-panel="f2"]');
   if (panel && !panel.hidden) start();
   window.addEventListener("arc-north", () => { if (started) { sunTable(); if (V) V.draw(); } });
+})(window.G3);
+
+/* ================= Dựng mặt bằng chi tiết thẳng từ file xếp khối, tự đặt cửa =================
+   File xếp khối chưa có cửa (bạn dặn: cửa để làm sau, mình tự đoán chỗ có cửa). Luật đặt cửa:
+   - Mỗi khối thuộc một khu: sk (đón tiếp, sự kiện, mở ngoài giờ), tv (thư viện, sau cổng từ), kho, nv (nhân viên), kt (kỹ thuật).
+   - Hành lang lấy khu theo phòng nó chạm (chạm quầy A4 hay phòng đọc là tv; chạm sự kiện là sk; còn lại theo hành lang cạnh nó).
+   - Chỗ hai khối chạm nhau đủ rộng thì mở cửa theo cặp khu (phòng–hành lang cùng khu: cửa phòng; khác khu: cửa khóa ngoài giờ hoặc cửa nhân viên; thang: cửa thang).
+   - Tầng 1: A1 mở cửa chính ở các phía Bắc, Nam còn hở; phòng đông người có cửa thoát nạn ra ngoài; tiếp nhận C4 có cửa cuốn ra lối Tây. */
+(function () {
+  const G = (typeof window !== "undefined") ? (window.G3 = window.G3 || {}) : {};
+  const E = 0.03;
+  const KT = "Nam · Nữ · KT (người khuyết tật)";
+  const zoneOf = c => /^(A1|A2|A3|D[1-4])$/.test(c) ? "sk" : /^(A4|B[1-6])$/.test(c) ? "tv" : /^(C1|C3)$/.test(c) ? "kho" : /^(C2|C4|E1|E2|E3|E6)$/.test(c) ? "nv" : c === "E4" ? "kt" : null;
+  const ENCL = /^(B2|B3|B4|C\d|D\d|E\d)$/;
+  // đoạn chạm giữa hai hình chữ nhật: {len, side của a ("N","S","E","W")}
+  function touch(a, b) {
+    const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
+    if (Math.abs(a.x + a.w - b.x) < E && oy > 0.2) return { len: oy, side: "E" };
+    if (Math.abs(b.x + b.w - a.x) < E && oy > 0.2) return { len: oy, side: "W" };
+    if (Math.abs(a.y + a.h - b.y) < E && ox > 0.2) return { len: ox, side: "S" };
+    if (Math.abs(b.y + b.h - a.y) < E && ox > 0.2) return { len: ox, side: "N" };
+    return null;
+  }
+  // phần cạnh còn hở ra ngoài (không áp khối nào cùng tầng)
+  function freeLen(b, side, L) {
+    const along = side === "N" || side === "S", a0 = along ? b.x : b.y, a1 = along ? b.x + b.w : b.y + b.h;
+    let segs = [[a0, a1]];
+    for (const o of L) { if (o === b) continue; const t = touch(b, o); if (!t || t.side !== side) continue; const p0 = along ? o.x : o.y, p1 = along ? o.x + o.w : o.y + o.h; segs = segs.flatMap(([s, e]) => [[s, Math.min(e, p0)], [Math.max(s, p1), e]]).filter(([s, e]) => e - s > 0.2); }
+    return segs.reduce((m, [s, e]) => Math.max(m, e - s), 0);
+  }
+  function autoPlan(blocks, opt = {}) {
+    const B = blocks.filter(b => b.onSite !== false && !b.draft && b.kind !== "court" && b.kind !== "frame");
+    const parks = blocks.filter(b => b.kind === "park" && b.onSite !== false && !b.draft);
+    const NF = Math.max(1, ...B.filter(b => b.kind !== "park").map(b => b.f || 1));
+    const LV = [];
+    for (let f = 1; f <= NF; f++) {
+      const L = B.filter(b => (b.f || 1) === f && b.kind !== "park").map((b, i) => ({ b, id: "", x: b.x, y: b.y, w: b.w, h: b.h, kind: b.kind, c: b.kind === "room" ? b.c : b.kind === "circ" ? "circ" : null }));
+      const used = new Set();
+      for (const z of L) { let base = (z.c && z.c !== "circ" ? z.c : z.kind === "circ" ? "H" : z.kind === "stair" ? "ST" : z.kind === "lift" ? "TM" : "LS"), k = 1, id = base; while (used.has(id)) id = base + (++k); used.add(id); z.id = id; }
+      LV.push(L);
+    }
+    // khu của phòng, rồi lan sang hành lang
+    for (const L of LV) {
+      for (const z of L) z.zone = z.kind === "room" ? zoneOf(z.c) : null;
+      const nb = z => L.filter(o => o !== z && touch(z, o));
+      for (let it = 0; it < 6; it++) for (const z of L.filter(z => z.kind === "circ")) {
+        const zs = nb(z).map(o => o.kind === "room" ? zoneOf(o.c) : o.kind === "circ" ? o.zone : null).filter(Boolean);
+        const has = q => zs.includes(q);
+        const name = (z.b.n || "").toLowerCase();
+        z.zone = /sự kiện|cà phê/.test(name) && has("sk") ? "sk" : has("tv") ? "tv" : has("sk") ? "sk" : /nhân viên|văn phòng|nghiệp vụ/.test(name) || has("nv") ? "nv" : has("kho") ? "nv" : z.zone || null;
+      }
+      for (const z of L.filter(z => z.kind === "circ" && !z.zone)) z.zone = "tv";
+      for (const z of L.filter(z => z.c === "E5")) { const zs = nb(z).map(o => o.zone).filter(Boolean); z.zone = zs.includes("sk") ? "sk" : zs.includes("tv") ? "tv" : zs[0] || "tv"; }
+      for (const z of L.filter(z => z.kind !== "room" && z.kind !== "circ")) z.zone = z.kind === "book" ? (LV.indexOf(L) === 0 ? "kho" : "tv") : (nb(z).some(o => o.zone === "tv") ? "tv" : nb(z).some(o => o.zone === "nv") ? "nv" : "tv");
+    }
+    // hành lang trước cổng từ: hành lang thư viện chạm sảnh A1 (người chưa qua quầy A4 đi trên đó)
+    LV.forEach((L, li) => { if (li) return; const a1 = L.filter(z => z.c === "A1"); for (const z of L.filter(z => z.kind === "circ" && z.zone === "tv")) if (a1.some(a => touch(z, a))) z.pre = true; });
+    // cửa
+    const door = (z, to, w, k, pos) => { (z.d = z.d || []).push([to, w, k, pos == null ? 0.5 : pos]); };
+    const linked = (a, b) => (a.d || []).some(d => d[0] === b.id) || (b.d || []).some(d => d[0] === a.id);
+    LV.forEach((L, li) => {
+      const isCore = z => z.kind === "stair" || z.kind === "lift" || z.kind === "book";
+      for (let i = 0; i < L.length; i++) for (let j = 0; j < L.length; j++) {
+        if (i === j) continue; const a = L[i], b = L[j]; if (linked(a, b)) continue;
+        const t = touch(a, b); if (!t) continue; const s = t.len;
+        const fit = w => s >= w + 0.2 ? w : s >= 1.0 ? +(s - 0.2).toFixed(2) : 0;
+        let k = null, w = 0.9;
+        const ca = a.c || "", cb = b.c || "";
+        if (a.pre || b.pre) { // trước cổng từ chỉ mở sang A1, A4 và phòng nhân viên, kho
+          const p = a.pre ? a : b, o = a.pre ? b : a; if (i > j && a.pre && b.pre) continue;
+          if (o.c === "A1") { k = "k"; w = 1.6; } else if (o.c === "A4") { k = "o"; w = 2.0; } else if (o.zone === "nv" || o.zone === "kho") { k = "nv"; w = 1.0; } else if (o.pre) { k = "o"; w = 2.4; } else continue;
+          const ww = s >= w + 0.2 ? w : s >= 1.0 ? +(s - 0.2).toFixed(2) : 0; if (ww && !linked(a, b)) door(a, b.id, ww, k); continue;
+        }
+        if (a.kind === "circ" && b.kind === "circ") { if (i > j) continue; k = a.zone === b.zone ? "o" : (a.zone === "tv" && b.zone === "sk") || (a.zone === "sk" && b.zone === "tv") ? "k" : "nv"; w = k === "o" ? 2.4 : 1.4; }
+        else if (a.kind === "room" && b.kind === "circ") {
+          if (ca === "A1" && b.zone === "tv") { k = "k"; w = 1.6; }
+          else if (a.zone === b.zone || ca === "E5" || (a.zone === "sk" && b.zone === "sk")) { k = /^(A1|A2|A3|A4|B1|B5|B6)$/.test(ca) ? "o" : "p"; w = k === "o" ? (ca === "A4" ? 2.0 : 2.4) : /^(D1|B3|D4|B2)$/.test(ca) ? 1.8 : 0.9; }
+          else if (a.zone === "nv" || a.zone === "kho" || a.zone === "kt") { k = "nv"; w = 1.0; }
+          else continue;
+        }
+        else if (isCore(a) && (b.kind === "circ" || b.kind === "room")) {
+          if (a.kind === "book" && li === 0) { if (!(b.zone === "kho" || b.zone === "nv")) continue; k = "nv"; w = 1.2; }
+          else if (b.kind === "room" && a.kind === "stair" && li > 0 && (b.zone === "tv" || b.zone === "nv")) { k = "thang"; w = 1.2; } // thang bộ tầng trên: mở vào mọi phòng cạnh nó để thoát nạn
+          else if (b.kind === "room" && (b.zone !== "tv" || b.c === "A1" || L.some(o => o.kind === "circ" && !o.pre && touch(b, o)))) continue;
+          else { k = "thang"; w = 1.2; }
+        }
+        else if (a.kind === "room" && b.kind === "room") {
+          if (i > j) continue;
+          const pair = [ca, cb].sort().join("-");
+          if (/^D1-D2$/.test(pair)) { k = "o"; w = 2.4; }
+          else if (/^D1-D3$/.test(pair) || /^E1-E1$/.test(pair) || /^E1-E2$/.test(pair)) { k = "p"; w = 0.9; }
+          else if (/^A1-A2$|^A2-A3$/.test(pair)) { k = "o"; w = 2.4; }
+          else if (/^A1-A4$/.test(pair)) { k = "k"; w = 1.8; }
+          else if (/^(A4-C[123]|C1-C2|C1-C3|C2-C3|C2-C4|C3-C4)$/.test(pair)) { k = "nv"; w = 1.0; }
+          else if (a.zone === "tv" && b.zone === "tv" && /^B1|^B5|^B6/.test(ca) && /^B1|^B5|^B6/.test(cb)) { k = "o"; w = 2.4; }
+          else continue;
+        }
+        else continue;
+        const ww = fit(w); if (!ww) continue;
+        door(a, b.id, ww, k);
+      }
+      // phòng chưa có cửa: nối với phòng cạnh cùng khu
+      for (const z of L) {
+        const has = L.some(o => linked(z, o)); if (has || isCore(z) && li > 0 && false) continue;
+        if (has) continue;
+        if (z.pre) continue;
+        const o = L.filter(o => o !== z && !o.pre && touch(z, o) && !(o.c === "A1" && z.zone === "tv")).sort((p, q) => (q.zone === z.zone) - (p.zone === z.zone) || touch(z, q).len - touch(z, p).len)[0];
+        if (o && !(li === 0 && (z.c === "A1" || o.c === "A1"))) { const t = touch(z, o); door(z, o.id, Math.min(0.9, t.len - 0.2), /stair|lift|book/.test(z.kind) ? "thang" : o.zone === z.zone ? "p" : "nv"); }
+      }
+      // cửa ra ngoài (tầng 1)
+      if (li === 0) for (const z of L) {
+        const fr = s => freeLen(z, s, L);
+        const add = (k, w, sides) => { for (const s of sides) if (fr(s) >= w + 0.2) { door(z, s, w, k); return true; } return false; };
+        if (z.c === "A1") { const n = add("chinh", 2.4, ["N"]), s = add("chinh", 2.4, ["S"]); if (!n && !s) add("chinh", 2.0, ["E", "W"]); }
+        else if (z.c === "D1") { if (fr("N") >= 5) { door(z, "N", 1.8, "tn", 0.25); door(z, "N", 1.8, "tn", 0.8); } else add("tn", 1.8, ["N", "W", "E", "S"]) && add("tn", 1.2, ["W", "E", "S"]); }
+        else if (/^(D4|A3)$/.test(z.c)) add("tn", 1.2, ["N", "E", "S", "W"]);
+        else if (z.c === "B3") add("tnbd", 1.8, ["S", "N", "E"]);
+        else if (z.c === "C4") { add("cuon", 2.8, ["W"]) || add("cuon", 2.8, ["S", "N"]); add("nv", 1.0, ["W", "S", "N"]); }
+        else if (/^(E3|E4)$/.test(z.c)) add("nv", 1.0, ["S", "W", "E", "N"]);
+        else if (z.kind === "circ" && !z.pre && fr("W") + fr("S") + fr("E") + fr("N") > 1.4) add(z.zone === "sk" ? "tn" : z.zone === "tv" ? "tnbd" : "nv", 1.2, ["E", "S", "W", "N"]);
+        else if (z.kind === "stair" || z.kind === "lift") add(z.zone === "sk" ? "tn" : "tnbd", 1.2, ["W", "S", "N", "E"]);
+      }
+    });
+    // lõi thang nối tầng: chồng nhau quá nửa thì cùng mã
+    let ln = 0;
+    LV.forEach((L, li) => { for (const z of L.filter(z => /stair|lift|book/.test(z.kind))) {
+      const low = li ? LV[li - 1].filter(o => /stair|lift|book/.test(o.kind) && o.link && (Math.max(0, Math.min(o.x + o.w, z.x + z.w) - Math.max(o.x, z.x)) * Math.max(0, Math.min(o.y + o.h, z.y + z.h) - Math.max(o.y, z.y))) > 0.5 * z.w * z.h) : [];
+      z.link = low[0] ? low[0].link : "L" + (++ln);
+    } });
+    // phòng cho bộ phân tích
+    const E1s = [];
+    const levels = LV.map((L, li) => ({
+      k: "t" + (li + 1), z: 0.45 + 4.5 * li, title: `Tầng ${li + 1} · sàn +${(0.45 + 4.5 * li).toFixed(3)}`,
+      env: L.map(z => [[z.x, z.y], [z.x + z.w, z.y], [z.x + z.w, z.y + z.h], [z.x, z.y + z.h]]),
+      rooms: L.map(z => {
+        const r = { id: z.id, n: z.b.n || z.c, r: [z.x, z.y, z.w, z.h], ctl: z.zone || "tv", nz: /^(D1|D2|A3|B3|E4)$/.test(z.c) ? 3 : /^(B4|D4)$/.test(z.c) ? 2 : /^(B2|E1)$/.test(z.c) ? 0 : 1, d: z.d || [] };
+        if (z.kind === "room" || z.kind === "circ") r.c = z.c;
+        if (/stair|lift|book/.test(z.kind)) r.core = { st: z.kind === "book" ? "u+l+b" : z.kind === "lift" ? "u+l" : "u", link: z.link };
+        if (z.b.top) r.top = "N";
+        if (z.c === "A4") r.ctrl = 1;
+        if (z.c === "D1") { r.seat = 120; r.occ = 120; r.face = "W"; }
+        if (z.c === "D4") r.seat = 24; if (z.c === "A3") r.seat = 32; if (z.c === "B2") r.seat = 40; if (z.c === "B5") r.seat = 16; if (z.c === "B3") r.seat = 32;
+        if (z.c === "A1") { r.seat = 20; r.occ = 40; } if (z.c === "A2") r.occ = 30;
+        if (z.c === "E5") r.wc = /thiếu nhi/i.test(z.b.n || "") ? "Trẻ em · thay tã · KT" : /nhân viên/i.test(z.b.n || "") ? "Nam · Nữ nhân viên" : KT;
+        if (z.c === "E1") E1s.push(r);
+        return r;
+      }),
+      staff: []
+    }));
+    if (E1s.length === 1) E1s[0].e1 = "ca"; else E1s.forEach((r, i) => { r.e1 = i === E1s.length - 1 ? "hop" : "lam"; });
+    // người trực
+    const at = (c, t, sc, f) => { for (const [li, L] of levels.entries()) { const z = L.rooms.find(q => q.c === c); if (z && (f == null || f === li)) { L.staff.push({ x: z.r[0] + z.r[2] / 2, y: z.r[1] + z.r[3] / 2 + 1.2, t, sc }); return; } } };
+    at("A1", "Lễ tân", ["1", "2", "3", "4"]); at("A4", "Thủ thư mượn trả, cổng từ", ["1", "3", "4"]); at("E3", "Bảo vệ", ["1", "2", "3", "4"]); at("A3", "Quầy cà phê", ["1", "2", "3", "4"]);
+    at("B3", "Thủ thư thiếu nhi", ["1", "3"]); at("C2", "Nghiệp vụ", ["1", "3", "4"]); at("C4", "Nhận sách", ["4"]); at("D1", "Điều phối, âm thanh", ["2", "3"]); at("B5", "Hỗ trợ tra cứu", ["1", "3", "4"]); at("E1", "Văn phòng", ["1", "3", "4"]);
+    { const L = levels[0], sk = L.rooms.filter(z => z.c === "circ" && z.ctl === "sk").sort((a, b) => b.r[2] * b.r[3] - a.r[2] * a.r[3])[0]; if (sk) L.staff.push({ x: sk.r[0] + sk.r[2] / 2, y: sk.r[1] + sk.r[3] / 2, t: "Đón khách sự kiện", sc: ["2", "3"] }); }
+    // tổng mặt bằng
+    const bikes = []; for (const y of [89.5, 93.5, 95.5, 100]) for (let x = 16.2; x + 0.8 <= 41.3; x += 0.8) bikes.push([x, y, 0.8, 2]);
+    const gam = parks.map(p => { const n = Math.floor(p.w * p.h / 3); for (let y = p.y + 0.3; y + 2 <= p.y + p.h; y += 4.4) for (let x = p.x + 0.3; x + 0.8 <= p.x + p.w; x += 0.8) bikes.push([x, y, 0.8, 2]); return [p.x, p.y, p.w, p.h, n]; });
+    const A1 = levels[0].rooms.find(z => z.c === "A1"), C4 = levels[0].rooms.find(z => z.c === "C4");
+    const ds = A1 ? A1.d.filter(d => d[2] === "chinh").map(d => d[0]) : [];
+    const ax = A1 ? A1.r[0] + A1.r[2] / 2 : 23, ayN = A1 ? A1.r[1] : 35, ayS = A1 ? A1.r[1] + A1.r[3] : 44;
+    const lib = ds.includes("S") ? [[24, 92], [40.5, 92], [40.5, ayS + 2], [ax, ayS + 2], [ax, ayS]] : [[23, 96], [3.5, 96], [3.5, ayN - 4], [ax, ayN - 4], [ax, ayN]];
+    const ev = ds.includes("N") ? [[15, 6], [3.5, 10], [3.5, ayN - 4], [ax, ayN - 4], [ax, ayN]] : [[15, 6], [40.5, 10], [40.5, ayS + 2], [ax, ayS + 2], [ax, ayS]];
+    const plan = {
+      id: opt.id || "auto", code: opt.code || "Tự xếp", name: opt.name || "Bản xếp khối", from: opt.from || "bản xếp của bạn", yN: () => -999, yS: () => -999, levels, auto: true,
+      grid: { x: [...new Set(B.filter(b => b.f === 1).map(b => +b.x.toFixed(2)))].sort((a, b) => a - b).slice(0, 12), y: [...new Set(B.filter(b => b.f === 1).map(b => +b.y.toFixed(2)))].sort((a, b) => a - b).slice(0, 14) },
+      site: {
+        staff: [{ x: 9, y: 97, t: "Giữ xe (bãi Nam)", sc: ["1", "2", "3", "4"] }],
+        park: { bikes, nBike: bikes.length, cars: [[8, 89.5, 3.5, 5.5, 1], [11.5, 89.5, 3.5, 5.5, 1]], racks: [[10.5, 100.6, 5, 2.4]], nRack: 10, booth: [6.4, 100.6, 3.2, 2.4], gam },
+        routes: { delivery: [[[2.2, 112], [2.2, 104], [2.2, C4 ? C4.r[1] + C4.r[3] / 2 : 66], [6.1, C4 ? C4.r[1] + C4.r[3] / 2 : 66]]], fire: [[[-3, -12], [2.2, -4], [2.2, 102]], [[2.2, -2], [34, 7]]], moto: [[[3, 112], [3, 97], [9, 97], [40, 98.8]]], lib: [lib], event: [ev] },
+        routeNames: { lib: ds.includes("S") ? "Người đọc: từ bãi xe đi dọc bờ sông, vào cửa Nam A1" : "Người đọc: từ bãi xe đi dọc lối Tây, vào cửa Bắc A1", event: ds.includes("N") ? "Khách sự kiện: từ quảng trường vòng lối Tây vào cửa Bắc A1" : "Khách sự kiện: từ quảng trường đi dọc bờ sông vào cửa Nam A1" },
+        hatch: [], labels: []
+      }
+    };
+    plan.idea = makeIdea(plan, blocks, opt);
+    return plan;
+  }
+  function makeIdea(plan, blocks, opt) {
+    const K = G.K; if (!K || !K.B) return null;
+    const { B } = K, MAT = { A: "ribbon", B: "sheet", C: "deck", D: "gold", E: "stone" };
+    return {
+      id: plan.id, fam: "chot", code: plan.code, from: plan.from, name: plan.name, rule: "Theo đúng khối", tag: opt.tag || "", story: opt.tag || "", why: [], kc: { he: "Khung bê tông theo các khối", nhip: "", cx: "" }, qa: [], cut: "", roleOf: v => v.role || "p", floors: plan.levels.length, lab: [],
+      planBrief() { return null; },
+      build() {
+        const v = [];
+        plan.levels.forEach((L, li) => { const z0 = 0.45 + 4.5 * li, z1 = z0 + 4.5, up = plan.levels[li + 1] ? new Set(plan.levels[li + 1].rooms.filter(z => z.core).map(z => z.core.link)) : new Set();
+          for (const z of L.rooms) { const [x, y, w, h] = z.r; if (z.core) { v.push(B(x, y, w, h, z0, up.has(z.core.link) ? z1 : z1 + 1.6, /l|b/.test(z.core.st) ? "violet" : "warn", "X", { top: "x", lv: 0 })); continue; } const k = (z.c || "")[0], m = MAT[k] || "glass"; v.push(B(x, y, w, h, z0, z1, m, MAT[k] ? k : "L", { fl: 1, role: k === "B" ? "m" : "p" })); } });
+        return { v, st: [] };
+      }
+    };
+  }
+  G.P6AUTO = { autoPlan, touch, zoneOf };
+  if (typeof module !== "undefined" && module.exports) module.exports = G.P6AUTO;
+})();
+
+/* Final 3: file xep-khoi-arc329-2.json bạn gửi ngày 10/11/2026, giữ nguyên */
+(function(){window.G3=window.G3||{};window.G3.F3BASE={"kind": "arc329-xep-khoi", "v": 1, "savedAt": "2026-11-10T13:40:02.157Z", "note": "F.2d · Thang máy cho người đọc, cửa mái, tách B5 khỏi học nhóm", "from": "F.2d", "blocks": [{"id": "F.2d:1:D2", "c": "D2", "n": "Bục trình bày", "kind": "room", "a": 24.08, "x": 6.09, "y": 17.21, "w": 3.749, "h": 6.423, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:D3", "c": "D3", "n": "Kho bàn ghế sự kiện", "kind": "room", "a": 22, "x": 6.09, "y": 23.63, "w": 3.75, "h": 5.867, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:D1", "c": "D1", "n": "Phòng đa năng", "kind": "room", "a": 190.49, "x": 9.84, "y": 17.21, "w": 15.5, "h": 12.29, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:D4", "c": "D4", "n": "Phòng sinh hoạt chuyên đề", "kind": "room", "a": 67.55, "x": 25.34, "y": 17.21, "w": 9.5, "h": 7.11, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:WCP", "c": "E5", "n": "Vệ sinh công cộng, sự kiện (mở ngoài giờ)", "kind": "room", "a": 26.66, "x": 34.84, "y": 17.21, "w": 3.75, "h": 7.11, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:CO3", "c": "circ", "n": "Hành lang sự kiện", "kind": "circ", "a": null, "x": 17.84, "y": 53.44, "w": 2.25, "h": 9.253, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:FOYA", "c": "circ", "n": "Sảnh sự kiện, cà phê", "kind": "circ", "a": null, "x": 29.02, "y": 29.5, "w": 2.868, "h": 6.307, "f": 1, "top": false, "onSite": true, "link": "Lpvdov1"}, {"id": "F.2d:1:A3", "c": "A3", "n": "Cà phê sách", "kind": "room", "a": 77, "x": 31.89, "y": 24.31, "w": 6.707, "h": 11.48, "f": 1, "top": true, "onSite": true}, {"id": "F.2d:1:A1", "c": "A1", "n": "Đón tiếp và thông tin", "kind": "room", "a": 76.29, "x": 20.09, "y": 35.79, "w": 8.975, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:A2", "c": "A2", "n": "Trưng bày", "kind": "room", "a": 81, "x": 29.07, "y": 35.79, "w": 9.529, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:CS", "c": "core", "n": "Lõi sách: thang bộ + thang máy + tời sách", "kind": "book", "a": null, "x": 6.09, "y": 35.79, "w": 8.5, "h": 4, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:STN", "c": "core", "n": "Thang bộ + thang máy Bắc (lên đọc tầng 2, 3)", "kind": "lift", "a": null, "x": 14.59, "y": 35.79, "w": 5.5, "h": 6.2, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:C1", "c": "C1", "n": "Kho đóng", "kind": "room", "a": 116, "x": 6.09, "y": 39.79, "w": 8.5, "h": 13.647, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:LC", "c": "circ", "n": "Sảnh thang Bắc, sau cổng từ", "kind": "circ", "a": null, "x": 14.59, "y": 41.981, "w": 5.5, "h": 11.456, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:HL2", "c": "circ", "n": "Lối vào quầy (khóa ngoài giờ)", "kind": "circ", "a": null, "x": 6.09, "y": 69.91, "w": 8.491, "h": 1.825, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:A4", "c": "A4", "n": "Gửi đồ, mượn trả, cổng từ (kiểm soát sách)", "kind": "room", "a": 30, "x": 14.59, "y": 53.44, "w": 3.25, "h": 9.231, "f": 1, "top": true, "onSite": true}, {"id": "F.2d:1:C3", "c": "C3", "n": "Lưu trữ tài liệu địa phương", "kind": "room", "a": 41, "x": 6.09, "y": 53.44, "w": 8.5, "h": 4.824, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:HA", "c": "circ", "n": "Sảnh thư viện sau cổng từ", "kind": "circ", "a": null, "x": 14.59, "y": 62.671, "w": 2.99, "h": 4.845, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:C2", "c": "C2", "n": "Xử lý nghiệp vụ", "kind": "room", "a": 66, "x": 6.08, "y": 58.26, "w": 8.5, "h": 7.765, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:C4", "c": "C4", "n": "Tiếp nhận sách", "kind": "room", "a": 33, "x": 6.08, "y": 66.03, "w": 8.5, "h": 3.882, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:B3", "c": "B3", "n": "Thiếu nhi và gia đình", "kind": "room", "a": 165, "x": 17.58, "y": 67.48, "w": 19.412, "h": 8.5, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:H7", "c": "circ", "n": "Hành lang vệ sinh, kho chung", "kind": "circ", "a": null, "x": 25.331, "y": 24.32, "w": 6.568, "h": 5.18, "f": 1, "top": false, "onSite": true, "link": "Lpvdov1"}, {"id": "F.2d:1:KW", "c": "circ", "n": "Hành lang thiếu nhi, lối nhân viên từ gầm xe", "kind": "circ", "a": null, "x": 14.58, "y": 67.5, "w": 3, "h": 12.777, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:E6", "c": "E6", "n": "Dụng cụ vệ sinh, kho chung", "kind": "room", "a": 18, "x": 6.38, "y": 71.73, "w": 4.186, "h": 4.3, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:WCB", "c": "E5", "n": "Vệ sinh thiếu nhi, thay tã (có KT)", "kind": "room", "a": 17.2, "x": 10.57, "y": 71.73, "w": 4.011, "h": 4.288, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:H9A", "c": "circ", "n": "Sảnh nhân viên Tây Nam", "kind": "circ", "a": null, "x": 17.58, "y": 62.671, "w": 2.51, "h": 4.828, "f": 1, "top": false, "onSite": true, "link": "Lq0b1n3"}, {"id": "F.2d:1:H9", "c": "circ", "n": "Sảnh nhân viên Tây Nam", "kind": "circ", "a": null, "x": 9.982, "y": 83, "w": 4.607, "h": 2.71, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:E4", "c": "E4", "n": "Kỹ thuật (điện, bơm, máy lạnh)", "kind": "room", "a": 55, "x": 32.49, "y": 80.26, "w": 6.293, "h": 8.74, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:STW", "c": "core", "n": "Thang thoát hiểm Tây Nam (lên khu văn phòng)", "kind": "stair", "a": null, "x": 6, "y": 83, "w": 4, "h": 6, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:1:E3", "c": "E3", "n": "Trực bảo vệ, giữ xe gầm", "kind": "room", "a": 15.1, "x": 10, "y": 85.71, "w": 4.591, "h": 3.289, "f": 1, "top": false, "onSite": true}, {"id": "F.2d:2:CS2", "c": "core", "n": "Lõi sách tầng 2", "kind": "book", "a": null, "x": 6.087, "y": 35.78, "w": 8.5, "h": 4, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:STS", "c": "core", "n": "Thang bộ + thang máy Bắc", "kind": "lift", "a": null, "x": 14.59, "y": 35.78, "w": 5.5, "h": 6.2, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:B6", "c": "B6", "n": "Đọc linh hoạt, hỗ trợ tra cứu", "kind": "room", "a": 51.5, "x": 20.09, "y": 35.78, "w": 6.148, "h": 8.376, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:B5", "c": "B5", "n": "Tra cứu số", "kind": "room", "a": 90, "x": 16.27, "y": 44.13, "w": 3.849, "h": 23.385, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:H8", "c": "circ", "n": "Sảnh thang Bắc tầng 2", "kind": "circ", "a": null, "x": 14.59, "y": 41.98, "w": 5.525, "h": 2.155, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:HZ", "c": "circ", "n": "Hành lang đọc tầng 2", "kind": "circ", "a": null, "x": 14.6, "y": 44.105, "w": 1.643, "h": 41.602, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:HQ", "c": "circ", "n": "Hành lang học nhóm", "kind": "circ", "a": null, "x": 12.58, "y": 50.71, "w": 2.022, "h": 18.303, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:B4b", "c": "B4", "n": "Học nhóm 1", "kind": "room", "a": 24.77, "x": 6.09, "y": 50.71, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:B4c", "c": "B4", "n": "Học nhóm 2", "kind": "room", "a": 24.77, "x": 6.09, "y": 54.52, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:B4a", "c": "B4", "n": "Học nhóm 3", "kind": "room", "a": 24.77, "x": 6.09, "y": 58.33, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:B4d", "c": "B4", "n": "Học nhóm 4", "kind": "room", "a": 24.77, "x": 6.08, "y": 62.22, "w": 6.5, "h": 3.81, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:WCL2", "c": "E5", "n": "Vệ sinh thư viện tầng 2", "kind": "room", "a": 19.7, "x": 6.08, "y": 66.03, "w": 6.5, "h": 3.031, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:B1w", "c": "B1", "n": "Đọc mở và kệ (trên thiếu nhi)", "kind": "room", "a": 177.1, "x": 16.24, "y": 67.55, "w": 20.835, "h": 8.5, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:2:HQe", "c": "circ", "n": "Hành lang văn phòng Tây", "kind": "circ", "a": null, "x": 6.18, "y": 80.26, "w": 8.428, "h": 2.74, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:HN", "c": "circ", "n": "Hành lang văn phòng", "kind": "circ", "a": null, "x": 16.223, "y": 80.26, "w": 22.557, "h": 2.5, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:E2", "c": "E2", "n": "Phòng nhân viên (nghỉ, ăn, tủ đồ)", "kind": "room", "a": 40, "x": 18.75, "y": 82.76, "w": 6.452, "h": 6.2, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:E1a", "c": "E1", "n": "Văn phòng: chỗ làm việc", "kind": "room", "a": 44.44, "x": 25.2, "y": 82.76, "w": 7.117, "h": 6.244, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:E1b", "c": "E1", "n": "Văn phòng: phòng họp", "kind": "room", "a": 40.4, "x": 32.31, "y": 82.76, "w": 6.47, "h": 6.244, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:H9r", "c": "circ", "n": "Sảnh vệ sinh nhân viên", "kind": "circ", "a": null, "x": 16.225, "y": 82.933, "w": 2.543, "h": 2.777, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:STW2", "c": "core", "n": "Thang thoát hiểm Tây Nam", "kind": "stair", "a": null, "x": 6.18, "y": 83, "w": 4, "h": 6, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:2:HQt", "c": "circ", "n": "Sảnh thang Tây Nam", "kind": "circ", "a": null, "x": 10.18, "y": 83, "w": 4.413, "h": 6.004, "f": 2, "top": false, "onSite": true, "link": "Lqk0ab5"}, {"id": "F.2d:2:WCL1", "c": "E5", "n": "Vệ sinh nhân viên (tầng 2)", "kind": "room", "a": 13.44, "x": 14.59, "y": 85.71, "w": 4.173, "h": 3.22, "f": 2, "top": false, "onSite": true}, {"id": "F.2d:3:CS3", "c": "core", "n": "Lõi sách tầng 3", "kind": "book", "a": null, "x": 6.2, "y": 34.29, "w": 8.39, "h": 4, "f": 3, "top": false, "onSite": true}, {"id": "F.2d:3:STE3", "c": "core", "n": "Thang bộ + thang máy Bắc tầng 3", "kind": "lift", "a": null, "x": 14.59, "y": 34.29, "w": 5.5, "h": 6.2, "f": 3, "top": false, "onSite": true}, {"id": "F.2d:3:B1n6", "c": "B1", "n": "Đọc mở và kệ (Bắc)", "kind": "room", "a": 51.5, "x": 20.09, "y": 34.29, "w": 6.32, "h": 8.149, "f": 3, "top": true, "onSite": true}, {"id": "F.2d:3:B1n", "c": "B1", "n": "Bàn đọc cá nhân (Tây Bắc)", "kind": "room", "a": 93.2, "x": 6.07, "y": 39.78, "w": 8.522, "h": 10.936, "f": 2, "top": true, "onSite": true}, {"id": "F.2d:3:B1f", "c": "B1", "n": "Bàn đọc cá nhân (dải giữa)", "kind": "room", "a": 182.2, "x": 6.07, "y": 38.29, "w": 8.52, "h": 21.385, "f": 3, "top": true, "onSite": true}, {"id": "F.2d:3:B2", "c": "B2", "n": "Đọc yên tĩnh", "kind": "room", "a": 172, "x": 16.84, "y": 67.55, "w": 20.235, "h": 8.5, "f": 3, "top": true, "onSite": true}, {"id": "F.2d:1:gam", "c": "XE", "n": "Bãi đỗ xe (gầm dưới tầng 2)", "kind": "park", "a": null, "x": 14.59, "y": 80.26, "w": 17.9, "h": 8.74, "f": 1, "top": false, "onSite": true, "pk": "moto"}, {"id": "circ·lcv81", "c": "circ", "n": "Sảnh, hành lang", "kind": "circ", "a": null, "x": 14.59, "y": 40.49, "w": 3.388, "h": 20.358, "f": 3, "top": false, "onSite": true}]};})();
+
+/* ================= Final 3: bản xếp 10/11 của bạn và 5 ý tưởng giữ nguyên lý xếp =================
+   Mọi ý tưởng giữ cách xếp của bạn: cụm sự kiện ở đầu Bắc, dải kho nghiệp vụ dọc lối Tây, sân giữa, dải thiếu nhi
+   và văn phòng phía Nam, khu đọc chồng lên dải Tây và dải Nam. Chỉ dời, đổi cỡ vài khối; giao thông ≤ 780 m². */
+(function () {
+  const G = (typeof window !== "undefined") ? (window.G3 = window.G3 || {}) : {};
+  const cp = o => JSON.parse(JSON.stringify(o));
+  function edit(base) {
+    const L = cp(base);
+    const get = id => { const b = L.find(q => q.id === id); if (!b) throw new Error("không có khối " + id); return b; };
+    const api = {
+      L, get,
+      set: (id, o) => Object.assign(get(id), o),
+      del: id => { const i = L.findIndex(q => q.id === id); if (i >= 0) L.splice(i, 1); },
+      add: b => L.push({ onSite: true, top: false, a: b.kind === "room" ? +(b.w * b.h).toFixed(2) : null, ...b })
+    };
+    return api;
+  }
+  // bộ sửa chung cho cả 5 ý tưởng
+  function common(e) {
+    // 1. Quầy A4 lên sát sảnh A1: khách đi xuyên qua A4 (cổng từ), thang Bắc mở từ trong quầy, không còn lối lên khu đọc trước quầy
+    e.set("F.2d:1:A4", { x: 14.59, y: 41.98, w: 5.5, h: 5.454, top: false });
+    e.set("F.2d:1:LC", { x: 14.59, y: 47.434, w: 5.5, h: 6.006, n: "Sảnh thư viện sau cổng từ" });
+    e.add({ id: "F3:1:gieng", c: "SAN", n: "Giếng trời (chỗ quầy A4 cũ)", kind: "court", x: 14.59, y: 53.44, w: 3.25, h: 9.231, f: 1 });
+    // 2. Tầng 3: lõi thang thẳng lõi tầng 2
+    e.set("F.2d:3:CS3", { x: 6.087, y: 35.78, w: 8.5, h: 4 });
+    e.set("F.2d:3:STE3", { y: 35.78 });
+    e.set("F.2d:3:B1n6", { y: 35.78 });
+    e.set("F.2d:3:B1f", { y: 39.78 });
+    e.set("circ·lcv81", { x: 14.59, y: 41.98, w: 2.4, h: 20.36, n: "Hành lang đọc tầng 3" });
+    // 3. Bớt hành lang: bỏ hành lang học nhóm đôi ở tầng 2 (dãy học nhóm dời sát hành lang đọc), vệ sinh tầng 2 lên đầu dãy làm vùng đệm, thu sảnh thang Tây Nam
+    e.del("F.2d:2:HQ");
+    e.set("F.2d:2:WCL2", { x: 8.11, y: 50.71 });
+    [["F.2d:2:B4b", 53.741], ["F.2d:2:B4c", 57.551], ["F.2d:2:B4a", 61.361], ["F.2d:2:B4d", 65.171]].forEach(([id, y]) => e.set(id, { x: 8.11, y }));
+    e.set("F.2d:2:HQt", { h: 2.74 });
+    e.del("F.2d:2:H9r"); e.del("F.2d:2:WCL1");
+    // 4. Nối B2, vệ sinh tầng 3, thang thoát hiểm Đông Nam 3 tầng
+    e.add({ id: "F3:3:link", c: "circ", n: "Hành lang nối đọc yên tĩnh", kind: "circ", x: 14.59, y: 62.34, w: 2.25, h: 13.71, f: 3 });
+    e.add({ id: "F3:3:WC3", c: "E5", n: "Vệ sinh tầng 3 (có KT)", kind: "room", x: 10.59, y: 61.165, w: 4, h: 3, f: 3 });
+    for (const f of [1, 2, 3]) e.add({ id: `F3:${f}:STE`, c: "core", n: "Thang thoát hiểm Đông Nam (chỉ khi khẩn cấp)", kind: "stair", x: 34.5, y: 76.05, w: 3.6, h: 4.21, f });
+    return e;
+  }
+  const IDEAS = [
+    { key: "base", code: "F.3", name: "Bản của bạn (10/11), giữ 100%", tag: "Đúng từng khối trong file", mods: null,
+      text: "Giữ nguyên mọi khối. Cửa do mình tự đặt theo luật (chỗ các khối chạm nhau; hành lang trước cổng từ chỉ mở sang A1 và A4). Lỗi liệt kê bên dưới là của cách xếp, không phải do thiếu cửa." },
+    { key: "y1", code: "F.3-1", name: "Nối dải Tây: chữ L ba tầng", tag: "Giữ khối tầng 3 như bạn, chỉ nối B2 và sửa chung",
+      text: "Tầng 3 giữ đúng hai cụm của bạn (cụm Bắc trên lõi thang, đọc yên tĩnh B2 ở Nam). Hành lang đọc tầng 3 kéo xuống tới B2 dọc mép trong dải Tây, nên tầng 3 thành chữ L ôm sân giữa giống tầng 2. Thang Đông Nam cho B2 lối thoát thứ hai; vệ sinh tầng 3 đặt chồng lên vệ sinh tầng 2.",
+      mods: e => common(e) },
+    { key: "y2", code: "F.3-2", name: "Hai đầu cao, giữa thấp", tag: "Tra cứu số B5 lên mặt Bắc tầng 2; tầng 3 có hộp đọc trước và B2 sau",
+      text: "Tra cứu số B5 (đang là dải 3,85 × 23 m, chỉ xếp được 9/16 chỗ) dời lên mặt Bắc tầng 2, ngay trên A1, A2, nhìn ra quảng trường. Bàn đọc dải giữa tầng 3 dời lên trên B5 thành hộp đọc mặt trước. Mặt Bắc cao 3 tầng (A1, A2 → B6, B5 → hộp đọc), mặt Nam cao 3 tầng (B3 → B1w → B2); giữa sân là phần thấp. Hai đầu nối bằng hành lang đọc tầng 3 dọc dải Tây.",
+      mods: e => { common(e); e.set("F.2d:2:B5", { x: 26.24, y: 35.78, w: 10.6, h: 8.5, a: 90.1 }); e.set("F.2d:3:B1f", { x: 6.07, y: 39.78, w: 8.52, h: 6.9, a: 58.8, n: "Bàn đọc cá nhân (Tây Bắc)" }); e.add({ id: "F3:3:B1front", c: "B1", n: "Hộp đọc mặt trước (nhìn quảng trường)", kind: "room", x: 26.41, y: 35.78, w: 10.43, h: 8.5, f: 3, top: true }); } },
+    { key: "y3", code: "F.3-3", name: "Khung lam nối tầng 3, sân thượng đọc", tag: "Giữ khối như F.3-1, thêm khung lam và sân thượng đọc thay cho khối đặc",
+      text: "Đề giới hạn 3.000 m² nên tầng 3 không thể đầy khối. Thay vào đó, các mái tầng 2 còn trống (trên tra cứu số, trên đọc linh hoạt B6, đầu Đông của đọc mở B1w) làm sân thượng đọc ngoài trời có khung lam bê tông cao bằng tầng 3. Nhìn từ ngoài, tầng 3 là một khối liền chữ U (phần đặc là phòng, phần rỗng là khung lam), không tính vào diện tích sàn.",
+      mods: e => { common(e); e.add({ id: "F3:3:frameA", c: "LAM", n: "Khung lam, sân thượng đọc (trên tra cứu số)", kind: "frame", x: 16.99, y: 43.93, w: 3.13, h: 23.62, f: 3 }); e.add({ id: "F3:3:frameB", c: "LAM", n: "Khung lam, sân thượng đọc (mặt Bắc)", kind: "frame", x: 26.41, y: 35.78, w: 10.43, h: 8.5, f: 3 }); e.add({ id: "F3:3:frameC", c: "LAM", n: "Khung lam trên vệ sinh, học nhóm", kind: "frame", x: 8.11, y: 50.71, w: 2.48, h: 18.27, f: 3 }); } },
+    { key: "y4", code: "F.3-4", name: "So le chong chóng, hộp đua ra sông", tag: "Hộp đọc tầng 3 dời về góc Đông Bắc, đua 4 m ra phía sông",
+      text: "Như F.3-2 nhưng hộp đọc tầng 3 không nằm trên lõi thang mà dời hẳn về góc Đông Bắc, đua 4 m ra phía sông. Ba khối tầng 3 (dải Tây, hộp Đông Bắc, B2 phía Nam) xoay quanh sân giữa như cánh chong chóng: lệch, không đối xứng, mỗi mặt nhà một chiều cao khác nhau. Đua đúng 4 m nên không cần cột thêm.",
+      mods: e => { common(e); e.set("F.2d:2:B5", { x: 26.24, y: 35.78, w: 10.6, h: 8.5, a: 90.1 }); e.del("F.2d:3:B1n6"); e.set("F.2d:3:B1f", { x: 6.07, y: 39.78, w: 8.52, h: 12.9, a: 109.9 }); e.add({ id: "F3:3:B1ne", c: "B1", n: "Hộp đọc Đông Bắc (đua ra phía sông)", kind: "room", x: 30.24, y: 35.78, w: 10.6, h: 8.5, f: 3, top: true }); e.add({ id: "F3:3:bridge", c: "circ", n: "Cầu đọc tới hộp Đông Bắc", kind: "circ", x: 20.09, y: 35.78, w: 10.15, h: 2.4, f: 3 }); } },
+    { key: "y5", code: "F.3-5", name: "Lưng cao, mặt tiền thấp", tag: "Dồn tầng 3 về phía Nam (trên văn phòng), mặt Bắc chỉ còn lõi thang nhô cao",
+      text: "Mặt Bắc nhìn ra quảng trường giữ 2 tầng (mái tầng 2 làm vườn), chỉ hai lõi thang nhô lên như hai cột mốc. Khối đọc tầng 3 dồn về phía Nam thành một khối lớn (B2 + đọc mở trên dải văn phòng), quay mặt về bãi xe và đón nắng Nam có ô văng. Dải Tây tầng 3 chỉ còn hành lang nối lõi thang với khối Nam.",
+      mods: e => { common(e); e.del("F.2d:3:B1n6"); e.del("F.2d:3:B1f"); e.add({ id: "F3:3:B1back", c: "B1", n: "Đọc mở và kệ (khối Nam, trên văn phòng)", kind: "room", x: 14.59, y: 76.05, w: 19.91, h: 9.93, f: 3, top: true }); e.set("F3:3:WC3", { x: 12.59, y: 61.165, w: 2, h: 6 }); } }
+  ];
+  function build(base) {
+    return IDEAS.map(I => {
+      let blocks = cp(base);
+      if (I.mods) { const e = edit(base); I.mods(e); blocks = e.L; }
+      return { ...I, blocks };
+    });
+  }
+  const api = { IDEAS, build, edit, common };
+  G.F3IDEAS = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+})();
+
+/* ================= Tab Final 3: bản xếp 10/11 và 5 ý tưởng giữ nguyên lý xếp ================= */
+(function (G) {
+  if (!G || !G.F3BASE || !G.F3IDEAS || !G.P6AUTO || !G.P6) return;
+  const IDS = G.F3IDEAS.build(G.F3BASE.blocks);
+  const PL = IDS.map(I => { const p = G.P6AUTO.autoPlan(I.blocks, { id: "chotF3" + I.key, code: I.code, name: I.name, tag: I.tag }); p.tag = I.tag; p.intro = `<p class="lede">${I.text}</p>`; return p; });
+  G.F3PLANS = PL; G.CHOT = G.CHOT || []; for (const p of PL) G.CHOT.push(p);
+  const host = document.getElementById("f3-host");
+  if (!host || !G.P6VIEWER) return;
+  const P6 = G.P6, DT = window.D || (typeof D !== "undefined" ? D : null), NS = "http://www.w3.org/2000/svg";
+  const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const nf = (v, d = 0) => (+v).toLocaleString("vi-VN", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const onS = b => b.onSite !== false && !b.draft;
+  const col = b => b.kind === "room" ? `var(--z${b.c[0]})` : b.kind === "stair" ? "var(--f3Stair)" : b.kind === "lift" || b.kind === "book" ? "var(--f3Lift)" : b.kind === "court" ? "var(--zOut)" : b.kind === "park" ? "var(--f3Park)" : b.kind === "frame" ? "none" : "var(--zCirc)";
+  const label = b => b.kind === "room" ? b.c : b.kind === "book" ? "Lõi sách" : b.kind === "lift" ? "Thang + máy" : b.kind === "stair" ? "Thang" : b.kind === "park" ? "Gầm xe" : b.kind === "frame" ? "Khung lam" : b.kind === "court" ? "" : "Hành lang";
+  const CSS = `
+.f3t { display: grid; gap: 30px; --f3Stair: #e08a3c; --f3Lift: #8a6cc7; --f3Park: #c9d3d8; --f3Frame: #0e7490; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .f3t { --f3Park: #4a5559; --f3Frame: #5fd0e6; } }
+:root[data-theme="dark"] .f3t { --f3Park: #4a5559; --f3Frame: #5fd0e6; }
+.f3t .tw { overflow-x: auto; }
+.f3t table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.f3t th, .f3t td { padding: 5px 7px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.f3t td.num, .f3t th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.f3t .good { color: var(--accent); font-weight: 700; } .f3t .warn { color: var(--warn); font-weight: 700; } .f3t .mid { color: #c98a00; font-weight: 700; }
+.f3t .seg { display: flex; flex-wrap: wrap; gap: 0; }
+.f3t .seg button { font: 600 13px var(--body); padding: 7px 11px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; margin: 0 -1px -1px 0; text-align: left; }
+.f3t .seg button[aria-pressed="true"] { background: var(--ink); color: var(--sheet); }
+.f3t .seg button:focus-visible, .f3t .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.f3t .btn { font: 600 13px var(--body); padding: 6px 12px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; border-radius: 3px; }
+.f3t .duo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .f3t .duo { grid-template-columns: 1fr; } }
+.f3t .v3 { position: relative; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); height: min(60vh, 520px); touch-action: none; cursor: grab; }
+.f3t .v3 canvas { display: block; width: 100%; height: 100%; }
+.f3t .v3 .zm { position: absolute; right: 8px; top: 8px; display: flex; gap: 4px; }
+.f3t .v3 .zm button { min-width: 30px; height: 30px; font: 700 14px var(--body); border: 1px solid var(--ink); background: var(--sheet); color: var(--ink); cursor: pointer; border-radius: 3px; padding: 0 6px; }
+.f3t .kp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.f3t .kp figure { margin: 0; border: 1px solid var(--line); border-radius: 3px; background: var(--paper); }
+.f3t .kp figcaption { font: 700 12.5px var(--body); padding: 6px 8px 0; }
+.f3t .kp svg { display: block; width: 100%; height: auto; }
+.f3t ul.pl { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; max-width: 86ch; }
+.f3t ul.chk { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 5px; font-size: 13.5px; }
+.f3t ul.chk li { padding-left: 20px; position: relative; }
+.f3t ul.chk li::before { position: absolute; left: 0; font-weight: 800; }
+.f3t ul.chk li.ok::before { content: "✓"; color: var(--accent); } .f3t ul.chk li.no::before { content: "!"; color: var(--warn); } .f3t ul.chk li.soft::before { content: "?"; color: #c98a00; }
+.f3t .leg { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; }
+.f3t .leg span { display: inline-flex; align-items: center; gap: 6px; }
+.f3t .leg i { display: inline-block; width: 12px; height: 12px; border: 1px solid var(--ink); }
+.f3t .note { font-size: 13px; color: var(--ink-2); }
+`;
+  /* ---------- mặt bằng khối một tầng ---------- */
+  function plan(blocks, f) {
+    const PX = 10, B = blocks.filter(onS), svg = el("svg", { viewBox: `${4 * PX} ${14 * PX} ${38.5 * PX} ${76 * PX}`, role: "img", "aria-label": `Tầng ${f}` });
+    const R = (x, y, w, h, a) => el("rect", { x: x * PX, y: y * PX, width: w * PX, height: h * PX, ...a }, svg);
+    const T = (s, x, y, a = {}) => { const e = el("text", { x: x * PX, y: y * PX, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 12, fill: "var(--ink)", "font-family": "var(--body)", "font-weight": 700, ...a }, svg); e.textContent = s; return e; };
+    R(4, 14, 38.5, 76, { fill: "var(--sheet)" });
+    R(6, 12, 35.5, 77, { fill: "none", stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "6 4" });
+    for (const b of B.filter(b => b.f < f && !/^(court|frame)$/.test(b.kind))) R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink-2)", "stroke-width": 0.8, "stroke-dasharray": "4 3", opacity: 0.6 });
+    for (const b of B.filter(b => b.f === f)) {
+      if (b.kind === "frame") { R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--f3Frame)", "stroke-width": 2.2, "stroke-dasharray": "2 3" }); for (let x = b.x + 1; x < b.x + b.w; x += 1.2) el("line", { x1: x * PX, y1: b.y * PX, x2: x * PX, y2: (b.y + b.h) * PX, stroke: "var(--f3Frame)", "stroke-width": 0.6, opacity: 0.6 }, svg); continue; }
+      R(b.x, b.y, b.w, b.h, { fill: col(b), stroke: "var(--ink)", "stroke-width": 1, opacity: /^(court|park)$/.test(b.kind) ? 0.7 : 0.95, "stroke-dasharray": /^(court|park)$/.test(b.kind) ? "5 3" : null });
+      if (b.w * b.h >= 8) { const cx = b.x + b.w / 2, cy = b.y + b.h / 2, t = T(label(b), cx, cy, { "font-size": b.w >= 6 && b.h >= 4 ? 14 : 9.5 }); if (b.h > b.w * 2 && b.w < 4) t.setAttribute("transform", `rotate(-90 ${cx * PX} ${cy * PX})`); }
+    }
+    return svg;
+  }
+  /* ---------- khối 3D ---------- */
+  let V = null;
+  function view3d(box, blocks) {
+    if (V && V.dispose) V.dispose(); V = null;
+    const THREE = window.THREE; box.querySelectorAll("canvas").forEach(c => c.remove());
+    if (!THREE) { box.insertAdjacentHTML("afterbegin", `<p class="note" style="padding:12px">Trình duyệt chưa nạp được 3D.</p>`); return; }
+    let r; try { r = new THREE.WebGLRenderer({ antialias: true, alpha: true }); } catch (e) { return; }
+    r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); box.prepend(r.domElement);
+    const cs = getComputedStyle(host), C = v => { const m = /var\((--[\w-]+)\)/.exec(v); return new THREE.Color((m ? cs.getPropertyValue(m[1]) : v).trim() || "#999"); };
+    const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, 1, 2000);
+    sc.add(new THREE.HemisphereLight(0xffffff, 0x8a8f8c, 0.62)); sc.add(new THREE.AmbientLight(0xffffff, 0.25));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.6); sun.position.set(70, 90, 110); sc.add(sun);
+    const g = new THREE.Group(); sc.add(g);
+    const slab = (x0, y0, x1, y1, z0, z1, c, op) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, z1 - z0, y1 - y0), new THREE.MeshLambertMaterial({ color: C(c), transparent: op != null, opacity: op ?? 1 })); m.position.set((x0 + x1) / 2, (z0 + z1) / 2, (y0 + y1) / 2); g.add(m); return m; };
+    slab(-6, -6, 54, 110, -0.3, -0.05, "var(--road)"); slab(0, 0, 41.5, 104, -0.05, 0.02, "var(--sheet)"); slab(41.5, -6, 54, 110, -0.3, -0.02, "var(--water)");
+    const edge = new THREE.LineBasicMaterial({ color: C("var(--ink)"), transparent: true, opacity: 0.55 }), fr = new THREE.LineBasicMaterial({ color: C("var(--f3Frame)") });
+    const z0 = f => 0.45 + 4.5 * (f - 1), B = blocks.filter(onS);
+    const isCore = b => /^(stair|lift|book)$/.test(b.kind);
+    for (const b of B) {
+      if (b.kind === "court") continue;
+      if (b.kind === "park") { slab(b.x, b.y, b.x + b.w, b.y + b.h, 0.02, 0.12, "var(--f3Park)"); continue; }
+      if (b.kind === "frame") { const geo = new THREE.BoxGeometry(b.w, 4.3, b.h), e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), fr); e.position.set(b.x + b.w / 2, z0(b.f) + 2.15, b.y + b.h / 2); g.add(e); for (let x = b.x + 1.2; x < b.x + b.w; x += 1.2) { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, z0(b.f) + 4.3, b.y), new THREE.Vector3(x, z0(b.f) + 4.3, b.y + b.h)]), fr); g.add(l); } continue; }
+      const above = isCore(b) && B.some(o => o.f === b.f + 1 && isCore(o) && Math.min(o.x + o.w, b.x + b.w) - Math.max(o.x, b.x) > 1 && Math.min(o.y + o.h, b.y + b.h) - Math.max(o.y, b.y) > 1);
+      const m = slab(b.x, b.y, b.x + b.w, b.y + b.h, z0(b.f), z0(b.f) + 4.5 + (isCore(b) && !above ? 1.6 : 0) - 0.05, col(b), b.kind === "circ" ? 0.8 : null);
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), edge); e.position.copy(m.position); g.add(e);
+    }
+    const tgt = new THREE.Vector3(23.75, 5, 52), S = { th: 2.35, ph: 0.55, d: 120 };
+    const place = () => { cam.position.set(tgt.x + S.d * Math.cos(S.ph) * Math.sin(S.th), tgt.y + S.d * Math.sin(S.ph), tgt.z + S.d * Math.cos(S.ph) * Math.cos(S.th)); cam.lookAt(tgt); };
+    const draw = () => { const w = box.clientWidth, h = box.clientHeight; if (!w || !h) return; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); place(); r.render(sc, cam); };
+    let drag = null;
+    const pd = e => { if (e.target.closest("button")) return; drag = { x: e.clientX, y: e.clientY, th: S.th, ph: S.ph }; box.setPointerCapture && box.setPointerCapture(e.pointerId); };
+    const pm = e => { if (!drag) return; S.th = drag.th - (e.clientX - drag.x) * 0.008; S.ph = Math.max(0.1, Math.min(1.5, drag.ph + (e.clientY - drag.y) * 0.006)); draw(); };
+    const pu = () => { drag = null; };
+    box.addEventListener("pointerdown", pd); box.addEventListener("pointermove", pm); box.addEventListener("pointerup", pu);
+    const zi = () => { S.d = Math.max(45, S.d / 1.2); draw(); }, zo = () => { S.d = Math.min(400, S.d * 1.2); draw(); };
+    const vs = {
+      NE: () => { S.th = 2.35; S.ph = 0.55; draw(); }, SE: () => { S.th = 0.8; S.ph = 0.5; draw(); }, SW: () => { S.th = -0.8; S.ph = 0.5; draw(); }, NW: () => { S.th = -2.35; S.ph = 0.5; draw(); }
+    };
+    const bz = box.querySelector(".zm");
+    const on = (q, f) => { const b = bz.querySelector(q); if (b) b.onclick = f; };
+    on("[data-z='+']", zi); on("[data-z='-']", zo); on("[data-v='NE']", vs.NE); on("[data-v='SE']", vs.SE); on("[data-v='SW']", vs.SW); on("[data-v='NW']", vs.NW);
+    const ro = window.ResizeObserver ? new ResizeObserver(draw) : null; if (ro) ro.observe(box);
+    V = { draw, dispose() { if (ro) ro.disconnect(); box.removeEventListener("pointerdown", pd); box.removeEventListener("pointermove", pm); box.removeEventListener("pointerup", pu); try { r.dispose(); } catch (e) { /* bỏ qua */ } } };
+    draw();
+  }
+  /* ---------- số liệu ---------- */
+  const circOf = bl => bl.filter(b => onS(b) && !/^(room|court|park|frame)$/.test(b.kind)).reduce((t, b) => t + b.w * b.h, 0);
+  const t3Of = bl => bl.filter(b => onS(b) && b.f === 3 && !/^(court|park|frame)$/.test(b.kind)).reduce((t, b) => t + b.w * b.h, 0);
+  function stats(i) { const p = PL[i]; if (!p.__R) p.__R = P6.analyse(p, DT); const R = p.__R; return { R, errs: R.err.length + R.levels.reduce((t, M) => t + M.err.length, 0), circ: circOf(IDS[i].blocks), t3: t3Of(IDS[i].blocks), far: R.levels.map(M => M.far), b5: R.seats.B5 || 0, chk: G.T1CHK ? G.T1CHK.check({ blocks: IDS[i].blocks }) : null }; }
+  let cur = 1, VW = null;
+  function build() {
+    if (!document.getElementById("f3t-style")) { const s = document.createElement("style"); s.id = "f3t-style"; s.textContent = CSS; document.head.appendChild(s); }
+    G.P6V.css(); host.classList.add("f3t");
+    const S = IDS.map((_, i) => stats(i)), cell = (v, lim, u = " m") => `<span class="${v <= lim ? "good" : "warn"}">${v > 1e6 ? "kẹt" : nf(v) + u}</span>`;
+    host.innerHTML = `
+<section style="display:grid;gap:10px">
+  <p class="eyebrow">Final 3 · bản xếp khối ngày 10/11/2026</p>
+  <h2>Thiếu hành lang, tầng 3 trống: 5 cách giữ nguyên lý xếp của bạn</h2>
+  <p class="lede">Bản của bạn đang dùng đúng 780 m² giao thông (mức tối đa của đề) nhưng tầng 3 vẫn rời rạc: đọc yên tĩnh B2 chưa có lối vào. Giao thông vẫn bớt được khoảng 110 m² ở chỗ thừa, đủ để nối tầng 3 và thêm thang thoát hiểm. Cả 5 ý tưởng giữ cách xếp của bạn: cụm sự kiện ở đầu Bắc, dải kho nghiệp vụ dọc lối Tây, sân giữa, thiếu nhi và văn phòng ở phía Nam, khu đọc chồng lên dải Tây và dải Nam. Cửa do mình tự đặt theo luật, A4 là chỗ khách đi xuyên qua cổng từ.</p>
+</section>
+<section style="display:grid;gap:10px">
+  <h3>Bản của bạn (10/11): chỗ cần sửa, cả 5 ý tưởng đều sửa</h3>
+  <ul class="pl">
+    <li><b>Thang Bắc mở ra hành lang trước quầy A4</b> (hành lang này chạm sảnh A1): người đọc lên thẳng khu đọc mà không qua cổng từ. Sửa: dời A4 lên sát A1 (khách đi xuyên qua A4), thang Bắc mở từ trong A4, hành lang cũ thu lại thành sảnh sau cổng từ; chỗ A4 cũ thành giếng trời nhỏ. Hành lang tầng 1 bớt 30 m².</li>
+    <li><b>Tầng 3 chưa vào được đọc yên tĩnh B2:</b> hành lang đọc tầng 3 dừng ở y 60,9, B2 bắt đầu ở y 67,6; B2 cũng chỉ có thang ở đầu Bắc, cách khoảng 40 m. Sửa: hành lang nối 2,25 m dọc mép B2 (31 m²) và thang thoát hiểm Đông Nam 3 tầng ở khe giữa B3 và kỹ thuật E4.</li>
+    <li><b>Lõi thang tầng 3 lệch 1,5 m so với tầng 2:</b> dời cho thẳng (cả bàn đọc tầng 3 dời theo).</li>
+    <li><b>Hành lang thừa:</b> tầng 2 có hai hành lang chạy song song (hành lang đọc 1,64 m và hành lang học nhóm 2,02 m): bỏ hành lang học nhóm, dãy học nhóm dời 2 m sát hành lang đọc (37 m²). Sảnh thang Tây Nam tầng 2 to 26 m², thu còn 12 m². Hành lang tầng 3 rộng 3,4 m, thu còn 2,4 m (20 m²).</li>
+    <li><b>Tầng 3 không có vệ sinh:</b> thêm vệ sinh 12 m² chồng lên dãy vệ sinh, học nhóm tầng 2; bỏ vệ sinh nhân viên riêng ở tầng 2 để tổng vệ sinh vẫn trong +10% đề.</li>
+    <li><b>Tiếng ồn:</b> vệ sinh tầng 2 dời lên đầu dãy học nhóm, làm vùng đệm giữa học nhóm và bàn đọc.</li>
+  </ul>
+</section>
+<section style="display:grid;gap:10px">
+  <h3>So 6 phương án</h3>
+  <div class="tw"><table><thead><tr><th></th>${IDS.map(I => `<th class="num">${esc(I.code)}</th>`).join("")}</tr></thead><tbody>
+    <tr><td>Ý chính</td>${IDS.map(I => `<td style="font-size:12.5px;min-width:120px">${esc(I.name)}</td>`).join("")}</tr>
+    <tr><td>Giao thông (≤ 780 m²)</td>${S.map(s => `<td class="num">${cell(s.circ, 780.5, " m²")}</td>`).join("")}</tr>
+    <tr><td>Tổng sàn (≤ 3.000 m²)</td>${S.map(s => `<td class="num">${cell(s.R.total, 3000, " m²")}</td>`).join("")}</tr>
+    <tr><td>Sàn tầng 3</td>${S.map(s => `<td class="num">${nf(s.t3)} m²</td>`).join("")}</tr>
+    <tr><td>Thoát nạn xa nhất T1 · T2 · T3 (mốc 30 m)</td>${S.map(s => `<td class="num">${s.far.map(v => cell(v, 30.5, "")).join(" · ")}</td>`).join("")}</tr>
+    <tr><td>Tra cứu số B5: chỗ xếp được (cần 16)</td>${S.map(s => `<td class="num"><span class="${s.b5 >= 16 ? "good" : "warn"}">${s.b5} chỗ</span></td>`).join("")}</tr>
+    <tr><td>Số lỗi kiểm tra mặt bằng</td>${S.map(s => `<td class="num"><b class="${s.errs <= 13 ? "good" : s.errs <= 18 ? "mid" : "warn"}">${s.errs}</b></td>`).join("")}</tr>
+  </tbody></table></div>
+  <p class="note">Lỗi còn lại ở các ý tưởng chủ yếu là của cách xếp gốc: trưng bày A2, kho D3, E6 sát mép ±10% đề; quầy A4, xử lý C2 và vài phòng tầng 2 chưa có cửa sổ Bắc/Nam; phòng đa năng bị lõi thang che nắng Nam. Thoát nạn tầng 2 khoảng 32–33 m, hơi quá mốc 30 m mình tự đặt.</p>
+</section>
+<section style="display:grid;gap:12px">
+  <div class="seg" role="group" aria-label="Chọn phương án">${IDS.map((I, i) => `<button type="button" data-i="${i}" aria-pressed="${i === cur}"><b>${esc(I.code)}</b> · ${esc(I.name)}</button>`).join("")}</div>
+  <div id="f3-one"></div>
+</section>
+<section style="display:grid;gap:10px"><h3>Mặt bằng chi tiết (cửa, nội thất, 7 tình huống, tổng mặt bằng)</h3><p class="note">Chọn phương án ở hàng nút bên dưới; nút ở trên cũng đổi theo.</p><div id="f3-view"></div></section>`;
+    host.querySelectorAll("[data-i]").forEach(b => b.addEventListener("click", () => pick(+b.dataset.i)));
+    VW = G.P6VIEWER(host.querySelector("#f3-view"), () => PL, "f3", { ci: cur, noKhoi: true, groups: [["Bản xếp 10/11", /^F\.3/]] });
+    VW.build();
+    host.querySelector("#f3-view").addEventListener("click", e => { const b = e.target.closest("[data-pa]"); if (b) setTimeout(() => { const i = VW.ci; if (i !== cur) { cur = i; host.querySelectorAll("[data-i]").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.i === cur))); one(); } }, 0); });
+    one();
+  }
+  function pick(i) { cur = i; host.querySelectorAll("[data-i]").forEach(x => x.setAttribute("aria-pressed", String(+x.dataset.i === i))); one(); if (VW) { VW.ci = i; VW.build(); } }
+  function one() {
+    const I = IDS[cur], s = stats(cur), box = host.querySelector("#f3-one");
+    const chk = s.chk ? s.chk.out.filter(o => !/Đi bộ|Bảo vệ E3|Quầy A4/.test(o.t)) : [];
+    box.innerHTML = `
+<div style="display:grid;gap:12px">
+  <h3 style="margin:0">${esc(I.code)} · ${esc(I.name)}</h3>
+  <p style="max-width:86ch;margin:0">${esc(I.text)}</p>
+  <div class="duo">
+    <div class="v3" id="f3-3d" aria-label="Khối 3D, kéo để xoay"><div class="zm"><button type="button" data-v="NE" title="Nhìn từ quảng trường và sông">Đông Bắc</button><button type="button" data-v="SE" title="Nhìn từ sông, phía Nam">Đông Nam</button><button type="button" data-v="SW" title="Nhìn từ bãi xe, Trần Phú">Tây Nam</button><button type="button" data-v="NW" title="Nhìn từ Trần Phú, quảng trường">Tây Bắc</button><button type="button" data-z="+" aria-label="Phóng to">+</button><button type="button" data-z="-" aria-label="Thu nhỏ">−</button></div></div>
+    <div class="kp">${[1, 2, 3].map(f => `<figure><figcaption>Tầng ${f}</figcaption><div data-kp="${f}"></div></figure>`).join("")}</div>
+  </div>
+  <div class="leg">${["A", "B", "C", "D", "E"].map(z => `<span><i style="background:var(--z${z})"></i>${{ A: "A Đón tiếp", B: "B Đọc", C: "C Kho", D: "D Văn hóa", E: "E Hỗ trợ" }[z]}</span>`).join("")}<span><i style="background:var(--zCirc)"></i>Hành lang</span><span><i style="background:var(--f3Stair)"></i>Thang</span><span><i style="background:var(--f3Lift)"></i>Thang máy, lõi sách</span><span><i style="background:var(--f3Park)"></i>Gầm xe</span><span><i style="border:2px dashed var(--f3Frame);background:none"></i>Khung lam, sân thượng</span><span><i style="border-style:dashed;background:none"></i>Tầng dưới</span></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+    <div><h4 style="margin:0 0 6px">Kiểm tra trên khối</h4><ul class="chk">${chk.map(o => `<li class="${o.ok ? "ok" : o.hard ? "no" : "soft"}">${esc(o.t)}</li>`).join("")}</ul></div>
+    <div><h4 style="margin:0 0 6px">Số liệu</h4><ul class="pl"><li>Giao thông ${nf(s.circ)}/780 m², tổng sàn ${nf(s.R.total)} m², tầng 3 ${nf(s.t3)} m².</li><li>Thoát nạn xa nhất ${s.far.map(v => v > 1e6 ? "kẹt" : nf(v) + " m").join(" · ")}.</li><li>${s.errs} lỗi theo kiểm tra mặt bằng đầy đủ (xem bên dưới).</li></ul>
+      <div style="margin-top:10px"><button type="button" class="btn" id="f3-dl">Tải khối ${esc(I.code)} (mở được trong Tự xếp khối)</button></div></div>
+  </div>
+</div>`;
+    for (const f of [1, 2, 3]) box.querySelector(`[data-kp="${f}"]`).appendChild(plan(I.blocks, f));
+    view3d(box.querySelector("#f3-3d"), I.blocks);
+    box.querySelector("#f3-dl").addEventListener("click", () => {
+      const d = { kind: "arc329-xep-khoi", v: 1, savedAt: new Date().toISOString(), note: `${I.code} · ${I.name}`, from: "F.2d", blocks: I.blocks.filter(b => b.kind !== "frame") };
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 1)], { type: "application/json" })); a.download = `final3-${I.code.replace(/\./g, "")}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+  }
+  let started = false;
+  const start = () => { if (started) { if (V) V.draw(); return; } started = true; build(); };
+  const tabBtn = document.querySelector('.tabs [data-tab="f3"]');
+  if (tabBtn) tabBtn.addEventListener("click", () => setTimeout(start, 50));
+  const panel = document.querySelector('[data-panel="f3"]');
+  if (panel && !panel.hidden) start();
 })(window.G3);
 </script>

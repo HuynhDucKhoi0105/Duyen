@@ -915,6 +915,33 @@ Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn c
   - Danh sách Kiểm tra nhanh có dòng "Giao thông …" (lỗi thật khi vượt). Bảng Diện tích tô đỏ số giao thông khi vượt.
 - File 09/11 của bạn đang có 839 m² giao thông (vượt 59 m²): trang sẽ khóa nới hành lang cho tới khi bớt xuống dưới 780 m².
 
+### 3.27 Tab Final 3: bản 10/11, bớt hành lang, nối tầng 3, 5 ý tưởng khối (10/11/2026)
+
+Bạn gửi xep-khoi-arc329-2.json (từ F.2d). Bạn thích cách xếp này nhưng thiếu hành lang (đã chạm 780 m²), tầng 3 thiếu khối, mất đẹp; dồn hết ra mặt trước thì sau lưng chán.
+- **A4 là phòng đi xuyên qua** (bạn hỏi): khách đi từ A1 qua cổng từ trong A4 mới vào khu đọc. A4 làm luôn đoạn đường nối A1 với khu đọc, tính vào diện tích phòng (30 m²), không tính vào 780 m² giao thông.
+- **Bản 10/11 (F.3):** giao thông 780/780 m², tổng sàn 2.976 m².
+  - Thang Bắc mở ra hành lang trước quầy A4, nên người đọc lên khu đọc không qua cổng từ.
+  - B2 tầng 3 chưa có lối vào (hành lang tầng 3 dừng cách 6,7 m), chỉ có thang ở đầu Bắc.
+  - Lõi thang tầng 3 lệch 1,5 m so với tầng 2. Tầng 3 không có vệ sinh.
+  - Hai hành lang chạy song song ở tầng 2.
+- **Bộ sửa chung cho cả 5 ý tưởng (giao thông còn 748 m²):**
+  - A4 lên sát A1, thang Bắc mở từ trong A4, chỗ A4 cũ làm giếng trời: −30 m² hành lang.
+  - Bỏ hành lang học nhóm đôi, dãy học nhóm dời 2 m: −37 m². Vệ sinh tầng 2 lên đầu dãy làm vùng đệm.
+  - Thu sảnh thang Tây Nam: −14 m². Hành lang tầng 3 rộng 2,4 m: −20 m².
+  - Lõi tầng 3 thẳng tầng 2.
+  - Hành lang nối B2 (+31 m²), vệ sinh tầng 3 (bỏ vệ sinh nhân viên riêng ở tầng 2), thang thoát hiểm Đông Nam 3 tầng (+46 m²).
+- **5 ý tưởng:**
+  - **F.3-1 Nối dải Tây:** tầng 3 chữ L như tầng 2.
+  - **F.3-2 Hai đầu cao, giữa thấp:** B5 lên mặt Bắc tầng 2 (đủ 16 chỗ), hộp đọc tầng 3 mặt trước, B2 phía sau.
+  - **F.3-3 Khung lam, sân thượng đọc:** phần tầng 3 còn trống làm khung lam bê tông, không tính sàn; tầng 3 nhìn liền chữ U.
+  - **F.3-4 So le chong chóng:** hộp đọc Đông Bắc đua 4 m ra sông, ba khối tầng 3 xoay quanh sân.
+  - **F.3-5 Lưng cao, mặt tiền thấp:** tầng 3 dồn về phía Nam trên dải văn phòng; mặt Bắc 2 tầng, hai lõi thang nhô lên.
+- **Số liệu:**
+  - Tất cả: giao thông 748–773 m², tổng sàn 2.907–2.943 m².
+  - Lỗi kiểm tra từ 25 xuống 12–17.
+  - Thoát nạn xa nhất khoảng 19 · 32 · 28 m.
+- **Bộ tự đặt cửa (p6_auto.js):** dựng mặt bằng chi tiết thẳng từ file khối. Cửa đặt theo khu, theo chỗ chạm. Hành lang trước cổng từ chỉ mở sang A1 (khóa ngoài giờ) và A4. Thang bộ tầng trên mở vào phòng cạnh nó để thoát nạn.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).
