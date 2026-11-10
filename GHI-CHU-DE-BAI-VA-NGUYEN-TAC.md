@@ -905,6 +905,16 @@ Bạn gửi file xep-khoi-arc329.json (09/11, 16:36) và hỏi bản này ổn c
   - Lõi thang bộ + thang máy đặt cạnh nhau: khoảng 5,5 × 6,2 m (34 m²).
   - Cỡ mặc định trong Tự xếp khối: thang bộ 3 × 6,2 m; thang bộ + thang máy 5,5 × 6,2 m; lõi sách 6 × 6,2 m.
 
+### 3.26 Giới hạn giao thông 780 m² (bạn dặn 10/11/2026)
+
+- Hành lang, sảnh, thang (khối giao thông) không được vượt 780 m² (dự trù của đề; con số này của đề còn gồm cả tường, cấu kiện). Tới hạn thì báo và cấm tăng thêm.
+- **Tab Tự xếp khối:**
+  - Dòng ngay trên khung mặt bằng luôn ghi "Giao thông (hành lang, sảnh, thang) …/780 m²": xanh khi còn nhiều, vàng khi còn dưới 40 m², đỏ khi vượt.
+  - Bị chặn khi tới hạn: nút "+ Sảnh, hành lang", "+ Thang …" không thêm khối; kéo khối giao thông từ kho hoặc bàn nháp lên khu đất thì khối bị trả về; kéo mép, thanh trượt, ô nhập không nới được (báo "Chạm giới hạn giao thông 780 m²").
+  - Vẫn làm được: thu nhỏ, bỏ bớt, dời chỗ, dán hành lang.
+  - Danh sách Kiểm tra nhanh có dòng "Giao thông …" (lỗi thật khi vượt). Bảng Diện tích tô đỏ số giao thông khi vượt.
+- File 09/11 của bạn đang có 839 m² giao thông (vượt 59 m²): trang sẽ khóa nới hành lang cho tới khi bớt xuống dưới 780 m².
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).

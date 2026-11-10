@@ -101,6 +101,19 @@
   const codeSum = c => S.blocks.filter(o => o.kind === "room" && o.c === c).reduce((t, o) => t + (+o.a || 0), 0);
   const floorTot = () => S.blocks.filter(o => onSite(o) && isFloor(o)).reduce((t, o) => t + o.w * o.h, 0);
   const MAXF = 3000, TOL = 0.10;
+  // giới hạn giao thông: đề dự trù 780 m² cho giao thông chung (hành lang, sảnh, thang), tường và cấu kiện
+  const CIRC_MAX = 780;
+  const isCirc = b => b && b.kind !== "room" && b.kind !== "court" && b.kind !== "park";
+  const circSum = ex => S.blocks.filter(o => o !== ex && onSite(o) && !o.draft && isCirc(o)).reduce((t, o) => t + o.w * o.h, 0);
+  const circRoom = ex => CIRC_MAX - circSum(ex); // còn bao nhiêu m² cho khối giao thông ex
+  let cwT = 0;
+  function circMsg(t) { const e = host.querySelector("#x10-cw"); if (!e) return; e.dataset.flash = "1"; e.innerHTML = `<b>${t}</b>`; e.className = "ptl cw bad"; clearTimeout(cwT); cwT = setTimeout(() => { delete e.dataset.flash; circLine(); }, 4500); }
+  function circLine() {
+    const e = host.querySelector("#x10-cw"); if (!e || e.dataset.flash) return;
+    const v = circSum(), left = CIRC_MAX - v;
+    e.className = "ptl cw" + (left < 0 ? " bad" : left < 40 ? " mid" : "");
+    e.textContent = `Giao thông (hành lang, sảnh, thang) ${nf(v)}/${nf(CIRC_MAX)} m² · ` + (left < 0 ? `vượt ${nf(-left)} m²: không thêm, không nới hành lang được nữa, chỉ thu nhỏ hoặc bỏ bớt` : left < 40 ? `còn ${nf(left)} m², sắp chạm giới hạn` : `còn ${nf(left)} m²`);
+  }
   const curF = () => mode === "all" ? null : +mode;
   const CSS_ESC = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/"/g, '\\"');
   const raf = (() => { const q = new Map(); return (k, f) => { if (q.has(k)) { q.set(k, f); return; } q.set(k, f); requestAnimationFrame(() => { const g = q.get(k); q.delete(k); g(); }); }; })();
@@ -136,6 +149,9 @@
 .x10 .info { grid-area: info; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); align-items: start; }
 .x10 .cv { position: relative; }
 .x10 .ptl { margin: 0; font: 700 13.5px var(--body); color: var(--ink-2); min-height: 1.3em; }
+.x10 .ptl.cw { font-weight: 600; color: var(--accent); }
+.x10 .ptl.cw.mid { color: #c98a00; }
+.x10 .ptl.cw.bad { color: var(--warn); }
 .x10calc { position: fixed; right: 16px; bottom: 16px; z-index: 60; width: 300px; max-width: calc(100vw - 32px); background: var(--sheet); color: var(--ink); border: 1px solid var(--ink); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.25); padding: 10px; display: grid; gap: 8px; font: 14px var(--body); }
 .x10calc[hidden] { display: none; }
 .x10calc .ch { display: flex; align-items: center; gap: 8px; cursor: move; touch-action: none; user-select: none; }
@@ -266,6 +282,7 @@
   </div>
   <div class="lg"><span><i style="border:2px dashed var(--ink-2)"></i>tầng dưới</span><span><i style="border:2px dotted var(--ink)"></i>tầng trên</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Red) 0 2px,transparent 2px 6px);border:1px solid var(--x10Red)"></i>đua quá 4 m, cần cột</span><span><i style="background:repeating-linear-gradient(45deg,var(--x10Green) 0 2px,transparent 2px 6px);border:1px solid var(--x10Green)"></i>mái lộ: lấy sáng mái, sân thượng</span><span><i style="background:#2f8fd6;height:4px"></i>mặt Bắc/Nam hở lấy sáng</span><span><i style="border-top:2px dashed var(--x10Guide)"></i>đường dóng khi kéo</span></div>
   <p class="ptl" id="x10-pt"></p>
+  <p class="ptl cw" id="x10-cw" aria-live="polite"></p>
   <div class="main l-${UI.layout}" id="x10-main" style="--planH:${UI.planH2}px">
     <div class="stk" id="x10-stk" aria-label="Chọn tầng đang xếp"></div>
     <div class="kho"><div class="bar"><b style="font-size:13.5px">Kho khối</b><span class="k">kéo vào khu đất, vào 3D, hoặc ra bàn nháp bên phải mặt bằng (bấm đúp một khối để đưa ra bàn nháp)</span></div><div id="x10-kho" class="row"></div></div>
@@ -469,6 +486,7 @@
   }
   // kích thước tổng và dòng chữ trên khung: vẽ lại riêng, nhanh khi đang kéo
   function dimsNow() {
+    circLine();
     const f = curF(), cur = S.blocks.filter(b => onSite(b) && (!f || b.f === f));
     const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = (f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng") + (UI.dims && G.XDIM ? " · " + G.XDIM.text(cur) : "") + (msel.size > 1 ? ` · đang chọn ${msel.size} khối` : "");
     const g = svg && svg.querySelector("#x10-dims"); if (!g) return;
@@ -663,6 +681,14 @@
   }
   // thả khối: ra ngoài khu đất thì cất vào kho, còn lại giữ trong khu đất và đẩy khít
   function drop(b, wasStage) {
+    const fromDraft = !!b.draft;
+    dropIn(b, wasStage);
+    if (isCirc(b) && onSite(b) && !b.draft && (wasStage || fromDraft) && circSum() > CIRC_MAX + 0.01) {
+      if (fromDraft) toDraft(b); else toStage(b);
+      circMsg(`Không đưa được khối này lên khu đất: giao thông sẽ thành ${nf(circSum() + b.w * b.h)}/${nf(CIRC_MAX)} m². Đã trả khối về ${fromDraft ? "bàn nháp" : "kho"}.`);
+    }
+  }
+  function dropIn(b, wasStage) {
     const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
     if (cx > DRAFT.x0 - 2 && cx < DRAFT.x1 + 4 && cy > -6 && cy < 110) {
       b.draft = true; b.x = b.w > DRAFT.x1 - DRAFT.x0 ? DRAFT.x0 : Math.max(DRAFT.x0, Math.min(DRAFT.x1 - b.w, b.x)); b.y = Math.max(DRAFT.y0 + 7, Math.min(DRAFT.y1 - b.h, b.y));
@@ -758,10 +784,12 @@
       const lo = hor ? o0.x : o0.y, hi = hor ? o0.x + o0.w : o0.y + o0.h, far = sd === "e" || sd === "s", L = hor ? LX : LY;
       const raw = hor ? px : py, base = hor ? o0.w : o0.h, other0 = hor ? o0.h : o0.w;
       let mn = 1.5, mx = 60;
+      const capMx = isCirc(b) && onSite(b) && !b.draft ? Math.max(Math.min(base, 60), circRoom(b) / other0) : Infinity; if (capMx < mx) mx = capMx;
       if (room && !free) [mn, mx] = hor ? wRange(b) : hRange(b);
       else if (room && free && AL) { mn = Math.max(mn, AL.lo / other0); mx = Math.min(mx, AL.hi / other0); }
       const lenOf = edge => far ? edge - lo : hi - edge;
       let s = best(L, raw, M), len = clamp(lenOf(s ? s.t : raw), mn, mx);
+      const atCap = capMx < 1e9 && lenOf(raw) > capMx + 0.05 && len >= capMx - 1e-6;
       if (s && Math.abs(lenOf(s.t) - len) > 1e-6) s = null;
       let perp = other0, s2 = null;
       if (room && !free) {
@@ -780,7 +808,7 @@
       const gs = [];
       if (s) gs.push(guide(hor ? "x" : "y", s.t, s.o));
       if (s2) gs.push(guide(hor ? "y" : "x", s2.t, s2.o));
-      raf("rs", () => { redrawBlock(b); dimsNow(); drawGuides(gs); cardVals(b); update3d(b); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = fr.o ? cutTxt({ ...fr, b }) : ""; mbDraw(); });
+      raf("rs", () => { redrawBlock(b); dimsNow(); drawGuides(gs); cardVals(b); update3d(b); const m = host.querySelector("#x10-snap"); if (m) m.innerHTML = fr.o ? cutTxt({ ...fr, b }) : atCap ? `<span style="color:var(--warn)">Chạm giới hạn giao thông ${nf(CIRC_MAX)} m²: không nới hành lang này thêm được.</span>` : ""; if (atCap) circMsg(`Giao thông đang ${nf(circSum())}/${nf(CIRC_MAX)} m²: không nới hành lang, thang thêm được.`); mbDraw(); });
     };
     const up = () => {
       if (!drag) return; drag = null;
@@ -980,8 +1008,9 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
     apply(lo); return { t: lo, o };
   }
   const cutTxt = r => r && r.o ? (r.o.kind === "zone" ? `<span style="color:var(--warn)">Chạm mép vùng xây dựng (lối xe cứu hỏa, quảng trường, bãi xe): khối tầng 1 dừng ở mép này (rộng ${nf(r.b.w, 2)} × sâu ${nf(r.b.h, 2)} m).</span>` : `<span style="color:var(--warn)">Chạm ${esc(label(r.o))}: đã dừng ở mép khối này (rộng ${nf(r.b.w, 2)} × sâu ${nf(r.b.h, 2)} m).</span>`) : "";
-  function setW(b, w) { const [lo, hi] = wRange(b), ap = v => { b.w = R3(v); if (b.kind === "room") b.h = R3(b.a / b.w); }; return { ...fitTo(b, blockers(b), ap, b.w, clamp(+w, lo, hi)), b }; }
-  function setH(b, h) { const [lo, hi] = hRange(b), ap = v => { b.h = R3(v); if (b.kind === "room") b.w = R3(b.a / b.h); }; return { ...fitTo(b, blockers(b), ap, b.h, clamp(+h, lo, hi)), b }; }
+  const capW = (b, v, other) => isCirc(b) && onSite(b) && !b.draft ? Math.min(v, Math.max(b.w * b.h, circRoom(b)) / other) : v;
+  function setW(b, w) { w = b.kind === "room" ? w : capW(b, +w, b.h); const [lo, hi] = wRange(b), ap = v => { b.w = R3(v); if (b.kind === "room") b.h = R3(b.a / b.w); }; return { ...fitTo(b, blockers(b), ap, b.w, clamp(+w, lo, hi)), b }; }
+  function setH(b, h) { h = b.kind === "room" ? h : capW(b, +h, b.w); const [lo, hi] = hRange(b), ap = v => { b.h = R3(v); if (b.kind === "room") b.w = R3(b.a / b.h); }; return { ...fitTo(b, blockers(b), ap, b.h, clamp(+h, lo, hi)), b }; }
   // cỡ của các khối khác (cùng tầng, tầng trên, dưới) để hút theo khi kéo thanh tỉ lệ
   function dimTargets(b) {
     const out = [];
@@ -1088,6 +1117,7 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
   function unjoin(b) { const L = linkOf(b); for (const o of L) delete o.link; clearSel(); sel = b.id; keep(); render(); }
   function addHelper(k) {
     const h = HELP[k], id = k + "·" + Date.now().toString(36).slice(-4) + (seq++);
+    if (isCirc({ kind: k }) && circRoom() < h.w * h.h) { circMsg(`Không thêm được ${h.n.split(":")[0].toLowerCase()}: giao thông đã ${nf(circSum())}/${nf(CIRC_MAX)} m², khối mới ${nf(h.w * h.h)} m² sẽ vượt giới hạn. Thu nhỏ hoặc bỏ bớt hành lang khác trước.`); return; }
     S.blocks.push({ id, c: k === "court" ? "SAN" : k === "park" ? "XE" : k === "circ" ? "circ" : "core", n: h.n, kind: k, w: h.w, h: h.h, x: 8, y: 14, f: k === "park" || mode === "all" ? 1 : +mode, a: null, ...(k === "park" ? { pk: "moto" } : {}) });
     sel = id; keep(); render();
   }
@@ -1188,7 +1218,8 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
     add(placed.size === all.size, `Đã đặt ${placed.size}/${all.size} loại khối lên khu đất`);
     { const offA = [...new Set(S.blocks.filter(b => b.kind === "room" && briefA(b.c)).map(b => b.c))].filter(c => Math.abs(codeSum(c) / briefA(c) - 1) > TOL + 0.005);
       add(!offA.length, offA.length ? `Diện tích lệch quá ±10% so với đề: ${offA.map(c => `${c} ${nf(codeSum(c))}/${nf(briefA(c))} m²`).join(", ")}` : "Diện tích từng phòng trong ±10% đề", S.blocks.filter(b => offA.includes(b.c)).map(b => b.id));
-      const tf = floorTot(); add(tf <= MAXF + 0.5, `Tổng sàn ${nf(tf)} m² ${tf <= MAXF + 0.5 ? "≤" : ">"} 3.000 m²`); }
+      const tf = floorTot(); add(tf <= MAXF + 0.5, `Tổng sàn ${nf(tf)} m² ${tf <= MAXF + 0.5 ? "≤" : ">"} 3.000 m²`);
+      const cs = circSum(); add(cs <= CIRC_MAX + 0.5, cs <= CIRC_MAX + 0.5 ? `Giao thông (hành lang, sảnh, thang) ${nf(cs)}/${nf(CIRC_MAX)} m², còn ${nf(CIRC_MAX - cs)} m²` : `Giao thông (hành lang, sảnh, thang) ${nf(cs)} m², vượt dự trù ${nf(CIRC_MAX)} m² của đề ${nf(cs - CIRC_MAX)} m²: đang khóa thêm và nới hành lang, cần thu nhỏ hoặc bỏ bớt`, [], true); }
     const fl = P.filter(isFloor), ov = [];
     for (let i = 0; i < fl.length; i++) for (let j = i + 1; j < fl.length; j++) if (fl[i].f === fl[j].f && ovl(fl[i], fl[j]) > 0.3) ov.push([fl[i], fl[j]]);
     add(!ov.length, ov.length ? `Khối chồng lên nhau: ${ov.slice(0, 4).map(([a, b]) => `${label(a)} – ${label(b)}`).join(", ")}` : "Không có khối chồng lên nhau", ov.flat().map(b => b.id), true);
@@ -1256,11 +1287,11 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
     const rm = P.filter(b => b.kind === "room").reduce((s, b) => s + b.w * b.h, 0), gt = tot - rm;
     box.innerHTML = `<table><tr><th>Nhóm</th><th class="n">Đã đặt</th><th class="n">Đề</th></tr>${Object.keys(brief).map(c => `<tr><td>${c}</td><td class="n">${nf(z(c))}</td><td class="n">${nf(brief[c])}</td></tr>`).join("")}
 <tr><td><b>Cộng các phòng</b></td><td class="n"><b>${nf(rm)}</b></td><td class="n">2.220</td></tr>
-<tr><td>Thang, sảnh, hành lang đã vẽ</td><td class="n">${nf(gt)}</td><td class="n">780</td></tr>
+<tr><td>Thang, sảnh, hành lang đã vẽ</td><td class="n"><b style="color:${gt > CIRC_MAX ? "var(--warn)" : "inherit"}">${nf(gt)}</b></td><td class="n">≤ ${nf(CIRC_MAX)}</td></tr>
 ${[1, 2, 3].filter(n => n === 1 || f(n) > 0).map(n => `<tr><td>Tầng ${n} (sàn)</td><td class="n">${nf(f(n))}</td><td></td></tr>`).join("")}
 <tr><td><b>Tổng sàn</b></td><td class="n"><b style="color:${tot > 3000 ? "var(--warn)" : "inherit"}">${nf(tot)}</b></td><td class="n">≤ 3.000</td></tr>
 ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); return pk.length ? Object.keys(PK).filter(k => pk.some(b => (b.pk || "moto") === k)).map(k => `<tr><td>Bãi ${PK[k][0]} (không tính sàn)</td><td class="n">~${pk.filter(b => (b.pk || "moto") === k).reduce((t, b) => t + pkN(b), 0)} chỗ</td><td></td></tr>`).join("") : ""; })()}</table>
-<p class="st">Đề bài: 2.220 m² cho 24 phòng cộng 780 m² dự trù cho giao thông chung, tường và cấu kiện, tổng tối đa 3.000 m². Tổng sàn ở đây tính các khối đã đặt (phòng, thang, sảnh, hành lang). Còn khoảng ${nf(Math.max(0, 3000 - tot))} m² cho hành lang nối các khối, tường, cột chưa vẽ${rm < 2220 * 0.97 ? `; các phòng đang nhỏ hơn đề ${nf(2220 - rm)} m²` : ""}.</p>`;
+<p class="st">Đề bài: 2.220 m² cho 24 phòng cộng 780 m² dự trù cho giao thông chung, tường và cấu kiện, tổng tối đa 3.000 m². Tổng sàn ở đây tính các khối đã đặt (phòng, thang, sảnh, hành lang). Giao thông đã vẽ ${gt > CIRC_MAX ? `vượt ${nf(gt - CIRC_MAX)} m² so với 780 m²: trang đang khóa không cho thêm hay nới hành lang, thang` : `còn ${nf(CIRC_MAX - gt)} m² trong 780 m²`}; lưu ý 780 m² của đề còn gồm cả tường, cấu kiện. Còn khoảng ${nf(Math.max(0, 3000 - tot))} m² tới giới hạn 3.000 m²${rm < 2220 * 0.97 ? `; các phòng đang nhỏ hơn đề ${nf(2220 - rm)} m²` : ""}.</p>`;
   }
 
   /* ---------- khối 3D dự phòng bằng SVG (khi trình duyệt không chạy được WebGL) ---------- */
