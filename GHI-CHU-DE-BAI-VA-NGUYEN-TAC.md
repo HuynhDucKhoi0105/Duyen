@@ -942,6 +942,13 @@ Bạn gửi xep-khoi-arc329-2.json (từ F.2d). Bạn thích cách xếp này nh
   - Thoát nạn xa nhất khoảng 19 · 32 · 28 m.
 - **Bộ tự đặt cửa (p6_auto.js):** dựng mặt bằng chi tiết thẳng từ file khối. Cửa đặt theo khu, theo chỗ chạm. Hành lang trước cổng từ chỉ mở sang A1 (khóa ngoài giờ) và A4. Thang bộ tầng trên mở vào phòng cạnh nó để thoát nạn.
 
+### 3.28 Tách mọi phòng, kể cả vệ sinh E5 (10/11/2026)
+
+- Trước đây nút "Tách đôi" chỉ hiện với phòng từ 30 m² trở lên, nên các khối vệ sinh E5 không tách được.
+- Giờ mọi phòng từ 6 m² có nút "Tách ra" kèm ô "phần mới … m²" (mặc định một nửa, mỗi phần tối thiểu 3 m²).
+- Khối được cắt theo cạnh dài. Phần mới đặt sát phần cũ và được chọn sẵn để kéo đi, hoặc bấm PageUp để đưa lên tầng khác.
+- Các phần giữ cùng mã; giới hạn ±10% đề tính theo tổng các phần. Nút "Gộp lại" nhập các phần cùng mã, cùng tầng.
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).

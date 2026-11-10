@@ -460,7 +460,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 <div class="tab" data-panel="t1g" hidden><div id="t1g-host"></div></div>
 </div>
 
-<script>window.ARC_BUILD="20261110-205444"</script>
+<script>window.ARC_BUILD="20261110-215355"</script>
 <script>try{window.ARC_NORTH=JSON.parse(localStorage.getItem("arc329.north")??"20")}catch(e){window.ARC_NORTH=20}</script>
 <script>
 /*DATA*/
@@ -20734,6 +20734,8 @@ ${plan.notes ? `<section style="display:grid;gap:8px"><h3>Giải thích bố tr�
 .x10 .dims label > span { display: flex; align-items: center; gap: 4px; font-size: 12px; }
 .x10 .dims input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; font-size: 14px; font-variant-numeric: tabular-nums; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
 .x10 #x10-sel .btn.sm { font-size: 12px; padding: 3px 7px; }
+.x10 #x10-sel .spl { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; }
+.x10 #x10-sel .spl input { width: 64px; font: inherit; padding: 4px 5px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
 .x10 .snap { color: var(--accent) !important; font-weight: 700; min-height: 1.2em; margin: 0 0 4px; }
 .x10 #x10-sel .seg button { font-size: 12px; padding: 1px 7px; }
 .x10 svg.plan.dragging, .x10 svg.plan.dragging g.blk { cursor: grabbing; }
@@ -21617,11 +21619,16 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
     const ap = t => { b.a = +t.toFixed(2); if (kw) b.h = R3(b.a / b.w); else b.w = R3(b.a / b.h); };
     return { ...fitTo(b, blockers(b), ap, b.a, a), b };
   }
-  function split(b) {
-    const half = { ...b, id: root(b) + "·" + Date.now().toString(36).slice(-3) + (seq++), a: b.a / 2 };
-    b.a = b.a / 2;
-    if (b.w >= b.h) { b.w = +(b.w / 2).toFixed(2); half.w = b.w; half.x = b.x + b.w + 1; } else { b.h = +(b.h / 2).toFixed(2); half.h = b.h; half.y = b.y + b.h + 1; }
-    S.blocks.push(half); sel = half.id; keep(); render();
+  // tách một phòng thành hai phần cùng mã: phần mới có diện tích pa (mặc định một nửa), cắt theo cạnh dài, đặt sát phần cũ
+  function split(b, pa) {
+    const A = +b.a || b.w * b.h; pa = clamp(+pa || A / 2, 3, A - 3); const f = pa / A;
+    const part = { ...b, id: root(b) + "·" + Date.now().toString(36).slice(-3) + (seq++), a: +pa.toFixed(2) };
+    b.a = +(A - pa).toFixed(2);
+    if (b.w >= b.h) { const w0 = b.w; b.w = R3(w0 * (1 - f)); part.w = R3(w0 * f); part.x = R3(b.x + b.w); }
+    else { const h0 = b.h; b.h = R3(h0 * (1 - f)); part.h = R3(h0 * f); part.y = R3(b.y + b.h); }
+    S.blocks.push(part); msel.clear(); sel = part.id; keep(); render();
+    const t = `Đã tách ${label(b)}: phần cũ ${nf(b.a, 1)} m², phần mới ${nf(part.a, 1)} m² (đang chọn, kéo đi chỗ khác hoặc lên tầng khác bằng PageUp). Diện tích đề tính theo tổng các phần cùng mã; bấm "Gộp lại" để nhập lại.`;
+    say(t); const m = host.querySelector("#x10-snap"); if (m) m.textContent = t;
   }
   const root = b => String(b.id).split("·")[0];
   const place = b => onSite(b) ? "s" + b.f : b.draft ? "d" : "k";
@@ -21717,7 +21724,7 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
   ${room ? `<button type="button" class="btn" id="x10-d8">Sâu 8 m</button>` : ""}
   ${b.kind === "park" ? `<span class="seg" aria-label="Loại xe">${Object.entries(PK).map(([k, [t, m]]) => `<button type="button" data-pk="${k}" aria-pressed="${(b.pk || "moto") === k}" title="${m} m² mỗi chỗ, gồm lối đi">${t}</button>`).join("")}</span><span class="k">~${pkN(b)} chỗ · ${nf(b.w * b.h)} m² (không tính vào tổng sàn)</span>` : ""}
   ${!outdoor(b) ? `<span class="seg">${[1, 2, 3].map(f => `<button type="button" data-f="${f}" aria-pressed="${b.f === f}">Tầng ${f}</button>`).join("")}</span>` : ""}
-  ${room && b.a >= 30 ? `<button type="button" class="btn" id="x10-split">Tách đôi</button>` : ""}
+  ${room && (+b.a || b.w * b.h) >= 6 ? `<span class="spl"><button type="button" class="btn" id="x10-split" title="Tách thành hai phần cùng mã ${esc(b.c)}">Tách ra</button> phần mới <input type="number" id="x10-spa" step="0.5" min="3" max="${nf(Math.max(3, (+b.a || b.w * b.h) - 3), 1).replace(",", ".")}" value="${+((+b.a || b.w * b.h) / 2).toFixed(1)}" aria-label="Diện tích phần mới khi tách"> m²</span>` : ""}
   ${room && parts(b).length > 1 ? `<button type="button" class="btn" id="x10-merge" title="Gộp mọi phần ${esc(b.c)} cùng tầng thành một khối">Gộp lại (${parts(b).length} phần ${esc(b.c)})</button>` : ""}
   ${b.kind === "circ" && !b.link && circChain(b).length > 1 ? `<button type="button" class="btn" id="x10-join" title="Dán các khối hành lang đang chạm nhau thành một hình">Dán ${circChain(b).length} khối hành lang chạm nhau thành 1</button>` : ""}
   ${b.link && linkOf(b).length > 1 ? `<button type="button" class="btn" id="x10-unjoin">Tách hành lang ra từng khối</button>` : ""}
@@ -21749,7 +21756,7 @@ ${chips.length ? `<div class="bar">${chips.join("")}</div>` : ""}
     const mg = box.querySelector("#x10-merge"); if (mg) mg.addEventListener("click", () => merge(b));
     const jn = box.querySelector("#x10-join"); if (jn) jn.addEventListener("click", () => joinCirc(circChain(b)));
     const uj = box.querySelector("#x10-unjoin"); if (uj) uj.addEventListener("click", () => unjoin(b));
-    const sp = box.querySelector("#x10-split"); if (sp) sp.addEventListener("click", () => split(b));
+    const sp = box.querySelector("#x10-split"); if (sp) sp.addEventListener("click", () => split(b, parseFloat(String((box.querySelector("#x10-spa") || {}).value || "").replace(",", "."))));
     const bk = box.querySelector("#x10-back"); if (bk) bk.addEventListener("click", () => { toStage(b); keep(); render(); });
     const td = box.querySelector("#x10-todraft"); if (td) td.addEventListener("click", () => { toDraft(b); keep(); render(); });
     const dl = box.querySelector("#x10-del"); if (dl) dl.addEventListener("click", () => { S.blocks = S.blocks.filter(q => q !== b); sel = null; keep(); render(); });
@@ -22792,7 +22799,10 @@ ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); retu
       for (const z of L.filter(z => z.kind !== "room" && z.kind !== "circ")) z.zone = z.kind === "book" ? (LV.indexOf(L) === 0 ? "kho" : "tv") : (nb(z).some(o => o.zone === "tv") ? "tv" : nb(z).some(o => o.zone === "nv") ? "nv" : "tv");
     }
     // hành lang trước cổng từ: hành lang thư viện chạm sảnh A1 (người chưa qua quầy A4 đi trên đó)
-    LV.forEach((L, li) => { if (li) return; const a1 = L.filter(z => z.c === "A1"); for (const z of L.filter(z => z.kind === "circ" && z.zone === "tv")) if (a1.some(a => touch(z, a))) z.pre = true; });
+    // lan tiếp sang hành lang chỉ là lối đi (không chạm phòng đọc, thang): người chưa qua A4 vẫn đi trên đó
+    LV.forEach((L, li) => { if (li) return; const a1 = L.filter(z => z.c === "A1"); for (const z of L.filter(z => z.kind === "circ" && z.zone === "tv")) if (a1.some(a => touch(z, a))) z.pre = true;
+      const passage = z => z.kind === "circ" && z.zone === "tv" && !z.pre && !L.some(o => o !== z && touch(z, o) && (/^B/.test(o.c || "") || /stair|lift|book/.test(o.kind) || (o.kind === "circ" && !o.pre && o.zone === "tv")));
+      for (let it = 0; it < 4; it++) for (const z of L.filter(passage)) if (L.some(o => o.pre && touch(z, o))) z.pre = true; });
     // cửa
     const door = (z, to, w, k, pos) => { (z.d = z.d || []).push([to, w, k, pos == null ? 0.5 : pos]); };
     const linked = (a, b) => (a.d || []).some(d => d[0] === b.id) || (b.d || []).some(d => d[0] === a.id);

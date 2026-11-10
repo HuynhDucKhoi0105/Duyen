@@ -52,7 +52,10 @@
       for (const z of L.filter(z => z.kind !== "room" && z.kind !== "circ")) z.zone = z.kind === "book" ? (LV.indexOf(L) === 0 ? "kho" : "tv") : (nb(z).some(o => o.zone === "tv") ? "tv" : nb(z).some(o => o.zone === "nv") ? "nv" : "tv");
     }
     // hành lang trước cổng từ: hành lang thư viện chạm sảnh A1 (người chưa qua quầy A4 đi trên đó)
-    LV.forEach((L, li) => { if (li) return; const a1 = L.filter(z => z.c === "A1"); for (const z of L.filter(z => z.kind === "circ" && z.zone === "tv")) if (a1.some(a => touch(z, a))) z.pre = true; });
+    // lan tiếp sang hành lang chỉ là lối đi (không chạm phòng đọc, thang): người chưa qua A4 vẫn đi trên đó
+    LV.forEach((L, li) => { if (li) return; const a1 = L.filter(z => z.c === "A1"); for (const z of L.filter(z => z.kind === "circ" && z.zone === "tv")) if (a1.some(a => touch(z, a))) z.pre = true;
+      const passage = z => z.kind === "circ" && z.zone === "tv" && !z.pre && !L.some(o => o !== z && touch(z, o) && (/^B/.test(o.c || "") || /stair|lift|book/.test(o.kind) || (o.kind === "circ" && !o.pre && o.zone === "tv")));
+      for (let it = 0; it < 4; it++) for (const z of L.filter(passage)) if (L.some(o => o.pre && touch(z, o))) z.pre = true; });
     // cửa
     const door = (z, to, w, k, pos) => { (z.d = z.d || []).push([to, w, k, pos == null ? 0.5 : pos]); };
     const linked = (a, b) => (a.d || []).some(d => d[0] === b.id) || (b.d || []).some(d => d[0] === a.id);
