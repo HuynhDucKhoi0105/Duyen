@@ -51,6 +51,10 @@
   // bãi đỗ xe: không tính sàn; xe máy 3 m²/xe (gồm lối đi), ô tô 25 m²/xe, xe đạp 1,5 m²/xe; ở tầng 1 dưới tầng trên thì có cột đỡ
   const PK = { moto: ["xe máy", 3], car: ["ô tô", 25], bike: ["xe đạp", 1.5] };
   const pkN = b => Math.floor(b.w * b.h / PK[b.pk || "moto"][1]);
+  // mô hình tỉ lệ 1:200 (bạn yêu cầu 11/11/2026): 1 m thật = 0,5 cm mô hình
+  const cmT = (v, d = 2) => nf(v / 2, d);
+  const zOf = b => G.MOHINH ? G.MOHINH.zOf(b, S.blocks.filter(o => onSite(o) && !o.draft)) : { z0: TOP[b.f - 1], z1: TOP[b.f], h: TOP[b.f] - TOP[b.f - 1], up: false };
+  let MEAS = null; // đường đo đang hiện {x0, y0, x1, y1}
 
   /* ---------- trạng thái ---------- */
   let S = load() || { blocks: defaults(), note: "" };
@@ -61,7 +65,7 @@
   const clearSel = () => { sel = null; msel.clear(); };
   function load() { try { const t = localStorage.getItem(KEY); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
   // cách hiển thị (không phải bản xếp): lưu riêng
-  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h", dims: true }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
+  const UI = Object.assign({ under: 0.7, layout: "split", planH2: Math.round(Math.max(620, Math.min(1100, (window.innerHeight || 900) - 70))), explode: 0, cut: true, shadow: true, people: true, navLock: true, dvLock: false, tdView: "3d", keepDim: "h", dims: true, ruler: true, meas: false }, (() => { try { return JSON.parse(localStorage.getItem(UIKEY) || "{}") || {}; } catch (e) { return {}; } })());
   const saveUI = () => { try { localStorage.setItem(UIKEY, JSON.stringify(UI)); } catch (e) { /* bỏ qua */ } };
   // hoàn tác / làm lại
   const UNDO = [], REDO = []; let lastSnap = JSON.stringify(S.blocks), lastPush = 0;
@@ -191,6 +195,14 @@
 .x10 #x10-sel .btn.sm { font-size: 12px; padding: 3px 7px; }
 .x10 #x10-sel .spl { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; }
 .x10 #x10-sel .spl input { width: 64px; font: inherit; padding: 4px 5px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
+.x10 .cv.measuring svg.plan, .x10 .cv.measuring svg.plan * { cursor: crosshair !important; }
+.x10 .mcm { color: var(--xdimC); }
+.x10 .info .mdl { grid-column: 1 / -1; }
+.x10 .mdl details { margin: 6px 0; } .x10 .mdl summary { cursor: pointer; font-weight: 700; font-size: 13px; }
+.x10 .mdl table td.n, .x10 .mdl table th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.x10 .mdl tr.cl td { font-weight: 700; background: color-mix(in srgb, var(--xdimC) 9%, transparent); }
+.x10 .mdl .lnk { font: inherit; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; text-align: left; }
+.x10 .mdl .tw { overflow-x: auto; }
 .x10 .snap { color: var(--accent) !important; font-weight: 700; min-height: 1.2em; margin: 0 0 4px; }
 .x10 #x10-sel .seg button { font-size: 12px; padding: 1px 7px; }
 .x10 svg.plan.dragging, .x10 svg.plan.dragging g.blk { cursor: grabbing; }
@@ -270,7 +282,7 @@
   <h2>Kéo các khối lên khu đất, xếp 2–3 tầng, rồi gửi cho Claude làm mặt bằng</h2>
   <p class="lede">Chọn tầng ở hàng trên, kéo khối từ kho vào mặt bằng hoặc vào 3D. Mặt bằng: cuộn chuột hoặc ＋/− để phóng to, kéo chỗ trống để di chuyển. Khối tự hút mép, canh thẳng hàng (đường dóng hồng). Sọc đỏ: đua quá 4 m cần cột; sọc xanh: mái tầng dưới còn lộ. Xếp xong bấm <b>Lưu cho Claude</b>.</p></div>
   <div class="bar">
-    <button type="button" class="btn" id="x10-undo" title="Ctrl+Z">↶ Hoàn tác</button><button type="button" class="btn" id="x10-redo" title="Ctrl+Y">↷ Làm lại</button><button type="button" class="btn" id="x10-calcb" aria-pressed="${!!UI.calc}">🧮 Máy tính</button>
+    <button type="button" class="btn" id="x10-undo" title="Ctrl+Z">↶ Hoàn tác</button><button type="button" class="btn" id="x10-redo" title="Ctrl+Y">↷ Làm lại</button><button type="button" class="btn" id="x10-calcb" aria-pressed="${!!UI.calc}">🧮 Máy tính</button><button type="button" class="btn" id="x10-rlb" aria-pressed="${!!UI.ruler}" title="Thước chia sẵn tỉ lệ 1:200 trên mặt bằng; kích thước khối, nhóm khối ghi thêm cm mô hình">📏 Thước 1:200</button><button type="button" class="btn" id="x10-msb" aria-pressed="${!!UI.meas}" ${UI.ruler ? "" : "hidden"} title="Bật rồi kéo trên mặt bằng để đo (tự bắt mép, góc khối; giữ Alt để đo xiên tự do). Esc xoá đường đo">📐 Kéo để đo</button><span class="k" id="x10-msv" aria-live="polite"></span>
     <span class="k" style="margin-left:8px">Thêm</span>${Object.entries(HELP).map(([k, v]) => `<button type="button" class="btn" data-add="${k}">+ ${v.n.split(":")[0]}</button>`).join("")}
   </div>
   <div class="bar">
@@ -302,6 +314,7 @@
     <div class="info">
       <div class="card"><h4>Kiểm tra nhanh</h4><p class="k" style="margin:0 0 6px">! lỗi thật, viền đỏ trên khối · ? gợi ý, bấm dòng để tô các khối liên quan</p><ul class="chk" id="x10-chk"></ul></div>
       <div class="card"><h4>Diện tích</h4><div id="x10-area"></div></div>
+      <div class="card mdl"><h4>Cắt mô hình 1:200</h4><div id="x10-mdl"></div></div>
       <div class="card"><h4>Gửi cho Claude</h4>
         <textarea id="x10-note" placeholder="Ghi chú cho Claude (ý tưởng hình khối, chỗ nào bạn muốn giữ)…"></textarea>
         <div class="bar" style="margin-top:6px"><button type="button" class="btn pri" id="x10-save">Lưu cho Claude</button><button type="button" class="btn" id="x10-dl">Tải file</button><label class="btn">Mở file<input type="file" id="x10-open" accept=".json,application/json" hidden></label></div>
@@ -336,11 +349,13 @@
     $("#x10-reset").addEventListener("click", () => { if (!confirm("Xếp lại từ đầu? (Bấm Hoàn tác nếu muốn lấy lại bản đang xếp.)")) return; S = { blocks: defaults(), note: S.note }; sel = null; keep(); render(); });
     $("#x10-from").addEventListener("change", e => { if (e.target.value === "") return; if (confirm("Thay bản đang xếp bằng các khối của ý tưởng này?")) fromPlan(+e.target.value); e.target.value = ""; });
     $("#x10-undo").addEventListener("click", undo);
+    $("#x10-rlb").addEventListener("click", e => { UI.ruler = !UI.ruler; if (!UI.ruler) { UI.meas = false; MEAS = null; } saveUI(); e.currentTarget.setAttribute("aria-pressed", String(UI.ruler)); const m = $("#x10-msb"); m.hidden = !UI.ruler; m.setAttribute("aria-pressed", String(!!UI.meas)); measMode(); renderPlan(); sideCard(); });
+    $("#x10-msb").addEventListener("click", e => { UI.meas = !UI.meas; saveUI(); e.currentTarget.setAttribute("aria-pressed", String(UI.meas)); measMode(); });
     calcInit();
     $("#x10-redo").addEventListener("click", redo);
     host.querySelectorAll("[data-td]").forEach(q => q.addEventListener("click", () => { UI.tdView = q.dataset.td; saveUI(); host.querySelectorAll("[data-td]").forEach(p => p.setAttribute("aria-pressed", String(p === q))); $("#x10-td").classList.toggle("mbv", UI.tdView === "mb"); if (UI.tdView === "mb") mbDraw(true); else { T3 = null; iso(); } }));
     divider($("#x10-dv"));
-    planNav();
+    planNav(); measMode();
     if (!window.__x10key) { window.__x10key = 1; document.addEventListener("keydown", onKey); }
     undoBtns();
     render();
@@ -350,14 +365,14 @@
     const sv = host.querySelector("#x10-svg");
     host.querySelector("#x10-zi").addEventListener("click", () => zoomAt(0.8));
     host.querySelector("#x10-zo").addEventListener("click", () => zoomAt(1.25));
-    host.querySelector("#x10-zf").addEventListener("click", () => { VB = { ...VB0 }; setVB(); });
+    host.querySelector("#x10-zf").addEventListener("click", () => { VB = { ...VB0 }; setVB(); if (UI.ruler) { rulerNow(); measNow(); } });
     const cv = sv.closest(".cv"), nl = host.querySelector("#x10-nl");
     const showLock = () => { cv.classList.toggle("navlock", !!UI.navLock); nl.setAttribute("aria-pressed", String(!!UI.navLock)); nl.textContent = UI.navLock ? "🔒 Đã khoá khung" : "🔓 Đang mở khung"; };
     showLock();
     nl.addEventListener("click", () => { UI.navLock = !UI.navLock; saveUI(); showLock(); });
     sv.addEventListener("wheel", e => { if (UI.navLock) return; e.preventDefault(); svg = sv; const [x, y] = pt(e); zoomAt(e.deltaY < 0 ? 0.88 : 1.14, x, y); }, { passive: false });
     let pan = null;
-    sv.addEventListener("pointerdown", e => { if (e.button > 1 || drag) return; svg = sv; if (e.button === 0 && (UI.navLock || e.shiftKey)) { marquee(e); return; } pan = { x: e.clientX, y: e.clientY, vx: VB.x, vy: VB.y, k: VB.w * PX / sv.getBoundingClientRect().width / PX }; sv.setPointerCapture(e.pointerId); sv.classList.add("panning"); if (sel || msel.size) { clearSel(); renderPlan(); sideCard(); hi3d(); } });
+    sv.addEventListener("pointerdown", e => { if (e.button > 1 || drag) return; svg = sv; if (e.button === 0 && UI.ruler && UI.meas) { measure(e); return; } if (e.button === 0 && (UI.navLock || e.shiftKey)) { marquee(e); return; } pan = { x: e.clientX, y: e.clientY, vx: VB.x, vy: VB.y, k: VB.w * PX / sv.getBoundingClientRect().width / PX }; sv.setPointerCapture(e.pointerId); sv.classList.add("panning"); if (sel || msel.size) { clearSel(); renderPlan(); sideCard(); hi3d(); } });
     sv.addEventListener("pointermove", e => { if (!pan) return; VB.x = pan.vx - (e.clientX - pan.x) * pan.k; VB.y = pan.vy - (e.clientY - pan.y) * pan.k; setVB(); });
     const end = () => { pan = null; sv.classList.remove("panning"); };
     sv.addEventListener("pointerup", end); sv.addEventListener("pointercancel", end);
@@ -392,10 +407,11 @@
     const nw = Math.max(12, Math.min(VB0.w * 1.6, VB.w * k)), r = nw / VB.w;
     if (px == null) { px = VB.x + VB.w / 2; py = VB.y + VB.h / 2; }
     VB = { x: px - (px - VB.x) * r, y: py - (py - VB.y) * r, w: nw, h: VB.h * r }; setVB();
+    if (UI.ruler) raf("rl", () => { rulerNow(); measNow(); });
   }
   let svg, HT = 0.5; // HT: bề dày vùng bấm mép khối (m)
   function render() {
-    renderPlan(); renderStack(); renderKho(); sideCard(); checksList(ISS); areaTable(); iso(); mbDraw();
+    renderPlan(); renderStack(); renderKho(); sideCard(); checksList(ISS); areaTable(); modelCard(); iso(); mbDraw();
     const fl = host.querySelector("#x10-flv"); if (fl) fl.textContent = mode === "all" ? "Cả" : "T" + mode;
   }
   // các dải ô 0,5 m thỏa điều kiện test, gộp thành hình chữ nhật
@@ -463,6 +479,7 @@
     // khối tầng trên: viền chấm
     if (f) for (const b of P.filter(b => b.f > f)) { const g = el("g", { "pointer-events": "none", opacity: 0.6 }, svg); R(b.x, b.y, b.w, b.h, { fill: "none", stroke: "var(--ink)", "stroke-width": 1.6, "stroke-dasharray": "2 5" }, g); if (b.w * b.h >= 30) T(`T${b.f} · ${label(b)}`, b.x + b.w / 2, b.y + 2, { "font-size": 12 }, g); }
     // kích thước tổng: cả tầng (phía Bắc, Tây) và từng cụm khối liền nhau (phía Nam, Đông)
+    el("g", { id: "x10-rl", "pointer-events": "none" }, svg); rulerNow();
     el("g", { id: "x10-dims", "pointer-events": "none" }, svg); dimsNow();
     // bàn nháp
     R(DRAFT.x0 - 0.5, DRAFT.y0, DRAFT.x1 - DRAFT.x0 + 1, DRAFT.y1 - DRAFT.y0, { fill: "var(--sheet)", stroke: "var(--ink-2)", "stroke-width": 1.5, "stroke-dasharray": "10 6", rx: 12 });
@@ -472,6 +489,7 @@
     for (const b of S.blocks.filter(b => b.draft)) drawBlock(b);
     if (drag && drag.b && !onSite(drag.b) && !drag.b.draft) drawBlock(drag.b); // khối đang kéo từ kho
     el("g", { id: "x10-guides", "pointer-events": "none" }, svg);
+    el("g", { id: "x10-ms", "pointer-events": "none" }, svg); measNow();
     // đưa khối đang chọn lên trên cùng
     for (const id of new Set([...msel, sel].filter(Boolean))) { const n = svg.querySelector(`g.blk[data-id="${CSS_ESC(id)}"]`); if (n) svg.insertBefore(n, svg.querySelector("#x10-seam")); }
   }
@@ -490,9 +508,9 @@
   function dimsNow() {
     circLine();
     const f = curF(), cur = S.blocks.filter(b => onSite(b) && (!f || b.f === f));
-    const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = (f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng") + (UI.dims && G.XDIM ? " · " + G.XDIM.text(cur) : "") + (msel.size > 1 ? ` · đang chọn ${msel.size} khối` : "");
+    const pt = host.querySelector("#x10-pt"); if (pt) pt.textContent = (f ? `Đang xếp tầng ${f}` : "Đang xem cả các tầng") + (UI.dims && G.XDIM ? " · " + G.XDIM.text(cur, { cm: UI.ruler }) : "") + (msel.size > 1 ? ` · đang chọn ${msel.size} khối` : "");
     const g = svg && svg.querySelector("#x10-dims"); if (!g) return;
-    g.innerHTML = ""; if (UI.dims && G.XDIM) G.XDIM.svg(g, cur, PX, { fs: 16 });
+    g.innerHTML = ""; if (UI.dims && G.XDIM) G.XDIM.svg(g, cur, PX, { fs: 16, cm: UI.ruler });
   }
   // vẽ lại đúng một khối (khi đổi cỡ), giữ chỗ của nó trong thứ tự vẽ
   function redrawBlock(b) {
@@ -501,7 +519,7 @@
   }
   // việc nặng (kiểm tra, bảng, 3D dựng lại, mặt bằng chi tiết) làm sau khi tay dừng
   let heavyT = 0;
-  function heavy(b, ms = 220) { clearTimeout(heavyT); heavyT = setTimeout(() => { if (drag && !drag.rs) return; renderPlan(); renderStack(); renderKho(); checksList(ISS); areaTable(); if (b) cardVals(b); iso(); mbDraw(); }, ms); }
+  function heavy(b, ms = 220) { clearTimeout(heavyT); heavyT = setTimeout(() => { if (drag && !drag.rs) return; renderPlan(); renderStack(); renderKho(); checksList(ISS); areaTable(); modelCard(); if (b) cardVals(b); iso(); mbDraw(); }, ms); }
   // 3D: đổi cỡ, dời khối có sẵn mà không dựng lại cả cảnh
   function update3d(b) {
     if (!T3) return; const o = T3.objs[b.id]; if (!o || !o.w0) return;
@@ -542,6 +560,14 @@
       if (b.kind === "park") t1.textContent = `Bãi ${PK[b.pk || "moto"][0]} · ~${pkN(b)} chỗ`;
       if (b.link) { const L = linkOf(b); if (L.length > 1) { const big = L.reduce((p, q) => q.w * q.h > p.w * p.h ? q : p); if (big !== b) t1.remove(); else t1.textContent = `Hành lang · ${nf(L.reduce((t, o) => t + o.w * o.h, 0), 0)} m²`; } }
       if (big) { const t2 = el("text", { x: x + w / 2, y: y + h / 2 + 13, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 14, fill: "var(--ink-2)", "pointer-events": "none" }, g); t2.textContent = `${nf(area(b), 0)} m² · ${nf(b.w, 1)} × ${nf(b.h, 1)}`; }
+      if (UI.ruler && b.kind !== "park") {
+        // cỡ mô hình 1:200: chữ ngang khi khối đủ rộng, chữ dọc khi khối hẹp mà dài
+        const tx = `${cmT(b.w)} × ${cmT(b.h)} cm`, A = fs => ({ "text-anchor": "middle", "dominant-baseline": "middle", "font-size": fs, "font-weight": 700, fill: "var(--xdimC)", stroke: col(b), "stroke-width": 3, "paint-order": "stroke", "pointer-events": "none" });
+        const fit = len => [14, 13, 12, 11, 10].find(fs => tx.length * 0.56 * fs <= len * PX - 6); // cỡ chữ lớn nhất còn nằm trong khối
+        const fh = b.h >= 2.6 ? fit(b.w) : null, fv = !fh && b.w >= 1.4 ? fit(b.h * 0.55) : null;
+        if (fh) { const t3 = el("text", { x: x + w / 2, y: y + h / 2 + (big ? 30 : 14), ...A(fh) }, g); t3.textContent = tx; }
+        else if (fv) { const cy = y + h * 0.72, t3 = el("text", { x: x + w / 2, y: cy, transform: `rotate(-90 ${x + w / 2} ${cy})`, ...A(fv) }, g); t3.textContent = tx; }
+      }
     }
     // mép khối: bấm giữ rồi kéo để đổi cỡ (phòng giữ diện tích; giữ Shift thì đổi cả diện tích trong ±10%)
     if (onSite(b) || b.draft) {
@@ -710,6 +736,7 @@
   function pt(e) { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(svg.getScreenCTM().inverse()); return [q.x / PX, q.y / PX]; }
   function startDrag(e, b) {
     if (e.button > 0) return;
+    if (UI.ruler && UI.meas && svg && e.currentTarget && e.currentTarget.ownerSVGElement) return measure(e);
     e.preventDefault(); e.stopPropagation();
     if (!svg) return;
     const onPlan = onSite(b) || b.draft;
@@ -760,6 +787,7 @@
   // kéo mép khối để đổi cỡ
   function startResize(e, b, sd) {
     if (e.button > 0 || !svg) return;
+    if (UI.ruler && UI.meas) return measure(e);
     e.preventDefault();
     sel = b.id;
     const o0 = { x: b.x, y: b.y, w: b.w, h: b.h, a: b.a }, room = b.kind === "room" && b.a > 0, hor = sd === "e" || sd === "w";
@@ -831,6 +859,7 @@
       if (k === "y" || (k === "z" && e.shiftKey)) { e.preventDefault(); redo(); return; }
       return;
     }
+    if (e.key === "Escape" && MEAS) { MEAS = null; measNow(); if (!sel && !msel.size) return; }
     if (e.key === "Escape" && (sel || msel.size)) { clearSel(); render(); return; }
     if (msel.size > 1) {
       const st = e.shiftKey ? 4 : 0.5, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[e.key];
@@ -910,6 +939,7 @@
     box.innerHTML = `<h4>Đang chọn ${L.length} khối</h4>
 <p>${L.map(o => `<b>${esc(label(o))}</b>${o.f ? " T" + o.f : ""}`).join(", ")}</p>
 <p>Cộng ${nf(a, 1)} m² · khung bao rộng Đông – Tây <b>${nf(bb.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(bb.h, 2)} m</b></p>
+${UI.ruler ? (() => { const Z = L.filter(o => onSite(o) && !outdoor(o)).map(zOf), z0 = Z.length ? Math.min(...Z.map(z => z.z0)) : 0, z1 = Z.length ? Math.max(...Z.map(z => z.z1)) : 0; return `<p class="mcm">Mô hình 1:200: khung bao <b>${cmT(bb.w)} × ${cmT(bb.h)} cm</b>${Z.length ? `, cao <b>${cmT(z1 - z0, 3)} cm</b> (từ ${cmT(z0, 3)} tới ${cmT(z1, 3)} cm)` : ""} · góc Tây Bắc cách mép Tây khu đất ${cmT(bb.x)} cm, mép Bắc ${cmT(bb.y)} cm</p>`; })() : ""}
 <p class="k">Kéo một khối trong nhóm để dời cả nhóm (tự bắt góc, bắt cạnh khối khác). Phím mũi tên dời 0,5 m, giữ Shift 4 m. Esc bỏ chọn. Shift + bấm để thêm, bớt khối.</p>
 ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const allC = L.every(o => o.kind === "circ"), sameR = L.every(o => o.kind === "room" && o.c === L[0].c && place(o) === place(L[0]));
   return `<div class="bar">${lk ? `<b>Hành lang dán ${L.length} phần</b><button type="button" class="btn" id="x10-gun">Tách ra từng khối</button>` : ""}${allC && !lk ? `<button type="button" class="btn pri" id="x10-gjoin">Dán thành 1 hành lang</button>` : ""}${sameR ? `<button type="button" class="btn pri" id="x10-gmerge">Gộp ${L.length} phần ${esc(L[0].c)} thành 1 khối</button>` : ""}</div>`; })()}
@@ -1135,7 +1165,9 @@ ${(() => { const lk = L[0].link && L.every(o => o.link === L[0].link); const all
   const h2t = (b, h) => { const [lo, hi] = hRange(b); return Math.round(1000 * Math.log(clamp(h, lo, hi) / lo) / Math.log(hi / lo)); };
   function infoHTML(b) {
     const room = b.kind === "room";
+    const z = onSite(b) && !outdoor(b) ? zOf(b) : null;
     return `<p>${nf(area(b), 1)} m² · rộng Đông – Tây <b>${nf(b.w, 2)} m</b> × sâu Bắc – Nam <b>${nf(b.h, 2)} m</b>${onSite(b) ? ` · tầng ${b.f}` : b.draft ? " · đang ở bàn nháp" : " · đang ở kho"}</p>
+${UI.ruler ? `<p class="mcm">Mô hình 1:200: <b>${cmT(b.w)} × ${cmT(b.h)} cm</b>${z ? `, cao <b>${cmT(z.h, 3)} cm</b> (đặt từ ${cmT(z.z0, 3)} cm)${z.up ? ", gồm 0,8 cm lõi nhô lên mái" : ""} · cách mép Tây khu đất ${cmT(b.x)} cm, mép Bắc ${cmT(b.y)} cm` : ""}</p>` : ""}
 ${room && LIT.test(b.c) ? `<p>${b.h <= 8 ? "Sâu ≤ 8 m: một mặt Bắc hoặc Nam là đủ sáng." : b.h <= 16 ? "Sâu 8–16 m: cần hở cả mặt Bắc và mặt Nam." : "Sâu quá 16 m: giữa phòng sẽ tối, nên đổi tỉ lệ hoặc tách đôi."}</p>` : ""}`;
   }
   // cập nhật số trên thẻ mà không dựng lại thẻ (giữ tay kéo, giữ ô đang gõ)
@@ -1519,6 +1551,106 @@ ${(() => { const pk = S.blocks.filter(b => onSite(b) && b.kind === "park"); retu
     } });
     S = { blocks: out, note: `Bắt đầu từ ${p.code} · ${p.name}. ` + (S.note || ""), from: p.code }; sel = null; keep(); build();
     if (out.some(b => b.approx)) say("Ý tưởng này có phòng cạnh xiên, đã quy về hình chữ nhật bao ngoài nên vài khối có thể chồng nhau; chỉnh lại cho khớp nếu cần.");
+  }
+
+  /* ---------- thước 1:200, kéo để đo, bảng cắt mô hình (bạn yêu cầu 11/11/2026) ---------- */
+  const ppmNow = () => { try { return svg.getScreenCTM().a * PX || 10; } catch (e) { return 10; } };
+  function measMode() { const s = host.querySelector("#x10-svg"); if (s) s.closest(".cv").classList.toggle("measuring", !!(UI.ruler && UI.meas)); measNow(); }
+  // thước chia sẵn: mép Bắc và mép Tây vùng xây dựng; số 0 ở góc Tây Bắc khu đất; số ghi cm mô hình
+  function rulerNow() {
+    const g = svg && svg.querySelector("#x10-rl"); if (!g) return; g.innerHTML = ""; if (!UI.ruler) return;
+    const ppm = ppmNow(), u = PX / ppm, fs = 11.5 * u, sw = u, bw = 30 * u;
+    const minor = ppm * 0.2 >= 4 ? 0.2 : 1, lab = ppm * 2 >= 30 ? 2 : ppm * 4 >= 30 ? 4 : 10, isM = (v, k) => Math.abs(v / k - Math.round(v / k)) < 1e-6;
+    const T = (t, a) => { const e = el("text", { "font-size": fs, "font-family": "var(--mono, monospace)", fill: "var(--ink)", ...a }, g); e.textContent = t; return e; };
+    // thước ngang (Đông – Tây) dọc mép Bắc vùng xây dựng
+    const yE = SITE.y0 * PX;
+    el("rect", { x: 0, y: yE - bw, width: 41.5 * PX, height: bw, fill: "var(--sheet)", "fill-opacity": 0.93, stroke: "var(--ink-2)", "stroke-width": sw }, g);
+    for (let i = 0; i * minor <= 41.5 + 1e-6; i++) { const m = +(i * minor).toFixed(3), X = m * PX, L = (isM(m, 2) ? 12 : isM(m, 1) ? 8 : 4) * u; el("line", { x1: X, y1: yE, x2: X, y2: yE - L, stroke: "var(--ink)", "stroke-width": isM(m, 2) ? sw * 1.3 : sw * 0.8 }, g); if (isM(m, lab)) T(nf(m / 2, 0), { x: X, y: yE - 15 * u, "text-anchor": "middle" }); }
+    // thước dọc (Bắc – Nam) dọc mép Tây vùng xây dựng
+    const xE = SITE.x0 * PX;
+    el("rect", { x: xE - bw, y: yE, width: bw, height: (104 - SITE.y0) * PX, fill: "var(--sheet)", "fill-opacity": 0.93, stroke: "var(--ink-2)", "stroke-width": sw }, g);
+    for (let i = Math.round(SITE.y0 / minor); i * minor <= 104 + 1e-6; i++) { const m = +(i * minor).toFixed(3), Y = m * PX, L = (isM(m, 2) ? 12 : isM(m, 1) ? 8 : 4) * u; el("line", { x1: xE, y1: Y, x2: xE - L, y2: Y, stroke: "var(--ink)", "stroke-width": isM(m, 2) ? sw * 1.3 : sw * 0.8 }, g); if (isM(m, lab) && m > SITE.y0) T(nf(m / 2, 0), { x: xE - 14 * u, y: Y, "text-anchor": "end", "dominant-baseline": "middle" }); }
+    // khung bao nhóm khối đang chọn, ghi m và cm
+    const L = grp().filter(o => onSite(o) || o.draft);
+    if (L.length > 1) {
+      const bb = bbOf(L), c = "var(--accent)", off = 1.3, tk = 5 * u, gg = el("g", {}, g);
+      const dim = (x1, y1, x2, y2, t, vert) => {
+        el("line", { x1: x1 * PX, y1: y1 * PX, x2: x2 * PX, y2: y2 * PX, stroke: c, "stroke-width": 2 * u }, gg);
+        for (const [x, y] of [[x1, y1], [x2, y2]]) el("line", { x1: x * PX - tk, y1: y * PX + tk, x2: x * PX + tk, y2: y * PX - tk, stroke: c, "stroke-width": 2.5 * u }, gg);
+        const mx = (x1 + x2) / 2 * PX, my = (y1 + y2) / 2 * PX, e = el("text", { x: vert ? mx - 8 * u : mx, y: vert ? my : my - 8 * u, "text-anchor": "middle", "font-size": 14 * u, "font-weight": 800, fill: c, stroke: "var(--sheet)", "stroke-width": 4 * u, "paint-order": "stroke", transform: vert ? `rotate(-90 ${mx - 8 * u} ${my})` : null }, gg);
+        e.textContent = t;
+      };
+      dim(bb.x, bb.y - off, bb.x + bb.w, bb.y - off, `nhóm ${nf(bb.w, 2)} m = ${cmT(bb.w)} cm`);
+      dim(bb.x - off, bb.y, bb.x - off, bb.y + bb.h, `nhóm ${nf(bb.h, 2)} m = ${cmT(bb.h)} cm`, true);
+      el("rect", { x: bb.x * PX, y: bb.y * PX, width: bb.w * PX, height: bb.h * PX, fill: "none", stroke: c, "stroke-width": 1.5 * u, "stroke-dasharray": `${6 * u} ${4 * u}` }, gg);
+    }
+  }
+  // kéo để đo: bắt mép, góc khối (tầng đang xếp và tầng ngay dưới), mép vùng xây dựng; gần ngang, gần dọc thì tự thẳng (giữ Alt để đo xiên)
+  function measSnap(x, y, tol) {
+    const f = curF(), L = S.blocks.filter(b => b.draft || (onSite(b) && (!f || b.f === f || b.f === f - 1)));
+    let bx = null, by = null, ex = tol, ey = tol;
+    for (const b of L) {
+      if (y > b.y - tol && y < b.y + b.h + tol) for (const v of [b.x, b.x + b.w]) { const k = Math.abs(v - x); if (k < ex) { ex = k; bx = v; } }
+      if (x > b.x - tol && x < b.x + b.w + tol) for (const v of [b.y, b.y + b.h]) { const k = Math.abs(v - y); if (k < ey) { ey = k; by = v; } }
+    }
+    for (const v of [0, SITE.x0, SITE.x1]) { const k = Math.abs(v - x); if (k < ex) { ex = k; bx = v; } }
+    for (const v of [0, SITE.y0, SITE.y1, 104]) { const k = Math.abs(v - y); if (k < ey) { ey = k; by = v; } }
+    return [bx == null ? x : bx, by == null ? y : by];
+  }
+  function measure(e) {
+    e.preventDefault(); e.stopPropagation();
+    const tol = () => Math.max(0.12, Math.min(1.2, 9 / ppmNow()));
+    const [sx, sy] = measSnap(...pt(e), tol()), M = MEAS = { x0: sx, y0: sy, x1: sx, y1: sy }; measNow();
+    const move = ev => { let [x, y] = measSnap(...pt(ev), tol()); if (!ev.altKey) { const ax = Math.abs(x - M.x0), ay = Math.abs(y - M.y0); if (ay < ax * 0.15) y = M.y0; else if (ax < ay * 0.15) x = M.x0; } M.x1 = x; M.y1 = y; raf("ms", measNow); };
+    const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up); if (MEAS === M && Math.hypot(M.x1 - M.x0, M.y1 - M.y0) < 0.05) MEAS = null; measNow(); };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);
+  }
+  function measNow() {
+    const g = svg && svg.querySelector("#x10-ms"), out = host.querySelector("#x10-msv");
+    if (g) g.innerHTML = "";
+    if (!MEAS || !UI.ruler) { if (out) out.textContent = !UI.ruler ? "" : UI.meas ? "Kéo trên mặt bằng để đo (tự bắt mép khối); Esc xoá đường đo" : "Số trên thước là cm mô hình 1:200 (1 m = 0,5 cm), số 0 ở góc Tây Bắc khu đất"; return; }
+    const { x0, y0, x1, y1 } = MEAS, dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0), d = Math.hypot(dx, dy);
+    const t = `${nf(d, 2)} m = ${cmT(d)} cm`, t2 = dx > 0.05 && dy > 0.05 ? ` (ngang ${cmT(dx)} cm, dọc ${cmT(dy)} cm)` : "";
+    if (out) out.innerHTML = `Đo được <b>${t}</b>${t2} trên mô hình 1:200`;
+    if (!g) return;
+    const u = PX / ppmNow(), c = "var(--x10Guide)", a = Math.atan2(y1 - y0, x1 - x0), nx = -Math.sin(a), ny = Math.cos(a), tk = 9 * u;
+    el("line", { x1: x0 * PX, y1: y0 * PX, x2: x1 * PX, y2: y1 * PX, stroke: c, "stroke-width": 2.5 * u }, g);
+    for (const [x, y] of [[x0, y0], [x1, y1]]) { el("line", { x1: x * PX - nx * tk, y1: y * PX - ny * tk, x2: x * PX + nx * tk, y2: y * PX + ny * tk, stroke: c, "stroke-width": 2.5 * u }, g); el("circle", { cx: x * PX, cy: y * PX, r: 3 * u, fill: c }, g); }
+    if (d < 0.05) return;
+    const mx = (x0 + x1) / 2 * PX + nx * 16 * u * (ny > 0 ? -1 : 1), my = (y0 + y1) / 2 * PX + ny * 16 * u * (ny > 0 ? -1 : 1);
+    const e = el("text", { x: mx, y: my, "text-anchor": "middle", "dominant-baseline": "middle", "font-size": 16 * u, "font-weight": 800, fill: c, stroke: "var(--sheet)", "stroke-width": 5 * u, "paint-order": "stroke" }, g);
+    e.textContent = `${cmT(d)} cm  (${nf(d, 2)} m)`;
+  }
+  // chọn khối hoặc cả cụm từ bảng cắt mô hình
+  function pickIds(ids, f) {
+    clearSel(); for (const id of ids) msel.add(id);
+    sel = ids[ids.length - 1] || null; if (msel.size === 1) msel.clear();
+    mode = String(f); host.querySelectorAll("[data-m]").forEach(q => q.setAttribute("aria-pressed", String(q.dataset.m === mode)));
+    render(); const cv = host.querySelector(".cv"); if (cv && cv.scrollIntoView) cv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  function modelCard() {
+    const box = host.querySelector("#x10-mdl"), M = G.MOHINH; if (!box) return; if (!M) { box.innerHTML = ""; return; }
+    const P = S.blocks.filter(b => onSite(b) && !b.draft), T = M.table(P), op = UI.mdlOpen || {};
+    if (!T.length) { box.innerHTML = `<p class="k">Chưa có khối nào trên khu đất.</p>`; return; }
+    const sh = n => { n = String(n || ""); return n.length > 38 ? n.slice(0, 36) + "…" : n; };
+    box.innerHTML = `<p>Tỉ lệ 1:200: <b>1 m thật = 0,5 cm</b> (5 mm) trên mô hình. Tầng cao 4,5 m = <b>2,25 cm</b>. Khối tầng 1 tính từ mặt đất cao 4,95 m = <b>2,475 cm</b> (gồm 0,225 cm nền tôn +0,45; nếu làm đế nền riêng thì cắt 2,25 cm). Lõi thang trên cùng nhô lên mái 1,6 m = <b>0,8 cm</b> (dấu ↑). Đế khu đất 41,5 × 104 m = <b>20,75 × 52 cm</b>. Vị trí đo từ mép Tây và mép Bắc khu đất, đúng số 0 của thước trên mặt bằng.</p>
+<p class="k">Cụm: các khối cùng tầng chạm nhau, cắt liền một miếng theo khung bao rồi rạch ranh phòng; khối lẻ cắt riêng. Bấm tên cụm để chọn cả cụm, mặt bằng hiện khung bao ghi cm; bấm tên khối để chọn khối đó.</p>
+<div class="bar"><button type="button" class="btn pri" id="x10-mprint">Tải khuôn in 1:200 (mỗi tầng một tờ)</button><button type="button" class="btn" id="x10-msvg">Tải file cắt laser (SVG, đúng mm)</button><button type="button" class="btn" id="x10-mcsv">Tải bảng kích thước (Excel)</button><span class="st" id="x10-mst"></span></div>
+${T.map(t => `<details data-mf="${t.f}" ${op[t.f] === false ? "" : "open"}><summary>Tầng ${t.f} · cắt dày ${cmT(t.h, 3)} cm · đặt từ ${cmT(t.z0, 3)} cm · ${t.n} khối, ${t.cl.length} cụm</summary><div class="tw"><table><tr><th>Khối (cm mô hình)</th><th class="n">Rộng Đông–Tây</th><th class="n">Sâu Bắc–Nam</th><th class="n">Cao</th><th class="n">Cách mép Tây</th><th class="n">Cách mép Bắc</th></tr>
+${t.cl.map(c => `<tr class="cl"><td><button type="button" class="lnk" data-mc="${t.f}:${c.k}">Cụm ${c.k}</button> <span class="k">khung bao ${c.blocks.length} khối</span></td><td class="n">${cmT(c.w)}</td><td class="n">${cmT(c.h)}</td><td class="n">${cmT(t.h, 3)}</td><td class="n">${cmT(c.x0)}</td><td class="n">${cmT(c.y0)}</td></tr>` + c.rows.map(r => `<tr><td><button type="button" class="lnk" data-mb="${esc(r.b.id)}">${esc(M.label(r.b))}</button> <span class="k">${esc(sh(r.b.n))}</span></td><td class="n">${cmT(r.b.w)}</td><td class="n">${cmT(r.b.h)}</td><td class="n">${cmT(r.h, 3)}${r.up ? " ↑" : ""}</td><td class="n">${cmT(r.b.x)}</td><td class="n">${cmT(r.b.y)}</td></tr>`).join("")).join("")}</table></div></details>`).join("")}`;
+    box.querySelectorAll("details[data-mf]").forEach(d => d.addEventListener("toggle", () => { UI.mdlOpen = { ...(UI.mdlOpen || {}), [d.dataset.mf]: d.open }; saveUI(); }));
+    box.querySelectorAll("[data-mc]").forEach(q => q.addEventListener("click", () => { const [f, k] = q.dataset.mc.split(":").map(Number), t = M.table(S.blocks.filter(b => onSite(b) && !b.draft)).find(z => z.f === f), c = t && t.cl.find(z => z.k === k); if (c) pickIds(c.blocks.map(b => b.id), f); }));
+    box.querySelectorAll("[data-mb]").forEach(q => q.addEventListener("click", () => { const b = S.blocks.find(o => o.id === q.dataset.mb); if (b) pickIds([b.id], b.f); }));
+    const ms = t => { const e = box.querySelector("#x10-mst"); if (e) e.textContent = t; };
+    const title = `ARC 329 · ${S.from ? S.from + " · " : ""}khuôn cắt mô hình 1:200 · ${new Date().toLocaleDateString("vi-VN")}`;
+    box.querySelector("#x10-mprint").addEventListener("click", async () => ms(await saveFile("khuon-mo-hinh-1-200.html", M.printHTML(P, { title }), "text/html") + " Mở file bằng trình duyệt, bấm In, chọn tỉ lệ 100%."));
+    box.querySelector("#x10-msvg").addEventListener("click", async () => ms(await saveFile("cat-laser-mo-hinh-1-200.svg", M.svgFile(P, { title }), "image/svg+xml")));
+    box.querySelector("#x10-mcsv").addEventListener("click", async () => ms(await saveFile("kich-thuoc-mo-hinh-1-200.csv", M.csv(P), "text/csv")));
+  }
+  async function saveFile(filename, data, type) {
+    let dl = null; try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (e) { dl = null; }
+    if (dl) { try { await dl.save({ filename, data }); return "Đã đưa file để bạn lưu."; } catch (e) { if (e && e.code !== "unavailable") return "Chưa tải được file."; } }
+    try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type: type + ";charset=utf-8" })); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); return "Đã tải file."; } catch (e) { return "Trình duyệt chặn tải file."; }
   }
 
   /* ---------- lưu cho Claude, tải và mở file ---------- */

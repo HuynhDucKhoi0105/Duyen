@@ -19,23 +19,24 @@
     return [...m.values()].map(bs => ({ ...box(bs), n: bs.length, blocks: bs })).sort((a, b) => a.y0 - b.y0 || a.x0 - b.x0);
   }
   // các đường cần vẽ: tổng (phía Bắc, phía Tây) và từng cụm từ 2 khối (phía Nam, phía Đông)
-  function dims(blocks) {
+  function dims(blocks, o = {}) {
+    const U = v => `${nf(v)} m` + (o.cm ? ` · ${nf(v / 2)} cm` : ""); // o.cm: ghi thêm cm mô hình 1:200
     const L = blocks.filter(solid); if (!L.length) return { all: null, cl: [], sh: [], lines: [] };
     const all = box(L), cl = clusters(L), lines = [];
     const W = all.x1 - all.x0, H = all.y1 - all.y0;
-    lines.push({ ax: "x", a: all.x0, b: all.x1, at: all.y0 - 4.2, from: all.y0, t: `Tổng Đông – Tây ${nf(W)} m`, tot: 1 });
-    lines.push({ ax: "y", a: all.y0, b: all.y1, at: all.x0 - 4.2, from: all.x0, t: `Tổng Bắc – Nam ${nf(H)} m`, tot: 1 });
+    lines.push({ ax: "x", a: all.x0, b: all.x1, at: all.y0 - 4.2, from: all.y0, t: `Tổng Đông – Tây ${U(W)}`, tot: 1 });
+    lines.push({ ax: "y", a: all.y0, b: all.y1, at: all.x0 - 4.2, from: all.x0, t: `Tổng Bắc – Nam ${U(H)}`, tot: 1 });
     const same = c => Math.abs(c.x0 - all.x0) < 0.02 && Math.abs(c.x1 - all.x1) < 0.02 && Math.abs(c.y0 - all.y0) < 0.02 && Math.abs(c.y1 - all.y1) < 0.02;
     const sh = cl.filter(c => c.n >= 2 && !same(c));
     sh.forEach((c, i) => {
-      lines.push({ ax: "x", a: c.x0, b: c.x1, at: c.y1 + 1.4, from: c.y1, t: `Cụm ${i + 1}: ${nf(c.x1 - c.x0)} m`, ci: i + 1 });
-      lines.push({ ax: "y", a: c.y0, b: c.y1, at: c.x1 + 1.4, from: c.x1, t: `Cụm ${i + 1}: ${nf(c.y1 - c.y0)} m`, ci: i + 1 });
+      lines.push({ ax: "x", a: c.x0, b: c.x1, at: c.y1 + 1.4, from: c.y1, t: `Cụm ${i + 1}: ${U(c.x1 - c.x0)}`, ci: i + 1 });
+      lines.push({ ax: "y", a: c.y0, b: c.y1, at: c.x1 + 1.4, from: c.x1, t: `Cụm ${i + 1}: ${U(c.y1 - c.y0)}`, ci: i + 1 });
     });
     return { all, cl, sh, lines, W, H };
   }
   // vẽ lên mặt bằng SVG (PX đơn vị SVG cho 1 m)
   function svg(parent, blocks, PX, o = {}) {
-    const D = dims(blocks); if (!D.all) return D;
+    const D = dims(blocks, o); if (!D.all) return D;
     const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) if (a[k] != null) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
     const g = el("g", { class: "xdim", "pointer-events": "none" }, parent), fs = o.fs || 15, tk = 0.45;
     for (const l of D.lines) {
@@ -72,10 +73,10 @@
     return D;
   }
   // một dòng chữ tóm tắt
-  function text(blocks) {
+  function text(blocks, o = {}) {
     const D = dims(blocks); if (!D.all) return "";
     const cl = D.sh;
-    return `Tổng Đông – Tây ${nf(D.W)} m × Bắc – Nam ${nf(D.H)} m` + (D.cl.length > 1 ? ` · ${D.cl.length} cụm rời${cl.length ? ": " + cl.map((c, i) => `cụm ${i + 1} ${nf(c.x1 - c.x0, 1)} × ${nf(c.y1 - c.y0, 1)} m`).join(", ") : ""}` : " · liền một khối");
+    return `Tổng Đông – Tây ${nf(D.W)} m × Bắc – Nam ${nf(D.H)} m` + (o.cm ? ` (mô hình 1:200: ${nf(D.W / 2)} × ${nf(D.H / 2)} cm)` : "") + (D.cl.length > 1 ? ` · ${D.cl.length} cụm rời${cl.length ? ": " + cl.map((c, i) => `cụm ${i + 1} ${nf(c.x1 - c.x0, 1)} × ${nf(c.y1 - c.y0, 1)} m`).join(", ") : ""}` : " · liền một khối");
   }
   G.XDIM = { clusters, dims, svg, three, text };
 })();

@@ -949,6 +949,23 @@ Bạn gửi xep-khoi-arc329-2.json (từ F.2d). Bạn thích cách xếp này nh
 - Khối được cắt theo cạnh dài. Phần mới đặt sát phần cũ và được chọn sẵn để kéo đi, hoặc bấm PageUp để đưa lên tầng khác.
 - Các phần giữ cùng mã; giới hạn ±10% đề tính theo tổng các phần. Nút "Gộp lại" nhập các phần cùng mã, cùng tầng.
 
+### 3.29 Thước 1:200 để cắt mô hình (11/11/2026)
+
+Bạn gửi bản final (xep-khoi-arc329-2.json, ghi chú "F.2d · Thang máy cho người đọc, cửa mái, tách B5 khỏi học nhóm") và chuẩn bị cắt mô hình.
+
+- Quy đổi: 1 m thật = 0,5 cm mô hình. Tầng 4,5 m = 2,25 cm. Khối tầng 1 tính từ mặt đất 4,95 m = 2,475 cm (gồm nền 0,225 cm). Lõi thang trên cùng nhô 1,6 m = 0,8 cm. Đế khu đất 41,5 × 104 m = 20,75 × 52 cm.
+- Tab Tự xếp khối có nút "📏 Thước 1:200" (mặc định bật):
+  - thước chia sẵn dọc mép Bắc và mép Tây vùng xây dựng, số ghi cm mô hình, số 0 ở góc Tây Bắc khu đất, vạch mm hiện khi phóng to;
+  - mỗi khối ghi thêm "rộng × sâu cm"; kích thước tổng, kích thước cụm ghi cả m và cm;
+  - chọn nhiều khối thì mặt bằng hiện khung bao nhóm ghi cm, thẻ bên cạnh ghi khung bao, chiều cao, vị trí;
+  - nút "📐 Kéo để đo": kéo trên mặt bằng để đo, tự bắt mép và góc khối, gần ngang hay dọc thì tự thẳng (giữ Alt để đo xiên); Esc xoá.
+- Thẻ "Cắt mô hình 1:200": bảng từng tầng, từng cụm (các khối cùng tầng chạm nhau, cắt liền một miếng) và từng khối, theo cm; bấm tên cụm hay khối để chọn trên mặt bằng.
+- Ba nút tải:
+  - khuôn in (HTML, mỗi tầng một tờ A3 đúng tỉ lệ, có vạch kiểm tra 10 cm);
+  - file cắt laser (SVG đơn vị mm: đỏ cắt, xanh rạch ranh phòng, xám tham khảo);
+  - bảng Excel (CSV).
+- Mã: mohinh.js (tính toán, xuất file), x10_xep.js (thước, đo, thẻ), xdim.js (ghi cm).
+
 ## 4. Những gì đã có trên trang phương án
 
 Link: https://claude.ai/artifact/4hkriHS1QkK6Zyka8yJWCD (riêng tư; muốn thầy xem thì bấm Share).
